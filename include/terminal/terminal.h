@@ -12,15 +12,14 @@ namespace SimpleOS {
 
 	class Terminal {
 
-		uint16_t* buffer = (uint16_t*)0xB8000;
-		size_t pos = 0;
+		static size_t pos;
 	public:
 
-		void print_string(cstr msg);
+		static void print_string(cstr msg);
 
-		void print_char(char c, size_t pos);
+		static void print_char(char c, size_t pos);
 
-		void print_char(char c);
+		static void print_char(char c);
 	};
 }
 

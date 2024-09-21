@@ -2,7 +2,9 @@
 
 #ifndef _TYPEDEF_
 
-using str = char*;
-using cstr = const char*;
+namespace SimpleOS {
+	using str = char*;
+	using cstr = const char*;
+}
 
 #endif // _TYPEDEF_
