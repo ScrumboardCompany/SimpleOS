@@ -21,8 +21,6 @@ namespace SimpleOS {
         static void init_idt();
 
     private:
-        
-        static void dividing_by_zero();
 
     private:
 
@@ -36,13 +34,17 @@ namespace SimpleOS {
             uint8_t zero;
             uint8_t type_attr;
             uint16_t offset_second;
-        };
+        } __attribute__((packed));
 
         struct IDTPtr {
             uint16_t limit;
             uint32_t base;
-        };
+        } __attribute__((packed));
     };
+
+    extern "C" void dividing_by_zero();
+
+    extern "C" void dividing_by_zero_handler();
 }
 
 #endif // _IDT_

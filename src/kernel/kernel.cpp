@@ -13,8 +13,10 @@ using namespace SimpleOS;
 
 extern "C" void kernel_main(void) {
 	IDT::init_idt();
-    Terminal::print_char('D');
-    Terminal::print_char('A');
-	Terminal::print_string("Hello from SimpleOS");
-    Terminal::print_string("Hello from SimpleOS2");
+	Terminal::print('D');
+	Terminal::print('A');
+	Terminal::print("Hello from SimpleOS");
+	Terminal::print("Hello from SimpleOS2");
+
+	__asm__ __volatile__("int $0");
 }

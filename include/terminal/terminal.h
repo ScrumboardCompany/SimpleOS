@@ -15,11 +15,11 @@ namespace SimpleOS {
 		static size_t pos;
 	public:
 
-		static void print_string(cstr msg);
+		static void print(cstr msg);
 
-		static void print_char(char c, size_t pos);
+		static void print(char c, size_t pos);
 
-		static void print_char(char c);
+		static void print(char c);
 	};
 }
 

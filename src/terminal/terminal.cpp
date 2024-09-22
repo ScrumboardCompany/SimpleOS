@@ -2,21 +2,21 @@
 
 using namespace SimpleOS;
 
-void Terminal::print_string(cstr msg) {
+void Terminal::print(cstr msg) {
 	while (*msg) {
-		print_char(*msg);
+		print(*msg);
 		++msg;
 	}
 }
 
-void Terminal::print_char(char c, size_t pos) {
+void Terminal::print(char c, size_t pos) {
 	char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
 	buffer[pos * 2] = c;
 	buffer[pos * 2 + 1] = 0x07;
 }
 
-void Terminal::print_char(char c) {
-	print_char(c, pos++);
+void Terminal::print(char c) {
+	print(c, pos++);
 }
 
 size_t Terminal::pos = 0;

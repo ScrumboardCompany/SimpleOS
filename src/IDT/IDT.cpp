@@ -5,7 +5,7 @@ using namespace SimpleOS;
 
 void IDT::init_idt() {
 
-    set_in_idt_slot(0, (uint32_t)dividing_by_zero, 0x08, 0x8E); // 0x08, 0x8E
+    set_in_idt_slot(0, (uint32_t)dividing_by_zero_handler, 0x08, 0x8E); // 0x08, 0x8E
 
     load_idt();
 
@@ -23,13 +23,23 @@ void IDT::set_in_idt_slot(int pos, uint32_t base, uint16_t sel, uint8_t flags) {
 void IDT::load_idt() {
     idt_ptr.limit = (sizeof(IDTSlot) * IDT_SIZE) - 1;
     idt_ptr.base = (uint32_t)&idt;
+    //__asm__("lidt %0" : : "m"(idt_ptr));
     __asm__ __volatile__("lidt (%0)" : : "r" (&idt_ptr));
 }
 
-void IDT::dividing_by_zero() {
-    Terminal::print_string("Failed operation dividing by zero");
-    asm("iret");
+extern "C" void SimpleOS::dividing_by_zero() {
+    Terminal::print("Failed operation dividing by zero");
+    //__asm__ __volatile__("cli; iret");
 }
+
+__asm__(
+    ".global dividing_by_zero_handler\n"
+    "dividing_by_zero_handler:\n"
+    "    pusha\n"
+    "    call dividing_by_zero\n"
+    "    popa\n"
+    "    iret\n"
+);
 
 IDT::IDTSlot IDT::idt[IDT_SIZE];
 IDT::IDTPtr IDT::idt_ptr;
