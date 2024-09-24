@@ -1,6 +1,7 @@
 #pragma once
 
 #ifndef _IDT_
+#define _IDT_
 
 #include "stdint.h"
 
@@ -18,7 +19,7 @@ namespace SimpleOS {
 
     public:
 
-        static void init_idt();
+		static void init_idt();
 
     private:
 
@@ -44,7 +45,7 @@ namespace SimpleOS {
 
     extern "C" void dividing_by_zero();
 
-    extern "C" void dividing_by_zero_handler();
+    //extern "C" void dividing_by_zero_handler();
 }
 
 #endif // _IDT_
