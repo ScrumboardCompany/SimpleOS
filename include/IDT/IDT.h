@@ -19,13 +19,13 @@ namespace SimpleOS {
 
     public:
 
+        static void set_in_idt_slot(int pos, uint32_t base, uint16_t sel, uint8_t flags);
+
 		static void init_idt();
 
-    private:
+        static void register_interrupt_handler(int pos, uint32_t base);
 
     private:
-
-        static void set_in_idt_slot(int pos, uint32_t base, uint16_t sel, uint8_t flags);
 
         static void load_idt();
 
