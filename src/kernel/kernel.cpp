@@ -9,14 +9,21 @@
 #include "terminal/terminal.h"
 #include "IDT/IDT.h"
 #include "GDT/GDT.h"
+#include "IRQ/IRQ.h"
+#include "devices/keyboard.h"
 
 using namespace SimpleOS;
 
 extern "C" void kernel_main(void) {
-	GDT::init_gdt();
-	IDT::init_idt();
+    GDT::init_gdt();
+    IDT::init_idt();
+    IRQ::init_pic();
+    Keyboard::init_keyboard();
 
-	Terminal::print("Hello SimpleOS");
+    Terminal::print(">");
 
-	__asm__ __volatile__("int $0");
+    while (true) {
+        __asm__ volatile("sti");
+        __asm__ volatile("hlt");
+    }
 }

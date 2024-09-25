@@ -12,16 +12,23 @@ void IDT::init_idt() {
     
     load_idt();
 
-    for(size_t i = 0; i < 32; ++i) {
-        set_in_idt_slot(i, (uint32_t)dividing_by_zero, 0x08, 0x8E);
-    }
+    set_in_idt_slot(0x00, (uint32_t)dividing_by_zero, 0x08, 0x8E);
+}
+
+void IDT::register_interrupt_handler(int pos, uint32_t base) {
+    set_in_idt_slot(pos, base, 0x08, 0x8E);
 }
 
 void IDT::set_in_idt_slot(int pos, uint32_t base, uint16_t sel, uint8_t flags) {
+    //idt[pos].offset_first = base & 0xFFFF;
+    //idt[pos].selector = sel;
+    //idt[pos].zero = 0;
+    //idt[pos].type_attr = flags | 0x60;
+    //idt[pos].offset_second = (base >> 16) & 0xFFFF;
     idt[pos].offset_first = base & 0xFFFF;
     idt[pos].selector = sel;
     idt[pos].zero = 0;
-    idt[pos].type_attr = flags | 0x60;
+    idt[pos].type_attr = flags;
     idt[pos].offset_second = (base >> 16) & 0xFFFF;
 }
 

@@ -6,8 +6,6 @@
 #include <stdint.h>
 
 namespace SimpleOS {
-	using str = char*;
-	using cstr = const char*;
 	using size_t = uint64_t;
 }
 
