@@ -89,7 +89,8 @@ void Terminal::execute_command(const char* command) {
 	if (strcmp(args_of_command[0], "color") == 0)
 		color(args_of_command);
 
-	else if (strcmp(args_of_command[0], "echo") == 0)
+	//else if (strcmp(args_of_command[0], "echo") == 0)
+		
 
 	else if (strcmp(args_of_command[0], "clear") == 0) {
 		clear();
