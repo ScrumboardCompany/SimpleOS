@@ -89,6 +89,8 @@ namespace SimpleOS {
 		static char* buffer;
 		
 		static size_t buffer_size;
+
+		static bool is_caps_lock;
     };
 
 	extern "C" void keyboard_handler();

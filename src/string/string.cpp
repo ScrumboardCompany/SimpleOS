@@ -113,3 +113,35 @@ char* strncat(char* dest, const char* src, size_t n) {
     *dest = '\0';
     return start;
 }
+
+void to_upper(char* str) {
+    while (*str) {
+        if (*str >= 'a' && *str <= 'z') {
+            *str = *str - ('a' - 'A');
+        }
+        str++;
+    }
+}
+
+char to_upper(char c) {
+    if (c >= 'a' && c <= 'z') {
+        return c - ('a' - 'A');
+    }
+    return c;
+}
+
+void to_lower(char* str) {
+    while (*str) {
+        if (*str >= 'A' && *str <= 'Z') {
+            *str = *str + ('a' - 'A');
+        }
+        str++;
+    }
+}
+
+char to_lower(char c) {
+    if (c >= 'A' && c <= 'Z') {
+        return c + ('a' - 'A');
+    }
+    return c;
+}

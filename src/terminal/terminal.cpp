@@ -73,7 +73,6 @@ void Terminal::new_line() {
 	else {
 		pos = (pos / WIDTH + 1) * WIDTH;
 	}
-	// print(">");
 }
 
 SimpleOS::size_t Terminal::get_pos() {
@@ -87,13 +86,14 @@ void Terminal::execute_command(const char* command) {
 
 	if (!get_size(args_of_command)) return;
 
-	if (strcmp(args_of_command[0], "COLOR") == 0)
+	if (strcmp(args_of_command[0], "color") == 0)
 		color(args_of_command);
 
-	/*else if (strcmp(args_of_command[0], "CLEAR") == 0) {
+	else if (strcmp(args_of_command[0], "echo") == 0)
+
+	else if (strcmp(args_of_command[0], "clear") == 0) {
 		clear();
-		pos = 0;
-	}*/
+	}
 
 	else { 
 		new_line();
@@ -103,19 +103,21 @@ void Terminal::execute_command(const char* command) {
 	new_line();
 };
 
-void SimpleOS::Terminal::color(char** args_of_command) {
-	if (get_size(args_of_command) == 2) {
-
-		char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
-
-		Color new_color = to_color(atoi(args_of_command[1]));
-
-		for (size_t i = 0; i < pos; ++i) {
-			buffer[i * 2 + 1] = (uint8_t)new_color;
-		}
-
-		terminal_color = new_color;
+void SimpleOS::Terminal::color(char** args) {
+	if (!get_size(args) == 1) {
+		new_line("Invalid arguments count");
+		return;
 	}
+
+	char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
+
+	Color new_color = to_color(atoi(args[1]));
+
+	for (size_t i = 0; i < pos; ++i) {
+		buffer[i * 2 + 1] = (uint8_t)new_color;
+	}
+
+	terminal_color = new_color;
 }
 
 Terminal::Color Terminal::to_color(int code) {

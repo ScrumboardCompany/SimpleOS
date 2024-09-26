@@ -52,54 +52,6 @@ char* SimpleOS::pop_char(const char* str) {
     return new_str;
 }
 
-//char** SimpleOS::split(const char* str, char delimiter, int* size) {
-//
-//    int count = 1;
-//    const char* tmp = str;
-//    while (*tmp) {
-//        if (*tmp == delimiter) {
-//            count++;
-//        }
-//        tmp++;
-//    }
-//
-//    char** result = (char**)malloc(count * sizeof(char*));
-//    if (result == NULL) {
-//        return NULL;
-//    }
-//
-//    int index = 0;
-//    const char* start = str;
-//    const char* end = str;
-//
-//    while (*end) {
-//        if (*end == delimiter) {
-//            int len = end - start;
-//            result[index] = (char*)malloc((len + 1) * sizeof(char));
-//            if (result[index] == NULL) {
-//                return NULL;
-//            }
-//            strncpy(result[index], start, len);
-//            result[index][len] = '\0';
-//            index++;
-//            start = end + 1;
-//        }
-//        end++;
-//    }
-//
-//    int len = end - start;
-//    result[index] = (char*)malloc((len + 1) * sizeof(char));
-//    if (result[index] == NULL) {
-//        return NULL;
-//    }
-//    strncpy(result[index], start, len);
-//    result[index][len] = '\0';
-//
-//    *size = count;
-//
-//    return result;
-//}
-
 char** SimpleOS::split(const char* str, char delimiter, int* size) {
 
     int count = 1;
@@ -111,7 +63,6 @@ char** SimpleOS::split(const char* str, char delimiter, int* size) {
         tmp++;
     }
 
-    // Выделяем память с запасом на NULL-указатель для окончания массива
     char** result = (char**)malloc((count + 1) * sizeof(char*));
     if (result == NULL) {
         return NULL;
@@ -129,24 +80,23 @@ char** SimpleOS::split(const char* str, char delimiter, int* size) {
                 return NULL;
             }
             strncpy(result[index], start, len);
-            result[index][len] = '\0'; // Завершаем строку нулевым символом
+            result[index][len] = '\0';
             index++;
             start = end + 1;
         }
         end++;
     }
 
-    // Последний элемент после последнего разделителя
     int len = end - start;
     result[index] = (char*)malloc((len + 1) * sizeof(char));
     if (result[index] == NULL) {
         return NULL;
     }
     strncpy(result[index], start, len);
-    result[index][len] = '\0'; // Завершаем строку нулевым символом
+    result[index][len] = '\0';
     index++;
 
-    result[index] = NULL; // Завершаем массив нулевым указателем
+    result[index] = NULL;
 
     *size = count;
 

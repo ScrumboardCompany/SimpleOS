@@ -18,4 +18,9 @@ void itoa(int value, char* str, int base);
 char* strcat(char* dest, const char* src);
 char* strncat(char* dest, const char* src, size_t n);
 
+void to_upper(char* str);
+char to_upper(char c);
+void to_lower(char* str);
+char to_lower(char c);
+
 #endif // _STRING_

@@ -56,7 +56,7 @@ namespace SimpleOS {
 			White = 0x0F
 		};
 		private:
-			static void color(char** args_of_command);
+			static void color(char** args);
 
 			static Color to_color(int code);
 

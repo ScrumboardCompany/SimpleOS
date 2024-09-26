@@ -15,6 +15,10 @@ extern "C" void SimpleOS::keyboard_handler() {
 
 	char c = Keyboard::get_key_char(key);
 
+	if (Keyboard::is_caps_lock)
+		c = to_upper(c);
+	else c = to_lower(c);
+
 	if (c) {
 		Keyboard::buffer = add_char(Keyboard::buffer, c);
 		++Keyboard::buffer_size;
@@ -31,6 +35,10 @@ extern "C" void SimpleOS::keyboard_handler() {
 		}
 		else Terminal::print("Buffer size small");
 		Terminal::new_line();
+	}
+
+	if (key == Keyboard::PressedKey::CapsLock) {
+		Keyboard::is_caps_lock = !Keyboard::is_caps_lock;
 	}
 
 	if (key == Keyboard::PressedKey::Backspace) {
@@ -90,3 +98,4 @@ char Keyboard::get_key_char(Keyboard::PressedKey key) {
 
 char* Keyboard::buffer = (char*)malloc(1);
 SimpleOS::size_t Keyboard::buffer_size = 0;
+bool Keyboard::is_caps_lock = false;
