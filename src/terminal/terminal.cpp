@@ -22,6 +22,43 @@ void Terminal::print(char c) {
 
 void Terminal::print(int n) {
 	char msg[10];
+	print(itoa(n, msg, 10));
+}
+
+void Terminal::reload(char c, Color color) {
+	char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
+
+	for (size_t i = 0; i < pos; ++i) {
+		buffer[i * 2] = c;
+		buffer[i * 2 + 1] = (uint8_t)color;
+	}
+}
+
+void Terminal::clear() {
+	reload(' ');
+	pos = 0;
+}
+
+void Terminal::delete_char(size_t pos) {
+    if (pos > 0) {
+        char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
+
+        --pos;
+        buffer[pos * 2] = ' ';
+
+        Terminal::pos = pos;
+    }
+}
+
+void Terminal::new_line() {
+	const size_t WIDTH = 80;
+	const size_t HEIGHT = 25;
+
+	if (pos / WIDTH >= HEIGHT) {
+		char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
+
+void Terminal::print(int n) {
+	char msg[10];
 	itoa(n, msg, 10);
 	print(msg);
 }
