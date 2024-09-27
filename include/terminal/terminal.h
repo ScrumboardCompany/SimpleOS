@@ -10,6 +10,9 @@
 
 namespace SimpleOS {
 
+	constexpr size_t WIDTH = 80;
+	constexpr size_t HEIGHT = 25;
+
 	class Terminal {
 
 		static size_t pos;
@@ -30,6 +33,8 @@ namespace SimpleOS {
 		static void clear();
 
 		static void delete_char(size_t pos);
+
+		static void delete_line();
 
 		static void new_line();
 
@@ -59,6 +64,8 @@ namespace SimpleOS {
 			static void color(char** args);
 
 			static Color to_color(int code);
+
+			static void to_args(char** command_split, char** args, SimpleOS::size_t size_command_split);
 
 			static Color terminal_color;
 	};

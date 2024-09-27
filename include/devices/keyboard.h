@@ -7,6 +7,7 @@
 
 #include "utils/utils.h"
 #include "utils/typedef.h"
+#include "libs/vector/vector.h"
 
 #include <stdint.h>
 
@@ -15,7 +16,6 @@ namespace SimpleOS {
     class Keyboard {
 
     public:
-
         enum class PressedKey : uint32_t {
 			A = 0x1E,
 			B = 0x30,
@@ -75,7 +75,12 @@ namespace SimpleOS {
 			F9 = 0x43,
 			F10 = 0x44,
 			F11 = 0x57,
-			F12 = 0x58
+			F12 = 0x58,
+			// Arrow keys
+			ArrowUp = 0x48,
+			ArrowDown = 0x50,
+			ArrowLeft = 0x4B,
+			ArrowRight = 0x4D
 		};
 
         static void init_keyboard();
@@ -84,6 +89,8 @@ namespace SimpleOS {
 
 		static char get_key_char(PressedKey key);
 
+		static void reset_selected_command_pos();
+
     //private:
 		
 		static char* buffer;
@@ -91,6 +98,10 @@ namespace SimpleOS {
 		static size_t buffer_size;
 
 		static bool is_caps_lock;
+
+		static vector<char*> commands;
+
+		static int selected_command_pos;
     };
 
 	extern "C" void keyboard_handler();

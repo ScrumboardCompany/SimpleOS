@@ -7,6 +7,7 @@ using namespace SimpleOS;
 
 void Keyboard::init_keyboard() {
     IDT::register_interrupt_handler(0x21, (uint32_t)keyboard_handler);
+	Keyboard::buffer = (char*)malloc(1);
 	Keyboard::buffer[0] = '\0';
 }
 
@@ -15,19 +16,33 @@ extern "C" void SimpleOS::keyboard_handler() {
 
 	char c = Keyboard::get_key_char(key);
 
-	if (Keyboard::is_caps_lock)
-		c = to_upper(c);
-	else c = to_lower(c);
+	c = (Keyboard::is_caps_lock ? to_upper(c) : to_lower(c));
 
 	if (c) {
 		Keyboard::buffer = add_char(Keyboard::buffer, c);
 		++Keyboard::buffer_size;
 		Terminal::print(c);
+
+		Keyboard::reset_selected_command_pos();
+	}
+
+	if (key == Keyboard::PressedKey::Backspace) {
+		Terminal::delete_char(Terminal::get_pos());
+		Keyboard::buffer = pop_char(Keyboard::buffer);
+		--Keyboard::buffer_size;
+
+		Keyboard::reset_selected_command_pos();
 	}
 
 	if (key == Keyboard::PressedKey::Enter) {
 		if (Keyboard::buffer_size > 0) {
 			Terminal::execute_command(Keyboard::buffer);
+
+			char* buffer_copy = (char*)malloc(strlen(Keyboard::buffer) + 1);
+			strcpy(buffer_copy, Keyboard::buffer);
+
+			Keyboard::commands.push(buffer_copy);
+			Keyboard::selected_command_pos = Keyboard::commands.size();
 
 			Keyboard::buffer = (char*)malloc(1);
 			Keyboard::buffer[0] = '\0';
@@ -35,15 +50,34 @@ extern "C" void SimpleOS::keyboard_handler() {
 		}
 		else Terminal::print("Buffer size small");
 		Terminal::new_line();
+
+		Keyboard::reset_selected_command_pos();
 	}
 
 	if (key == Keyboard::PressedKey::CapsLock) {
 		Keyboard::is_caps_lock = !Keyboard::is_caps_lock;
 	}
 
-	if (key == Keyboard::PressedKey::Backspace) {
-		Terminal::delete_char(Terminal::get_pos());
-		Keyboard::buffer = pop_char(Keyboard::buffer);
+	if (key == Keyboard::PressedKey::ArrowUp) {
+		if (!Keyboard::commands.empty() && Keyboard::selected_command_pos > 0) {
+			--Keyboard::selected_command_pos;
+			strcpy(Keyboard::buffer, Keyboard::commands.at(Keyboard::selected_command_pos));
+			Keyboard::buffer_size = strlen(Keyboard::buffer);
+
+			Terminal::delete_line();
+			Terminal::print(Keyboard::buffer);
+		}
+	}
+
+	if (key == Keyboard::PressedKey::ArrowDown) {
+		if (!Keyboard::commands.empty() && Keyboard::selected_command_pos < (int)Keyboard::commands.size() - 1) {
+			++Keyboard::selected_command_pos;
+			strcpy(Keyboard::buffer, Keyboard::commands.at(Keyboard::selected_command_pos));
+			Keyboard::buffer_size = strlen(Keyboard::buffer);
+
+			Terminal::delete_line();
+			Terminal::print(Keyboard::buffer);
+		}
 	}
 
 	IRQ::port_byte_out(0x20, 0x20);
@@ -96,6 +130,17 @@ char Keyboard::get_key_char(Keyboard::PressedKey key) {
 	}
 }
 
-char* Keyboard::buffer = (char*)malloc(1);
+void Keyboard::reset_selected_command_pos() {
+	if (!Keyboard::commands.empty()) {
+		Keyboard::selected_command_pos = Keyboard::commands.size();
+	}
+	else Keyboard::selected_command_pos = -1;
+}
+
+char* Keyboard::buffer = nullptr;
 SimpleOS::size_t Keyboard::buffer_size = 0;
+
 bool Keyboard::is_caps_lock = false;
+
+vector<char*> Keyboard::commands;
+int Keyboard::selected_command_pos = -1;
