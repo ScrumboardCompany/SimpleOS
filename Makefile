@@ -3,10 +3,10 @@ AC = i686-elf-as
 LC = i686-elf-gcc
 CPPC = i686-elf-g++
 
-CPPSRC = $(wildcard src/**/*.cpp)
+CPPSRC = $(shell for /R %%f in (*.cpp) do @echo %%f)
 CPPOBJ = $(patsubst %.cpp, %.o, $(CPPSRC))
 
-ASRC = $(wildcard *.s)
+ASRC = $(shell for /R %%f in (*.s) do @echo %%f)
 AOBJ = $(patsubst %.s, %.o, $(ASRC))
 
 $(TARGET) : $(CPPOBJ) $(AOBJ)
@@ -18,5 +18,6 @@ $(TARGET) : $(CPPOBJ) $(AOBJ)
 %.o : %.cpp 
 	$(CPPC) -c $< -o $@ -Iinclude -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
 
-clean :
-	del $(TARGET) *.o
+clean:
+	for /R %%f in (*.o) do del "%%f"
+	del *.o
