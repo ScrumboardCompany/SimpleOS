@@ -1,13 +1,5 @@
 #include "libs/string/string.h"
 
-void* memset(void* dest, int c, size_t n) {
-    unsigned char* p = (unsigned char*)dest;
-    while (n--) {
-        *p++ = (unsigned char)c;
-    }
-    return dest;
-}
-
 void* memcpy(void* dest, const void* src, size_t n) {
     unsigned char* d = (unsigned char*)dest;
     const unsigned char* s = (unsigned char*)src;

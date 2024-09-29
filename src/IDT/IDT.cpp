@@ -20,11 +20,6 @@ void IDT::register_interrupt_handler(int pos, uint32_t base) {
 }
 
 void IDT::set_in_idt_slot(int pos, uint32_t base, uint16_t sel, uint8_t flags) {
-    //idt[pos].offset_first = base & 0xFFFF;
-    //idt[pos].selector = sel;
-    //idt[pos].zero = 0;
-    //idt[pos].type_attr = flags | 0x60;
-    //idt[pos].offset_second = (base >> 16) & 0xFFFF;
     idt[pos].offset_first = base & 0xFFFF;
     idt[pos].selector = sel;
     idt[pos].zero = 0;
