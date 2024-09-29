@@ -20,6 +20,7 @@ char* SimpleOS::add_char(const char* str, char c) {
     }
 
     strcpy(new_str, str);
+    free((void*)str);
 
     new_str[len] = c;
 
@@ -46,8 +47,8 @@ char* SimpleOS::pop_char(const char* str) {
     }
      
     strncpy(new_str, str, len - 1);
-
     new_str[len - 1] = '\0';
+    free((void*)str);
 
     return new_str;
 }
@@ -103,7 +104,7 @@ char** SimpleOS::split(const char* str, char delimiter, int* size) {
     return result;
 }
 
-SimpleOS::size_t SimpleOS::get_size(char** array) {
+size_t SimpleOS::get_size(char** array) {
     size_t size = 0;
 
     while (array[size]) {

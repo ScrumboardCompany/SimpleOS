@@ -3,10 +3,10 @@
 #ifndef _TYPEDEF_
 #define _TYPEDEF_
 
+#include <stddef.h>
 #include <stdint.h>
 
 namespace SimpleOS {
-	using size_t = uint64_t;
 }
 
 #endif // _TYPEDEF_

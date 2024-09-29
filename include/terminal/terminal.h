@@ -1,10 +1,11 @@
 #pragma once
 
 #ifndef _TERMINAL_
+#define _TERMINAL_
 
 #include "utils/typedef.h"
+#include "terminal/terminal_commands.h"
 #include <stdint.h>
-#include <stddef.h>
 
 #define VIDEO_MEMORY_ADDRESS 0xB8000
 
@@ -15,10 +16,19 @@ namespace SimpleOS {
 
 	class Terminal {
 
-		static size_t pos;
-
 	public:
 		enum class Color : uint8_t;
+
+	private:
+
+		static size_t pos;
+		static Color terminal_color;
+		
+		static void to_args(char** command_split, char** args, size_t size_command_split);
+
+	public:
+
+		static Color to_color(int code);
 
 		static void print(const char* msg);
 
@@ -28,7 +38,7 @@ namespace SimpleOS {
 
 		static void print(int n);
 
-		static void reload(char c, Color color = Color::Grey);
+		static void reload(char c, Color color);
 
 		static void clear();
 
@@ -41,6 +51,12 @@ namespace SimpleOS {
 		static void execute_command(const char* command);
 
 		static size_t get_pos();
+
+		static void set_and_fill_terminal_color(Color new_color);
+
+		static void fill_terminal_color(Color new_color);
+
+		static void set_terminal_color(Color new_color);
 
 		enum class Color : uint8_t {
 			Black = 0x00,
@@ -60,14 +76,10 @@ namespace SimpleOS {
 			Yellow = 0x0E,
 			White = 0x0F
 		};
-		private:
-			static void color(char** args);
 
-			static Color to_color(int code);
+	private: // commands
 
-			static void to_args(char** command_split, char** args, SimpleOS::size_t size_command_split);
-
-			static Color terminal_color;
+		static void call_command(const char* key, char** argv);
 	};
 }
 

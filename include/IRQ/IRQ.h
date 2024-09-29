@@ -15,6 +15,10 @@ namespace SimpleOS {
 		static uint8_t port_byte_in(uint16_t port);
 
 		static void port_byte_out(uint16_t port, uint8_t data);
+
+		static void outw(uint16_t port, uint16_t data);
+
+		static uint16_t inw(uint16_t port);
 	};
 
 }

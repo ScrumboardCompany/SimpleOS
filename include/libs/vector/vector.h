@@ -11,7 +11,7 @@ using namespace SimpleOS;
 template<typename _Ty>
 class vector {
 	_Ty* arr;
-	SimpleOS::size_t _size;
+	size_t _size;
 
 public:
 	vector();
@@ -21,12 +21,15 @@ public:
 	void pop();
 
 	_Ty& at(int pos);
+    _Ty& operator[](int pos);
 
 	bool empty() const;
 
 	bool valid_index(int pos) const;
 
-	SimpleOS::size_t size() const;
+	size_t size() const;
+
+    //~vector();
 };
 
 template<typename _Ty>
@@ -36,7 +39,7 @@ template<typename _Ty>
 inline void vector<_Ty>::push(_Ty value) {
     _Ty* new_arr = (_Ty*)(malloc((_size + 1) * sizeof(_Ty)));
 
-    for (SimpleOS::size_t i = 0; i < _size; i++) {
+    for (size_t i = 0; i < _size; i++) {
         new_arr[i] = arr[i];
     }
     new_arr[_size] = value;
@@ -53,7 +56,7 @@ inline void vector<_Ty>::pop() {
     if (_size) {
         _Ty* new_arr = (_Ty*)(malloc((_size + 1) * sizeof(_Ty)));
 
-        for (SimpleOS::size_t i = 0; i < _size - 1; i++) {
+        for (size_t i = 0; i < _size - 1; i++) {
             new_arr[i] = arr[i];
         }
 
@@ -70,6 +73,11 @@ inline _Ty& vector<_Ty>::at(int pos) {
 }
 
 template<typename _Ty>
+inline _Ty& vector<_Ty>::operator[](int pos) {
+    return at(pos);
+}
+
+template<typename _Ty>
 inline bool vector<_Ty>::empty() const {
     return !_size;
 }
@@ -80,8 +88,13 @@ inline bool vector<_Ty>::valid_index(int pos) const {
 }
 
 template<typename _Ty>
-inline SimpleOS::size_t vector<_Ty>::size() const {
+inline size_t vector<_Ty>::size() const {
     return _size;
 }
+
+//template<typename _Ty>
+//inline vector<_Ty>::~vector() {
+//    free(arr);
+//}
 
 #endif // _VECTOR_

@@ -102,6 +102,17 @@ namespace SimpleOS {
 		static vector<char*> commands;
 
 		static int selected_command_pos;
+
+	//private:
+		static void __handle_arrow(bool isUp);
+
+
+		static void __backspace(PressedKey key);
+		static void __enter(PressedKey key);
+		static void __capslock(PressedKey key);
+		static void __arrow_up(PressedKey key);
+		static void __arrow_down(PressedKey key);
+
     };
 
 	extern "C" void keyboard_handler();

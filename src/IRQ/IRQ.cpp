@@ -33,3 +33,18 @@ uint8_t IRQ::port_byte_in(uint16_t port) {
 void IRQ::port_byte_out(uint16_t port, uint8_t data) {
     __asm__ volatile ("outb %1, %0" : : "dN" (port), "a" (data));
 }
+
+void IRQ::outw(uint16_t port, uint16_t data) {
+    __asm__ volatile ("outw %0, %1"
+        :
+        : "a"(data), "dN"(port));
+}
+
+uint16_t IRQ::inw(uint16_t port) {
+    uint16_t result;
+    //__asm__ __volatile__("inw %1, %0" : "=a"(result) : "Nd"(port));
+    __asm__ volatile ("inw %1, %0"
+        : "=a"(result)
+        : "dN"(port));
+    return result;
+}

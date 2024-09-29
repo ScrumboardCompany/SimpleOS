@@ -3,8 +3,7 @@
 #ifndef _STRING_
 #define _STRING_
 
-#include <stdint.h>
-#include <stddef.h>
+#include "utils/typedef.h"
 
 void* memset(void* dest, int c, size_t n);
 void* memcpy(void* dest, const void* src, size_t n);
