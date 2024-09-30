@@ -11,6 +11,7 @@
 #include "GDT/GDT.h"
 #include "IRQ/IRQ.h"
 #include "devices/keyboard.h"
+#include "fs/disk.h"
 
 using namespace SimpleOS;
 
@@ -19,6 +20,7 @@ extern "C" void kernel_main(void) {
     IDT::init_idt();
     IRQ::init_pic();
     Keyboard::init_keyboard();
+    Terminal::print('>');
 
     while (true) {
         __asm__ volatile("sti");

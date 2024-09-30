@@ -5,18 +5,15 @@
 
 using namespace SimpleOS;
 
-char* Keyboard::buffer = nullptr;
-size_t Keyboard::buffer_size = 0;
+string Keyboard::buffer = nullptr;
 
 bool Keyboard::is_caps_lock = false;
 
-vector<char*> Keyboard::commands;
+vector<string> Keyboard::commands;
 int Keyboard::selected_command_pos = -1;
 
 void Keyboard::init_keyboard() {
     IDT::register_interrupt_handler(0x21, (uint32_t)keyboard_handler);
-	Keyboard::buffer = (char*)malloc(1);
-	Keyboard::buffer[0] = '\0';
 }
 
 extern "C" void SimpleOS::keyboard_handler() {
@@ -27,8 +24,7 @@ extern "C" void SimpleOS::keyboard_handler() {
 	c = (Keyboard::is_caps_lock ? to_upper(c) : to_lower(c));
 
 	if (c) {
-		Keyboard::buffer = add_char(Keyboard::buffer, c);
-		++Keyboard::buffer_size;
+		Keyboard::buffer.push(c);
 		Terminal::print(c);
 
 		Keyboard::reset_selected_command_pos();
@@ -101,17 +97,10 @@ void Keyboard::__handle_arrow(bool isUp) {
 	if (!Keyboard::commands.empty() && Keyboard::selected_command_pos > 0) {
 		isUp ? ++Keyboard::selected_command_pos : --Keyboard::selected_command_pos;
 
-		if (Keyboard::buffer) {
-			free(Keyboard::buffer);
-		}
-
-		size_t command_length = strlen(Keyboard::commands.at(Keyboard::selected_command_pos));
-		Keyboard::buffer = (char*)malloc(command_length + 1);
-
-		strcpy(Keyboard::buffer, Keyboard::commands.at(Keyboard::selected_command_pos));
-		Keyboard::buffer_size = strlen(Keyboard::buffer);
+		Keyboard::buffer = Keyboard::commands[Keyboard::selected_command_pos];
 
 		Terminal::delete_line();
+		Terminal::print('>');
 		Terminal::print(Keyboard::buffer);
 	}
 }

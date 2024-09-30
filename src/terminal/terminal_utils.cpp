@@ -15,7 +15,6 @@ void Terminal::to_args(char** command_split, char** args, size_t size_command_sp
 }
 
 void Terminal::new_line() {
-
 	if (pos / WIDTH >= HEIGHT) {
 		char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
 

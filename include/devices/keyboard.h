@@ -8,6 +8,7 @@
 #include "utils/utils.h"
 #include "utils/typedef.h"
 #include "libs/vector/vector.h"
+#include "libs/string/class.h"
 
 #include <stdint.h>
 
@@ -93,13 +94,11 @@ namespace SimpleOS {
 
     //private:
 		
-		static char* buffer;
-		
-		static size_t buffer_size;
+		static string buffer;
 
 		static bool is_caps_lock;
 
-		static vector<char*> commands;
+		static vector<string> commands;
 
 		static int selected_command_pos;
 

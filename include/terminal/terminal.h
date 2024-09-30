@@ -5,6 +5,7 @@
 
 #include "utils/typedef.h"
 #include "terminal/terminal_commands.h"
+#include "libs/string/class.h"
 #include <stdint.h>
 
 #define VIDEO_MEMORY_ADDRESS 0xB8000
@@ -37,6 +38,8 @@ namespace SimpleOS {
 		static void print(char c);
 
 		static void print(int n);
+
+		static void print(const string& string);
 
 		static void reload(char c, Color color);
 
