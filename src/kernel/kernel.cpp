@@ -20,6 +20,7 @@ extern "C" void kernel_main(void) {
     IDT::init_idt();
     IRQ::init_pic();
     Keyboard::init_keyboard();
+    Terminal::print('>');
 
     ata_write_to_sector(0, "Hello ");
     ata_append_to_sector(0, "SimpleOS!");

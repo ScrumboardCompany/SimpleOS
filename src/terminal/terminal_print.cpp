@@ -1,5 +1,6 @@
 #include "terminal/terminal.h"
 #include "libs/string/string.h"
+#include "libs/string/class.h"
 
 using namespace SimpleOS;
 
@@ -17,11 +18,17 @@ void Terminal::print(char c, size_t pos) {
 }
 
 void Terminal::print(char c) {
-	print(c, pos++);
+	if (c == '\n') {
+		new_line();
+	} else print(c, pos++);
 }
 
 void Terminal::print(int n) {
 	char msg[10];
 	itoa(n, msg, 10);
 	print(msg);
+}
+
+void Terminal::print(const string& str) {
+	print(str.c_str());
 }

@@ -5,31 +5,26 @@ using namespace SimpleOS;
 
 void Keyboard::__backspace(PressedKey key) {
 	if (key == Keyboard::PressedKey::Backspace) {
-		Terminal::delete_char(Terminal::get_pos());
-		Keyboard::buffer = pop_char(Keyboard::buffer);
-		--Keyboard::buffer_size;
+		if (Terminal::get_pos() % WIDTH > 1) {
+			Terminal::delete_char(Terminal::get_pos());
 
-		Keyboard::reset_selected_command_pos();
+			Keyboard::buffer.pop();
+			Keyboard::reset_selected_command_pos();
+		}
 	}
 }
 
 void Keyboard::__enter(PressedKey key) {
 	if (key == Keyboard::PressedKey::Enter) {
-		if (Keyboard::buffer_size > 0) {
-			Terminal::execute_command(Keyboard::buffer);
+		if (Keyboard::buffer.size() > 0) {
+			Terminal::execute_command(Keyboard::buffer.c_str());
 
-			char* buffer_copy = (char*)malloc(strlen(Keyboard::buffer) + 1);
-			strcpy(buffer_copy, Keyboard::buffer);
-
-			Keyboard::commands.push(buffer_copy);
+			Keyboard::commands.push(Keyboard::buffer);
 			Keyboard::selected_command_pos = Keyboard::commands.size();
 
-			Keyboard::buffer = (char*)malloc(1);
-			Keyboard::buffer[0] = '\0';
-			Keyboard::buffer_size = 0;
+			Keyboard::buffer = "";
+			Terminal::print('>');
 		}
-		else Terminal::print("Buffer size small");
-		Terminal::new_line();
 
 		Keyboard::reset_selected_command_pos();
 	}

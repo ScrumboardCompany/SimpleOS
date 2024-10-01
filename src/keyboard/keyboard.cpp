@@ -5,18 +5,15 @@
 
 using namespace SimpleOS;
 
-char* Keyboard::buffer = nullptr;
-size_t Keyboard::buffer_size = 0;
+string Keyboard::buffer = "";
 
 bool Keyboard::is_caps_lock = false;
 
-vector<char*> Keyboard::commands;
-int Keyboard::selected_command_pos = -1;
+vector<string> Keyboard::commands;
+size_t Keyboard::selected_command_pos = -1;
 
 void Keyboard::init_keyboard() {
-    IDT::register_interrupt_handler(0x21, (uint32_t)keyboard_handler);
-	Keyboard::buffer = (char*)malloc(1);
-	Keyboard::buffer[0] = '\0';
+	IDT::register_interrupt_handler(0x21, (uint32_t)keyboard_handler);
 }
 
 extern "C" void SimpleOS::keyboard_handler() {
@@ -27,8 +24,7 @@ extern "C" void SimpleOS::keyboard_handler() {
 	c = (Keyboard::is_caps_lock ? to_upper(c) : to_lower(c));
 
 	if (c) {
-		Keyboard::buffer = add_char(Keyboard::buffer, c);
-		++Keyboard::buffer_size;
+		Keyboard::buffer.push(c);
 		Terminal::print(c);
 
 		Keyboard::reset_selected_command_pos();
@@ -38,13 +34,13 @@ extern "C" void SimpleOS::keyboard_handler() {
 	Keyboard::__enter(key);
 	Keyboard::__capslock(key);
 	Keyboard::__arrow_up(key);
-	Keyboard::__arrow_down(key);	
+	Keyboard::__arrow_down(key);
 
 	IRQ::port_byte_out(0x20, 0x20);
 }
 
 Keyboard::PressedKey Keyboard::get_key() {
-    return static_cast<PressedKey>(IRQ::port_byte_in(0x60));
+	return static_cast<PressedKey>(IRQ::port_byte_in(0x60));
 }
 
 char Keyboard::get_key_char(Keyboard::PressedKey key) {
@@ -98,20 +94,22 @@ void Keyboard::reset_selected_command_pos() {
 }
 
 void Keyboard::__handle_arrow(bool isUp) {
-	if (!Keyboard::commands.empty() && Keyboard::selected_command_pos > 0) {
-		isUp ? ++Keyboard::selected_command_pos : --Keyboard::selected_command_pos;
-
-		if (Keyboard::buffer) {
-			free(Keyboard::buffer);
+	if (!Keyboard::commands.empty() && Keyboard::selected_command_pos >= 0) {
+		if (isUp && Keyboard::selected_command_pos >= 0) {
+			if (Keyboard::selected_command_pos == 0) return;
+			--Keyboard::selected_command_pos;
 		}
+		else {
+			if (Keyboard::selected_command_pos < Keyboard::commands.size() - 1)
+				++Keyboard::selected_command_pos;
 
-		size_t command_length = strlen(Keyboard::commands.at(Keyboard::selected_command_pos));
-		Keyboard::buffer = (char*)malloc(command_length + 1);
-
-		strcpy(Keyboard::buffer, Keyboard::commands.at(Keyboard::selected_command_pos));
-		Keyboard::buffer_size = strlen(Keyboard::buffer);
-
-		Terminal::delete_line();
-		Terminal::print(Keyboard::buffer);
+			else return;
+		}
 	}
+
+	Keyboard::buffer = Keyboard::commands[Keyboard::selected_command_pos];
+
+	Terminal::delete_line();
+	Terminal::print('>');
+	Terminal::print(Keyboard::buffer);
 }

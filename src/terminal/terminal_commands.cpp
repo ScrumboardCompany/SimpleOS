@@ -24,6 +24,7 @@ bool SimpleOS::__check_argc(char** args, size_t argc) {
 
 	if (size == argc) return true;
 
+	Terminal::new_line();
 	Terminal::print(size > argc ? "Too many arguments" : "Too few arguments");
 	
 	return false;
@@ -33,6 +34,14 @@ void Terminal::call_command(const char* key, char** args) {
 
 	if (strcmp(key, "color") == 0)
 		__command_color(args);
-	else if (strcmp(key, "clear") == 0)
+	else if (strcmp(key, "clear") == 0) {
 		__command_clear(args);
+		return;
+	} else {
+		new_line();
+		char* error = (char*)malloc(strlen(key) + 1);
+		strcpy(error, key);
+		print(strcat(error, " is invalid command"));
+	}
+	new_line();
 }
