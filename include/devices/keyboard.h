@@ -100,7 +100,7 @@ namespace SimpleOS {
 
 		static vector<string> commands;
 
-		static int selected_command_pos;
+		static size_t selected_command_pos;
 
 	//private:
 		static void __handle_arrow(bool isUp);
