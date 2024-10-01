@@ -16,7 +16,7 @@ $(TARGET) : $(CPPOBJ) $(AOBJ)
 	$(AC) $< -o $@
 
 %.o : %.cpp 
-	$(CPPC) -c $< -o $@ -Iinclude -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
+	$(CPPC) -c $< -o $@ -Iinclude -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -fno-use-cxa-atexit
 
 clean:
 	for /R %%f in (*.o) do del "%%f"

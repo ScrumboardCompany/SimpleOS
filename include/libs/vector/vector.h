@@ -6,8 +6,6 @@
 #include "utils/typedef.h"
 #include "libs/memory/memory.h"
 
-using namespace SimpleOS;
-
 template<typename _Ty>
 class vector {
 	_Ty* arr;
@@ -29,7 +27,9 @@ public:
 
 	size_t size() const;
 
-    //~vector();
+    bool has(const _Ty& val) const;
+
+    ~vector();
 };
 
 template<typename _Ty>
@@ -92,9 +92,18 @@ inline size_t vector<_Ty>::size() const {
     return _size;
 }
 
-//template<typename _Ty>
-//inline vector<_Ty>::~vector() {
-//    free(arr);
-//}
+template<typename _Ty>
+inline bool vector<_Ty>::has(const _Ty& val) const{
+    for (size_t i = 0; i < _size; i++) {
+        if (val == arr[i])
+            return true;
+    }
+    return false;
+}
+
+template<typename _Ty>
+inline vector<_Ty>::~vector() {
+    free(arr);
+}
 
 #endif // _VECTOR_

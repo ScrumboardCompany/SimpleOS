@@ -15,6 +15,14 @@ size_t strlen(const char* str) {
     return s - str;
 }
 
+size_t strnlen(const char* str, size_t max_len) {
+    size_t length = 0;
+    while (length < max_len && str[length] != '\0') {
+        ++length;
+    }
+    return length;
+}
+
 char* strcpy(char* dest, const char* src) {
     char* start = dest;
     while ((*dest++ = *src++));

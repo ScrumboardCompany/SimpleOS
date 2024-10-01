@@ -4,10 +4,10 @@ typedef struct Block {
     size_t size;
     struct Block* next;
     int free;
-    int padding; // Для выравнивания структуры до 8 байт
+    int padding;
 } Block;
 
-#define HEAP_SIZE 0x100000 // Увеличили размер кучи для примера
+#define HEAP_SIZE 0x100000
 #define BLOCK_SIZE sizeof(Block)
 
 static char heap[HEAP_SIZE];
@@ -59,7 +59,7 @@ void* malloc(size_t size) {
 
     Block* block = find_free_block(size);
     if (block == NULL) {
-        return NULL; // Недостаточно памяти
+        return NULL;
     }
 
     split_block(block, size);
@@ -75,7 +75,6 @@ void free(void* ptr) {
     Block* block = (Block*)((char*)ptr - BLOCK_SIZE);
     block->free = 1;
 
-    // Объединение соседних свободных блоков
     Block* current = free_list;
     while (current != NULL) {
         if (current->free && current->next && current->next->free) {

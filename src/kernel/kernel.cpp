@@ -11,6 +11,7 @@
 #include "GDT/GDT.h"
 #include "IRQ/IRQ.h"
 #include "devices/keyboard.h"
+#include "fs/disk.h"
 
 using namespace SimpleOS;
 
@@ -19,6 +20,14 @@ extern "C" void kernel_main(void) {
     IDT::init_idt();
     IRQ::init_pic();
     Keyboard::init_keyboard();
+
+    ata_write_to_sector(0, "Hello ");
+    ata_append_to_sector(0, "SimpleOS!");
+
+    char buffer3[512];
+    ata_read_sector(0, buffer3);
+
+    Terminal::print(buffer3);
 
     while (true) {
         __asm__ volatile("sti");

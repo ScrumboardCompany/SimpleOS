@@ -6,7 +6,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-namespace SimpleOS {
-}
+typedef int64_t ssize_t;
 
 #endif // _TYPEDEF_

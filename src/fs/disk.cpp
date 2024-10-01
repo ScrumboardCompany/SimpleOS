@@ -1,4 +1,5 @@
 #include "fs/disk.h"
+#include "libs/string/string.h"
 
 using namespace SimpleOS;
 
@@ -10,7 +11,28 @@ void SimpleOS::ata_wait_drq() {
     while (!(IRQ::port_byte_in(ATA_PRIMARY_IO_BASE + 7) & ATA_STATUS_DRQ));
 }
 
-void SimpleOS::ata_write_sector(uint32_t lba, uint8_t* buffer) {
+uint32_t SimpleOS::ata_get_sector_count() {
+    uint16_t identify_data[256];
+
+    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 6, 0xA0);
+    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 7, ATA_COMMAND_IDENTIFY);
+
+    ata_wait_bsy();
+
+    if (IRQ::port_byte_in(ATA_PRIMARY_IO_BASE + 7) == 0) {
+        return 0;
+    }
+
+    for (int i = 0; i < 256; i++) {
+        identify_data[i] = IRQ::inw(ATA_PRIMARY_IO_BASE);
+    }
+
+    uint32_t sectors = identify_data[60] | (identify_data[61] << 16);
+
+    return sectors;
+}
+
+void SimpleOS::ata_write_to_sector(uint32_t lba, const char* buffer) {
     IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 6, 0xE0 | ((lba >> 24) & 0x0F));
     IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 2, 1);
     IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 3, (uint8_t)lba);
@@ -28,22 +50,32 @@ void SimpleOS::ata_write_sector(uint32_t lba, uint8_t* buffer) {
     ata_wait_bsy();
 }
 
-void SimpleOS::ata_write_sector(uint32_t lba, char* buffer) {
-    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 6, 0xE0 | ((lba >> 24) & 0x0F));
-    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 2, 1);
-    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 3, (uint8_t)lba);
-    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 4, (uint8_t)(lba >> 8));
-    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 5, (uint8_t)(lba >> 16));
-    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 7, ATA_COMMAND_WRITE);
+bool SimpleOS::ata_can_write_to_sector(uint32_t lba, size_t buffer_size) {
+    char data[512];
+    ata_read_sector(lba, data);
 
-    ata_wait_bsy();
-    ata_wait_drq();
+    size_t data_length = strnlen(data, 512);
+    size_t space_left = 512 - data_length;
 
-    for (int i = 0; i < 256; i++) {
-        IRQ::outw(ATA_PRIMARY_IO_BASE, ((uint16_t*)buffer)[i]);
+    return buffer_size <= space_left;
+}
+
+bool SimpleOS::ata_append_to_sector(uint32_t lba, const char* buffer) {
+    char data[512];
+    ata_read_sector(lba, data);
+
+    size_t data_length = strnlen(data, 512);
+    size_t space_left = 512 - data_length;
+    size_t buffer_size = strlen(buffer);
+
+    if (buffer_size > space_left) {
+        return false;
     }
 
-    ata_wait_bsy();
+    memcpy(data + data_length, buffer, buffer_size);
+    ata_write_to_sector(lba, data);
+
+    return true;
 }
 
 void SimpleOS::ata_read_sector(uint32_t lba, char* buffer) {
