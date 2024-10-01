@@ -5,6 +5,7 @@
 
 #include "IRQ/IRQ.h"
 #include "utils/typedef.h"
+#include "utils/utils.h"
 
 #define ATA_PRIMARY_IO_BASE   0x1F0
 #define ATA_PRIMARY_CTRL_BASE 0x3F6
@@ -29,6 +30,10 @@ namespace SimpleOS {
     bool ata_append_to_sector(uint32_t lba, const char* buffer);
 
     void ata_read_sector(uint32_t lba, char* buffer);
+
+    void ata_delete_from_sector(uint32_t lba);
+
+    void ata_delete_from_sector(uint32_t lba, size_t start, size_t length);
 }
 
 #endif // __DISK__

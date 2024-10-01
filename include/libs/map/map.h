@@ -12,6 +12,8 @@ private:
         Node* left;
         Node* right;
 
+        Node() = default;
+
         Node(const _KTy& key, const _VTy& value)
             : key(key), value(value), left(nullptr), right(nullptr) {}
     };
@@ -43,13 +45,19 @@ public:
 
     void erase(const _KTy& key);
 
-    bool contains(const _KTy& key) const;
+    bool has(const _KTy& key) const;
 };
 
 template<typename _KTy, typename _VTy>
-inline Node* map<_KTy, _VTy>::insert(Node* node, const _KTy& key, const _VTy& value) {
+inline typename map<_KTy, _VTy>::Node* map<_KTy, _VTy>::insert(Node* node, const _KTy& key, const _VTy& value) {
     if (node == nullptr) {
-        return new Node(key, value);
+
+		Node* new_node  = (Node*)malloc(sizeof(Node));
+        new_node->key   = key;
+        new_node->value = value;
+        new_node->left  = new_node->right = nullptr;
+
+        return new_node;
     }
 
     if (key < node->key) {
@@ -66,7 +74,7 @@ inline Node* map<_KTy, _VTy>::insert(Node* node, const _KTy& key, const _VTy& va
 }
 
 template<typename _KTy, typename _VTy>
-inline Node* map<_KTy, _VTy>::find(Node* node, const _KTy& key) const {
+inline typename map<_KTy, _VTy>::Node* map<_KTy, _VTy>::find(Node* node, const _KTy& key) const {
     if (node == nullptr || node->key == key) {
         return node;
     }
@@ -80,7 +88,7 @@ inline Node* map<_KTy, _VTy>::find(Node* node, const _KTy& key) const {
 }
 
 template<typename _KTy, typename _VTy>
-inline Node* map<_KTy, _VTy>::erase(Node* node, const _KTy& key) {
+inline typename map<_KTy, _VTy>::Node* map<_KTy, _VTy>::erase(Node* node, const _KTy& key) {
     if (node == nullptr) {
         return nullptr;
     }
@@ -116,7 +124,7 @@ inline Node* map<_KTy, _VTy>::erase(Node* node, const _KTy& key) {
 }
 
 template<typename _KTy, typename _VTy>
-inline Node* map<_KTy, _VTy>::findMin(Node* node) const {
+inline typename map<_KTy, _VTy>::Node* map<_KTy, _VTy>::findMin(Node* node) const {
     while (node->left != nullptr) {
         node = node->left;
     }
@@ -163,7 +171,7 @@ inline void map<_KTy, _VTy>::erase(const _KTy& key) {
 }
 
 template<typename _KTy, typename _VTy>
-inline bool map<_KTy, _VTy>::contains(const _KTy& key) const {
+inline bool map<_KTy, _VTy>::has(const _KTy& key) const {
     return find(root, key) != nullptr;
 }
 

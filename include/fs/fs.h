@@ -6,6 +6,7 @@
 #include "libs/vector/vector.h"
 #include "libs/map/map.h"
 #include "utils/typedef.h"
+#include "libs/string/class.h"
 
 namespace SimpleOS {
 
@@ -13,7 +14,6 @@ namespace SimpleOS {
 		
 	public:
 		struct File {
-			char* name = nullptr;
 			size_t size = 0;
 			vector<uint32_t> sectors;
 
@@ -23,16 +23,16 @@ namespace SimpleOS {
 
 		static bool delete_file(const char* name);
 
-		static void write_file(const char* name, const char* data);
+		static void write_to_file(const char* name, const char* data);
 
-		static void read_file(const char* name, char* buffer);
+		static bool read_file(const char* name, char* buffer);
 
 		static bool append_to_file(const char* name, const char* data);
 
 	private:
 		static ssize_t free_sector(size_t size);
 
-		static vector<File> files;
+		static map<string, File> files;
 		static vector<size_t> taken_sectors;
 	};
 

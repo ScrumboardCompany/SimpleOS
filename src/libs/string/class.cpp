@@ -48,7 +48,7 @@ const char* string::c_str() const {
 	return this->str;
 }
 
-size_t string::size() {
+size_t string::size() const {
 	return this->length;
 }
 
@@ -142,7 +142,7 @@ string string::operator + (const string& other) {
 	return newStr;
 };
 
-bool string::operator ==(const string& other) {
+bool string::operator ==(const string& other) const {
 	if (length != other.length) {
 		return false;
 	}
@@ -156,9 +156,25 @@ bool string::operator ==(const string& other) {
 	return true;
 };
 
-bool string::operator !=(const string& other) {
+bool string::operator !=(const string& other) const {
 	return !(this->operator == (other));
 };
+
+bool string::operator <(const char* other) const {
+	return length < strlen(other);
+}
+
+bool string::operator >(const char* other) const {
+	return length > strlen(other);
+}
+
+bool string::operator <(const string& other) const {
+	return length < other.length;
+}
+
+bool string::operator >(const string& other) const {
+	return this->length > other.length;
+}
 
 char& string::operator [](size_t index) {
 	return str[index];

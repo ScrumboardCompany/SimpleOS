@@ -22,14 +22,6 @@ extern "C" void kernel_main(void) {
     Keyboard::init_keyboard();
     Terminal::print('>');
 
-    ata_write_to_sector(0, "Hello ");
-    ata_append_to_sector(0, "SimpleOS!");
-
-    char buffer3[512];
-    ata_read_sector(0, buffer3);
-
-    Terminal::print(buffer3);
-
     while (true) {
         __asm__ volatile("sti");
         __asm__ volatile("hlt");

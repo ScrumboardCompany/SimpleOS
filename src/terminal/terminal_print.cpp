@@ -15,6 +15,7 @@ void Terminal::print(char c, size_t pos) {
 	char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
 	buffer[pos * 2] = c;
 	buffer[pos * 2 + 1] = (uint8_t)terminal_color;
+	move_cursor(pos);
 }
 
 void Terminal::print(char c) {
@@ -32,3 +33,63 @@ void Terminal::print(int n) {
 void Terminal::print(const string& str) {
 	print(str.c_str());
 }
+
+void Terminal::println(const char* msg) {
+	print(msg);
+
+	new_line();
+}
+
+void Terminal::println(char c) {
+	print(c);
+
+	new_line();
+};
+
+void Terminal::println(const string& string) {
+	print(string);
+
+	new_line();
+}
+
+void Terminal::lnprint(const char* msg) {
+	new_line();
+
+	print(msg);
+}
+
+void Terminal::lnprint(char c){
+	new_line();
+
+	print(c);
+}
+
+void Terminal::lnprint(const string& string) {
+	new_line();
+
+	print(string);
+}
+
+void Terminal::lnprintln(const char* msg) {
+	new_line();
+
+	print(msg);
+
+	new_line();
+}
+
+void Terminal::lnprintln(char c) {
+	new_line();
+
+	print(c);
+
+	new_line();
+};
+
+void Terminal::lnprintln(const string& string) {
+	new_line();
+
+	print(string);
+
+	new_line();
+};

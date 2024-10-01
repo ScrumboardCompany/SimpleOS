@@ -1,19 +1,22 @@
 #include "terminal/terminal.h"
 #include "utils/utils.h"
+#include "IRQ/IRQ.h"
 
 using namespace SimpleOS;
 
-void Terminal::reload(char c, Color color) {
+void Terminal::reload(char c, Color char_color, Color background_color) {
 	char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
+
+	uint8_t color = ((uint8_t)background_color << 4) | (uint8_t)char_color;
 
 	for (size_t i = 0; i < WIDTH * HEIGHT; ++i) {
 		buffer[i * 2] = c;
-		buffer[i * 2 + 1] = (uint8_t)color;
+		buffer[i * 2 + 1] = color;
 	}
 }
 
 void Terminal::clear() {
-	reload(' ', terminal_color);
+	reload(' ', terminal_color, Terminal::Color::Black);
 	pos = 0;
 }
 
@@ -39,6 +42,7 @@ void Terminal::delete_char(size_t pos) {
 		buffer[pos * 2] = ' ';
 
 		Terminal::pos = pos;
+		move_cursor(pos - 1);
 	}
 }
 
@@ -53,10 +57,20 @@ void Terminal::delete_line() {
 	}
 
 	pos = line_start;
+	move_cursor(pos - 1);
 }
 
 size_t Terminal::get_pos() {
 	return pos;
+}
+
+void Terminal::move_cursor(size_t pos) {
+	uint8_t position = (uint8_t)pos + 1;
+
+	IRQ::port_byte_out(0x3D4, 0x0F);
+	IRQ::port_byte_out(0x3D5, (uint8_t)(position & 0xFF));
+	IRQ::port_byte_out(0x3D4, 0x0E);
+	IRQ::port_byte_out(0x3D5, (uint8_t)((position >> 8) & 0xFF));
 }
 
 size_t Terminal::pos = 0;

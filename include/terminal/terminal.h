@@ -31,6 +31,8 @@ namespace SimpleOS {
 
 		static Color to_color(int code);
 
+
+
 		static void print(const char* msg);
 
 		static void print(char c, size_t pos);
@@ -41,7 +43,27 @@ namespace SimpleOS {
 
 		static void print(const string& string);
 
-		static void reload(char c, Color color);
+		static void println(const char* msg);
+
+		static void println(char c);
+
+		static void println(const string& string);
+
+		static void lnprint(const char* msg);
+
+		static void lnprint(char c);
+
+		static void lnprint(const string& string);
+
+		static void lnprintln(const char* msg);
+
+		static void lnprintln(char c);
+
+		static void lnprintln(const string& string);
+
+
+
+		static void reload(char c, Color char_color, Color background_color);
 
 		static void clear();
 
@@ -55,11 +77,15 @@ namespace SimpleOS {
 
 		static size_t get_pos();
 
+		static void move_cursor(size_t position);
+
 		static void set_and_fill_terminal_color(Color new_color);
 
 		static void fill_terminal_color(Color new_color);
 
 		static void set_terminal_color(Color new_color);
+
+		static void fill_bg(Color new_color);
 
 		enum class Color : uint8_t {
 			Black = 0x00,

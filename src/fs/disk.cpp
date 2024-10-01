@@ -95,3 +95,25 @@ void SimpleOS::ata_read_sector(uint32_t lba, char* buffer) {
 
     ata_wait_bsy();
 }
+
+void SimpleOS::ata_delete_from_sector(uint32_t lba) {
+    char empty_data[512];
+
+    memset(empty_data, 0, 512);
+
+    ata_write_to_sector(lba, empty_data);
+}
+
+void SimpleOS::ata_delete_from_sector(uint32_t lba, size_t start, size_t length) {
+    char data[512];
+
+    ata_read_sector(lba, data);
+
+    if (start >= 512 || start + length > 512) {
+        return;
+    }
+
+    memset(data + start, 0, length);
+
+    ata_write_to_sector(lba, data);
+}

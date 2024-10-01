@@ -18,6 +18,8 @@ public:
 
 	void pop();
 
+    void pop(size_t index);
+
 	_Ty& at(int pos);
     _Ty& operator[](int pos);
 
@@ -28,6 +30,8 @@ public:
 	size_t size() const;
 
     bool has(const _Ty& val) const;
+
+    int find(const _Ty& value) const;
 
     ~vector();
 };
@@ -58,6 +62,26 @@ inline void vector<_Ty>::pop() {
 
         for (size_t i = 0; i < _size - 1; i++) {
             new_arr[i] = arr[i];
+        }
+
+        free(arr);
+        arr = new_arr;
+
+        --_size;
+    }
+}
+
+template<typename _Ty>
+inline void vector<_Ty>::pop(size_t index) {
+    if (valid_index(index)) {
+        _Ty* new_arr = (_Ty*)(malloc((_size - 1) * sizeof(_Ty)));
+
+        for (size_t i = 0; i < index; i++) {
+            new_arr[i] = arr[i];
+        }
+
+        for (size_t i = index + 1; i < _size; i++) {
+            new_arr[i - 1] = arr[i];
         }
 
         free(arr);
@@ -99,6 +123,17 @@ inline bool vector<_Ty>::has(const _Ty& val) const{
             return true;
     }
     return false;
+}
+
+template<typename _Ty>
+inline int vector<_Ty>::find(const _Ty& value) const {
+    for (size_t i = 0; i < _size; i++) {
+
+        if (arr[i] == value) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 template<typename _Ty>

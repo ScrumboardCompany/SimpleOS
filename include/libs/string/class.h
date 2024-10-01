@@ -22,7 +22,7 @@ namespace SimpleOS {
 
 		const char* c_str() const;
 
-		size_t size();
+		size_t size() const;
 
 		void push(const char c);
 
@@ -34,9 +34,17 @@ namespace SimpleOS {
 
 		string operator + (const string& other);
 
-		bool operator ==(const string& other);
+		bool operator ==(const string& other) const;
 
-		bool operator !=(const string& other);
+		bool operator !=(const string& other) const;
+
+		bool operator <(const char* other) const;
+
+		bool operator >(const char* other) const;
+
+		bool operator <(const string& other) const;
+
+		bool operator >(const string& other) const;
 
 		char& operator [](size_t index);
 
