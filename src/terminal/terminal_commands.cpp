@@ -2,6 +2,7 @@
 #include "terminal/terminal.h"
 #include "utils/utils.h"
 #include "fs/fs.h"
+#include "fs/disk.h"
 
 using namespace SimpleOS;
 
@@ -79,12 +80,10 @@ void SimpleOS::Terminal_commands::__command_help(char** args) {
 
 void Terminal_commands::__command_mkfile(char** args) {
 
-	if (__check_argc(args, 1)) {
+	if (__check_argc(args, 2)) {
 
-		if (FileSystem::create_file(args[0], "Hello from mkfile"))
+		if (FileSystem::create_file(args[0], args[1]))
 			Terminal::lnprint("Good mkfile");
-
-		else Terminal::print("Invalid mkfile");
 	}
 }
 
@@ -94,9 +93,7 @@ void Terminal_commands::__command_rdfile(char** args) {
 
 		char* buffer = (char*)malloc(512);
 		if (FileSystem::read_file(args[0], buffer))
-			Terminal::print(buffer);
-
-		else Terminal::print("File don`t exists");
+			Terminal::lnprint(buffer);
 	}
 }
 
@@ -105,9 +102,9 @@ void Terminal_commands::__command_rmfile(char** args) {
 	if (__check_argc(args, 1)) {
 
 		if (FileSystem::delete_file(args[0]))
-			Terminal::print("File deleted successfully");
+			Terminal::lnprint("File deleted successfully");
 
-		else Terminal::print("File was not deleted successfully");
+		else Terminal::lnprint("File was not deleted successfully");
 
 	}
 
@@ -165,6 +162,14 @@ void Terminal::call_command(const char* key, char** args) {
 
 	else if (strcmp(key, "mkfile") == 0) {
 		Terminal_commands::__command_mkfile(args);
+	}
+
+	else if (strcmp(key, "rdsector") == 0) {
+		char buffer[512];
+
+		ata_read_sector(0, buffer);
+
+		Terminal::lnprint(buffer);
 	}
 
 	else {

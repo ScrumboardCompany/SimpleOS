@@ -51,6 +51,12 @@ void Terminal::println(char c) {
 	new_line();
 };
 
+void Terminal::println(int n) {
+	print(n);
+
+	new_line();
+}
+
 void Terminal::println(const string& string) {
 	print(string);
 
@@ -67,6 +73,12 @@ void Terminal::lnprint(char c){
 	new_line();
 
 	print(c);
+}
+
+void Terminal::lnprint(int n) {
+	new_line();
+
+	print(n);
 }
 
 void Terminal::lnprint(const string& string) {
@@ -90,6 +102,14 @@ void Terminal::lnprintln(char c) {
 
 	new_line();
 };
+
+void Terminal::lnprintln(int n) {
+	new_line();
+
+	print(n);
+
+	new_line();
+}
 
 void Terminal::lnprintln(const string& string) {
 	new_line();

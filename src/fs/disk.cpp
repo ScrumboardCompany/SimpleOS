@@ -12,24 +12,20 @@ void SimpleOS::ata_wait_drq() {
 }
 
 uint32_t SimpleOS::ata_get_sector_count() {
-    uint16_t identify_data[256];
+    uint16_t buffer[256];
 
     IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 6, 0xA0);
     IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 7, ATA_COMMAND_IDENTIFY);
 
     ata_wait_bsy();
 
-    if (IRQ::port_byte_in(ATA_PRIMARY_IO_BASE + 7) == 0) {
-        return 0;
-    }
-
     for (int i = 0; i < 256; i++) {
-        identify_data[i] = IRQ::inw(ATA_PRIMARY_IO_BASE);
+        buffer[i] = IRQ::inw(ATA_PRIMARY_IO_BASE);
     }
 
-    uint32_t sectors = identify_data[60] | (identify_data[61] << 16);
+    uint32_t sector_count = buffer[60] | (buffer[61] << 16);
 
-    return sectors;
+    return sector_count;
 }
 
 void SimpleOS::ata_write_to_sector(uint32_t lba, const char* buffer) {

@@ -30,6 +30,9 @@ private:
 
     void clear(Node* node);
 
+	template<typename Func>
+	void inOrderTraversal(Node* node, Func func) const;
+
 public:
     map() : root(nullptr) {}
 
@@ -46,6 +49,9 @@ public:
     void erase(const _KTy& key);
 
     bool has(const _KTy& key) const;
+
+	template<typename Func>
+	void forEach(Func func) const;
 };
 
 template<typename _KTy, typename _VTy>
@@ -141,6 +147,16 @@ inline void map<_KTy, _VTy>::clear(Node* node) {
 }
 
 template<typename _KTy, typename _VTy>
+template<typename Func>
+inline void map<_KTy, _VTy>::inOrderTraversal(Node* node, Func func) const {
+	if (node != nullptr) {
+		inOrderTraversal(node->left, func);
+		func(node->key, node->value);
+		inOrderTraversal(node->right, func);
+	}
+}
+
+template<typename _KTy, typename _VTy>
 inline void map<_KTy, _VTy>::insert(const _KTy& key, const _VTy& value) {
     root = insert(root, key, value);
 }
@@ -173,6 +189,12 @@ inline void map<_KTy, _VTy>::erase(const _KTy& key) {
 template<typename _KTy, typename _VTy>
 inline bool map<_KTy, _VTy>::has(const _KTy& key) const {
     return find(root, key) != nullptr;
+}
+
+template<typename _KTy, typename _VTy>
+template<typename Func>
+inline void map<_KTy, _VTy>::forEach(Func func) const {
+	inOrderTraversal(root, func);
 }
 
 #endif // _MAP_

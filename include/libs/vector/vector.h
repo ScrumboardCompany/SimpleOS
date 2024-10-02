@@ -14,6 +14,8 @@ class vector {
 public:
 	vector();
 
+    vector(const vector& other);
+
 	void push(_Ty value);
 
 	void pop();
@@ -33,11 +35,24 @@ public:
 
     int find(const _Ty& value) const;
 
+    vector& operator=(const vector& other);
+
     ~vector();
 };
 
 template<typename _Ty>
 inline vector<_Ty>::vector() : arr(nullptr), _size(0) {}
+
+template<typename _Ty>
+inline vector<_Ty>::vector(const vector<_Ty>& other) {
+    _size = other._size;
+
+    arr = (_Ty*)(malloc(_size * sizeof(_Ty)));
+
+    for (size_t i = 0; i < _size; i++) {
+        arr[i] = other.arr[i];
+    }
+}
 
 template<typename _Ty>
 inline void vector<_Ty>::push(_Ty value) {
@@ -134,6 +149,24 @@ inline int vector<_Ty>::find(const _Ty& value) const {
         }
     }
     return -1;
+}
+
+template<typename _Ty>
+inline vector<_Ty>& vector<_Ty>::operator=(const vector<_Ty>& other) {
+    if (this == &other) {
+        return *this;
+    }
+
+    free(arr);
+
+    _size = other._size;
+    arr = (_Ty*)(malloc(_size * sizeof(_Ty)));
+
+    for (size_t i = 0; i < _size; i++) {
+        arr[i] = other.arr[i];
+    }
+
+    return *this;
 }
 
 template<typename _Ty>

@@ -48,17 +48,23 @@ namespace SimpleOS {
 
 		static void println(char c);
 
+		static void println(int n);
+
 		static void println(const string& string);
 
 		static void lnprint(const char* msg);
 
 		static void lnprint(char c);
 
+		static void lnprint(int n);
+
 		static void lnprint(const string& string);
 
 		static void lnprintln(const char* msg);
 
 		static void lnprintln(char c);
+
+		static void lnprintln(int n);
 
 		static void lnprintln(const string& string);
 
