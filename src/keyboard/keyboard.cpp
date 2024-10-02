@@ -82,6 +82,7 @@ char Keyboard::get_key_char(Keyboard::PressedKey key) {
 	case Keyboard::PressedKey::Num8: return '8';
 	case Keyboard::PressedKey::Num9: return '9';
 	case Keyboard::PressedKey::Space: return ' ';
+	case Keyboard::PressedKey::Tab:   return '\t';
 	default: return _NO_CHAR;
 	}
 }

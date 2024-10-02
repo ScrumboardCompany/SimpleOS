@@ -16,7 +16,7 @@ namespace SimpleOS {
 	constexpr size_t HEIGHT = 25;
 
 	class Terminal {
-
+		friend class Terminal_commands;
 	public:
 		enum class Color : uint8_t;
 
@@ -24,6 +24,7 @@ namespace SimpleOS {
 
 		static size_t pos;
 		static Color terminal_color;
+		static Color bg_color;
 		
 		static void to_args(char** command_split, char** args, size_t size_command_split);
 
@@ -85,7 +86,11 @@ namespace SimpleOS {
 
 		static void set_terminal_color(Color new_color);
 
-		static void fill_bg(Color new_color);
+		static void set_and_fill_bg_color(Color new_color);
+
+		static void fill_bg_color(Color new_color);
+
+		static void set_bg_color(Color new_color);
 
 		enum class Color : uint8_t {
 			Black = 0x00,

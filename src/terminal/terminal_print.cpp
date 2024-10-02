@@ -13,15 +13,20 @@ void Terminal::print(const char* msg) {
 
 void Terminal::print(char c, size_t pos) {
 	char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
+	uint8_t color = ((uint8_t)bg_color << 4) | (uint8_t)terminal_color;
+
 	buffer[pos * 2] = c;
-	buffer[pos * 2 + 1] = (uint8_t)terminal_color;
+	buffer[pos * 2 + 1] = color;
 	move_cursor(pos);
 }
 
 void Terminal::print(char c) {
 	if (c == '\n') {
 		new_line();
-	} else print(c, pos++);
+	} else if (c == '\t') {
+		print("   ");
+	}
+	else print(c, pos++);
 }
 
 void Terminal::print(int n) {

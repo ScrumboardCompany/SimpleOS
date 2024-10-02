@@ -16,7 +16,7 @@ void Terminal::reload(char c, Color char_color, Color background_color) {
 }
 
 void Terminal::clear() {
-	reload(' ', terminal_color, Terminal::Color::Black);
+	reload(' ', terminal_color, bg_color);
 	pos = 0;
 }
 
@@ -53,7 +53,6 @@ void Terminal::delete_line() {
 
 	for (size_t i = 0; i < WIDTH; ++i) {
 		buffer[(line_start + i) * 2] = ' ';
-		buffer[(line_start + i) * 2 + 1] = (uint8_t)terminal_color;
 	}
 
 	pos = line_start;
@@ -75,3 +74,4 @@ void Terminal::move_cursor(size_t pos) {
 
 size_t Terminal::pos = 0;
 Terminal::Color Terminal::terminal_color = Terminal::Color::Grey;
+Terminal::Color Terminal::bg_color = Terminal::Color::Black;
