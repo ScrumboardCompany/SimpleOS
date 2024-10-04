@@ -8,6 +8,8 @@
 #include "utils/typedef.h"
 #include "libs/string/class.h"
 
+#define _INVALID_SECTOR -1
+
 namespace SimpleOS {
 
 	class FileSystem {
@@ -23,14 +25,23 @@ namespace SimpleOS {
 
 		static bool delete_file(const char* name);
 
-		static void write_to_file(const char* name, const char* data);
-
-		static bool read_file(const char* name, char* buffer);
+		static bool write_to_file(const char* name, const char* data);
 
 		static bool append_to_file(const char* name, const char* data);
 
+		static bool read_file(const char* name, string& buffer);
+
+		static bool format();
+
+		static bool exist(const char* name);
+
 	private:
 		static ssize_t free_sector(size_t size);
+		static ssize_t free_sector();
+
+		static bool distr_to_sectors(File& file, const char* data);
+
+		static bool __check_exist(const char* name);
 
 		static map<string, File> files;
 		static vector<size_t> taken_sectors;

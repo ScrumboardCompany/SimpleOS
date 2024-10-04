@@ -17,10 +17,15 @@ namespace SimpleOS {
 		static void __command_reset(char** args);
 		static void __command_echo(char** args);
 		static void __command_help(char** args);
+		static void __command_cat(char** args);
 
 		static void __command_mkfile(char** args);
 		static void __command_rdfile(char** args);
 		static void __command_rmfile(char** args);
+		static void __command_wrfile(char** args);
+		static void __command_apfile(char** args);
+		static void __command_exfile(char** args);
+		static void __command_format(char** args);
 
 		static bool __check_argc(char** args, size_t argc);
 	};

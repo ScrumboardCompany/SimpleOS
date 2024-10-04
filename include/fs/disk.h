@@ -34,6 +34,8 @@ namespace SimpleOS {
     void ata_delete_from_sector(uint32_t lba);
 
     void ata_delete_from_sector(uint32_t lba, size_t start, size_t length);
+
+    size_t ata_get_free_space_in_sector(uint32_t lba);
 }
 
 #endif // __DISK__

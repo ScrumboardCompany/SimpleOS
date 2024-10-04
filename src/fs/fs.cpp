@@ -10,6 +10,7 @@ map<string, FileSystem::File> FileSystem::files;
 vector<size_t> FileSystem::taken_sectors;
 
 bool FileSystem::create_file(const char* name, const char* data) {
+
 	if (files.has(name)) {
 		Terminal::lnprint(string(name) + " already exist");
 		return false;
@@ -17,43 +18,36 @@ bool FileSystem::create_file(const char* name, const char* data) {
 
 	File new_file;
 
-	if (data) {
-		new_file.size = strlen(data);
+	new_file.size = strlen(data);
 
-		ssize_t freesector = free_sector(new_file.size);
-		if (freesector == -1) {
-			Terminal::lnprint("No free space");
-			return false;
-		}
+	ssize_t freesector = free_sector();
 
-		ata_write_to_sector(freesector, data);
-		new_file.sectors.push(freesector);
+	if (freesector == _INVALID_SECTOR) {
+		Terminal::lnprint("No free space");
+		return false;
 	}
 
-	//Terminal::lnprint((int)new_file.sectors.size());
+	new_file.sectors.push(freesector);
+
+	if (data) {
+		distr_to_sectors(new_file, data);
+	}
+
+	for (size_t i = 0; i < new_file.sectors.size(); i++) {
+		Terminal::lnprint((int)i);
+		Terminal::print(" sector: ");
+		Terminal::print((int)new_file.sectors[i]);
+	}
+	Terminal::new_line();
 
 	files.insert(name, new_file);
-
-	/*Terminal::lnprint("New file: ");
-	File& file = files[name];
-	Terminal::lnprint((int)file.size);
-	Terminal::lnprint("file.sectors size: ");
-	Terminal::print((int)file.sectors.size());
-
-	for (size_t i = 0; i < file.sectors.size(); ++i) {
-		Terminal::lnprint((int)i);
-		Terminal::print(" el of file.sectors: ");
-		Terminal::print((int)file.sectors[i]);
-	}*/
 
 	return true;
 }
 
 bool FileSystem::delete_file(const char* name) {
-	if (!files.has(name)) {
-		Terminal::lnprint("File don`t exists");
-		return false;
-	}
+	
+	if (!__check_exist(name)) return false;
 
 	File file = files[name];
 
@@ -68,19 +62,25 @@ bool FileSystem::delete_file(const char* name) {
 	return true;
 }
 
-bool FileSystem::read_file(const char* name, char* buffer) {
-	if (!files.has(name)) {
-		Terminal::lnprint("File don`t exists");
+bool FileSystem::write_to_file(const char* name, const char* data) {
+
+	if (!delete_file(name)) {
 		return false;
 	}
-	
-	/*files.forEach([](const string& key, File file) {
-		Terminal::lnprint(key);
-		Terminal::lnprint((int)file.size);
-		for (size_t i = 0; i < file.sectors.size(); i++) {
-			Terminal::lnprint((int)file.sectors[i]);
-		}
-		});*/
+
+	return create_file(name, data);
+}
+
+bool FileSystem::append_to_file(const char* name, const char* data) {
+
+	if (!__check_exist(name)) return false;
+
+	return distr_to_sectors(files[name], data);
+}
+
+bool FileSystem::read_file(const char* name, string& buffer) {
+
+	if (!__check_exist(name)) return false;
 
 	File file = files[name];
 	size_t size = file.sectors.size();
@@ -93,25 +93,102 @@ bool FileSystem::read_file(const char* name, char* buffer) {
 		free(data);
 	}
 
-	free(buffer);
-	buffer = (char*)malloc(temp.size() + 1);
-	strcpy(buffer, temp.c_str());
+	Terminal::lnprint("size: ");
+	Terminal::println((int)file.size);
 
-	/*Terminal::lnprint("temp: ");
-	Terminal::print(buffer);
-	Terminal::lnprint("buffer: ");
-	Terminal::print(buffer);*/
+	buffer = temp;
 
 	return true;
+}
+
+bool FileSystem::format() {
+	bool has_error = false;
+	files.forEach([&has_error](const string& key, File) {
+		if (!delete_file(key.c_str()))
+			has_error = true;
+		});
+	return !has_error;
+}
+
+bool FileSystem::exist(const char* name) {
+	return files.has(name);
 }
 
 ssize_t FileSystem::free_sector(size_t size) {
 
 	for (uint32_t i = 0, sector_count = ata_get_sector_count(); i < sector_count; i++) {
-		if (!taken_sectors.has(i) && ata_can_write_to_sector(i, size)) {
+        if (!taken_sectors.has(i) && ata_can_write_to_sector(i, size)) {
+            taken_sectors.push(i);
+            return i;
+        }
+    }
+    return _INVALID_SECTOR;
+}
+
+ssize_t FileSystem::free_sector() {
+
+	for (uint32_t i = 0, sector_count = ata_get_sector_count(); i < sector_count; i++) {
+		if (!taken_sectors.has(i)) {
 			taken_sectors.push(i);
 			return i;
 		}
 	}
-	return -1;
+	return _INVALID_SECTOR;
+}
+
+bool FileSystem::distr_to_sectors(File& file, const char* data) {
+	size_t free_space = ata_get_free_space_in_sector(file.sectors.back());
+	if (free_space) {
+		char buffer[free_space];
+
+		strncpy(buffer, data, free_space - 1);
+
+		buffer[free_space - 1] = '\0';
+
+		ata_append_to_sector(file.sectors.back(), buffer);
+
+		data += free_space;
+	}
+
+
+	//Terminal::lnprint("begin");
+	while (strlen(data) > 0) {
+
+		ssize_t freesector = free_sector();
+		if (freesector == _INVALID_SECTOR) {
+			Terminal::lnprint("No free space");
+			return false;
+		}
+
+		/*Terminal::lnprint("freesector: ");
+		Terminal::print((int)freesector);*/
+
+		file.sectors.push(freesector);
+
+		char buffer[512];
+		size_t data_to_write = min(strlen(data), size_t(512));
+		memcpy(buffer, data, data_to_write);
+
+		if (data_to_write < 512) {
+			buffer[data_to_write] = '\0';
+		}
+		else {
+			buffer[511] = '\0';
+		}
+
+		/*Terminal::lnprint("Data to write: ");
+		Terminal::print(buffer);*/
+		ata_write_to_sector(freesector, buffer);
+
+		data += data_to_write;
+	}
+	return true;
+}
+
+bool FileSystem::__check_exist(const char* name) {
+	if (!files.has(name)) {
+		Terminal::lnprint("File don`t exists");
+		return false;
+	}
+	return true;
 }
