@@ -143,37 +143,27 @@ string string::operator + (const string& other) {
 };
 
 bool string::operator ==(const string& other) const {
-	if (length != other.length) {
-		return false;
-	}
-
-	for (size_t i = 0; i < length; i++) {
-		if (str[i] != other.str[i]) {
-			return false;
-		}
-	}
-
-	return true;
+	return strcmp(str, other.str) == 0;
 };
 
 bool string::operator !=(const string& other) const {
-	return !(this->operator == (other));
+	return strcmp(str, other.str) != 0;
 };
 
 bool string::operator <(const char* other) const {
-	return length < strlen(other);
+	return strcmp(str, other) < 0;
 }
 
 bool string::operator >(const char* other) const {
-	return length > strlen(other);
+	return strcmp(str, other) > 0;
 }
 
 bool string::operator <(const string& other) const {
-	return length < other.length;
+	return strcmp(str, other.str) < 0;
 }
 
 bool string::operator >(const string& other) const {
-	return this->length > other.length;
+	return strcmp(str, other.str) > 0;
 }
 
 char& string::operator [](size_t index) {

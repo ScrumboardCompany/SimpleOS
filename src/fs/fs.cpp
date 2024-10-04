@@ -8,33 +8,35 @@ using namespace SimpleOS;
 
 map<string, FileSystem::File> FileSystem::files;
 vector<size_t> FileSystem::taken_sectors;
+FileSystem::Superblock FileSystem::block;
 
 void FileSystem::init_fs() {
-	if (!read_superblock()) {
-		Superblock block;
+	Superblock temp_block;
 
-		write_superblock(block);
+	if (read_superblock()) {
+		block = temp_block;
+
+		uint32_t current_sector = block.file_table_start;
+
+		for (size_t i = 0; i < block.total_files; ++i) {
+			char buffer[512];
+			ata_read_sector(current_sector, buffer);
+
+			char filename[32];
+			memcpy(filename, buffer, 32);
+
+			File file;
+			memcpy(&file, buffer + 32, sizeof(File));
+
+			files[string(filename)] = file;
+
+			current_sector++;
+		}
 	}
 	else {
-		Superblock block;
-
-		read_superblock(&block);
-
-		files = block.files;
-		taken_sectors = block.taken_sectors;
-	}
-	/*if (!read_superblock()) {
-		Terminal::lnprint("Superblock error, creating new one");
-
-		superblock.total_sectors = ata_get_sector_count();
-		superblock.used_sectors = 0;
-		superblock.file_count = 0;
-		superblock.file_table_start = 1;
-
-		write_superblock();
+		format();
 	}
 
-	return true;*/
 }
 
 bool FileSystem::create_file(const char* name, const char* data) {
@@ -59,23 +61,9 @@ bool FileSystem::create_file(const char* name, const char* data) {
 
 	if (data) {
 		distr_to_sectors(new_file, data);
-	}
-
-	for (size_t i = 0; i < new_file.sectors.size(); i++) {
-		Terminal::lnprint((int)i);
-		Terminal::print(" sector: ");
-		Terminal::print((int)new_file.sectors[i]);
-	}
-	Terminal::new_line();
-		ata_write_to_sector(freesector, data);
-		new_file.sectors.push(freesector);
-
-		superblock.used_sectors++;
-	}
+	}	
 
 	files.insert(name, new_file);
-
-	superblock.file_count++;
 
 	write_superblock();
 
@@ -94,11 +82,8 @@ bool FileSystem::delete_file(const char* name) {
 		if (taken_sectors.has(file.sectors[i]))
 			taken_sectors.pop(taken_sectors.find(file.sectors[i]));
 
-		superblock.used_sectors--;
 	}
 	files.erase(name);
-
-	superblock.file_count--;
 
 	write_superblock();
 
@@ -117,8 +102,13 @@ bool FileSystem::write_to_file(const char* name, const char* data) {
 bool FileSystem::append_to_file(const char* name, const char* data) {
 
 	if (!__check_exist(name)) return false;
+	files[name].size += strlen(data);
 
-	return distr_to_sectors(files[name], data);
+	if (!distr_to_sectors(files[name], data)) return false;
+
+	write_superblock();
+
+	return true;
 }
 
 bool FileSystem::read_file(const char* name, string& buffer) {
@@ -136,13 +126,7 @@ bool FileSystem::read_file(const char* name, string& buffer) {
 		free(data);
 	}
 
-	Terminal::lnprint("size: ");
-	Terminal::println((int)file.size);
-
 	buffer = temp;
-	free(buffer);
-	buffer = (char*)malloc(temp.size() + 1);
-	strcpy(buffer, temp.c_str());
 
 	return true;
 }
@@ -153,6 +137,8 @@ bool FileSystem::format() {
 		if (!delete_file(key.c_str()))
 			has_error = true;
 		});
+	ata_delete_from_sector(0);
+
 	return !has_error;
 }
 
@@ -162,7 +148,7 @@ bool FileSystem::exist(const char* name) {
 
 ssize_t FileSystem::free_sector(size_t size) {
 
-	for (uint32_t i = 0, sector_count = ata_get_sector_count(); i < sector_count; i++) {
+	for (uint32_t i = 1, sector_count = ata_get_sector_count(); i < sector_count; i++) {
         if (!taken_sectors.has(i) && ata_can_write_to_sector(i, size)) {
             taken_sectors.push(i);
             return i;
@@ -173,7 +159,7 @@ ssize_t FileSystem::free_sector(size_t size) {
 
 ssize_t FileSystem::free_sector() {
 
-	for (uint32_t i = 0, sector_count = ata_get_sector_count(); i < sector_count; i++) {
+	for (uint32_t i = 1, sector_count = ata_get_sector_count(); i < sector_count; i++) {
 		if (!taken_sectors.has(i)) {
 			taken_sectors.push(i);
 			return i;
@@ -196,8 +182,6 @@ bool FileSystem::distr_to_sectors(File& file, const char* data) {
 		data += free_space;
 	}
 
-
-	//Terminal::lnprint("begin");
 	while (strlen(data) > 0) {
 
 		ssize_t freesector = free_sector();
@@ -205,9 +189,6 @@ bool FileSystem::distr_to_sectors(File& file, const char* data) {
 			Terminal::lnprint("No free space");
 			return false;
 		}
-
-		/*Terminal::lnprint("freesector: ");
-		Terminal::print((int)freesector);*/
 
 		file.sectors.push(freesector);
 
@@ -221,9 +202,6 @@ bool FileSystem::distr_to_sectors(File& file, const char* data) {
 		else {
 			buffer[511] = '\0';
 		}
-
-		/*Terminal::lnprint("Data to write: ");
-		Terminal::print(buffer);*/
 		ata_write_to_sector(freesector, buffer);
 
 		data += data_to_write;
@@ -237,45 +215,79 @@ bool FileSystem::__check_exist(const char* name) {
 		return false;
 	}
 	return true;
-	for (uint32_t i = 1, sector_count = ata_get_sector_count(); i < sector_count; i++) {
-		if (!taken_sectors.has(i) && ata_can_write_to_sector(i, size)) {
-			taken_sectors.push(i);
-			return i;
-		}
-	}
-	return -1;
 }
 
-bool FileSystem::read_superblock(Superblock* block) {
-
-	if ()
+bool FileSystem::read_superblock() {
 
 	char buffer[512];
+
 	ata_read_sector(0, buffer);
 
-	block = reinterpret_cast<Superblock*>(&buffer);
+	size_t offset = 0;
+	size_t file_count;
+	memcpy(&file_count, buffer + offset, sizeof(size_t));
+	offset += sizeof(size_t);
+
+	for (size_t i = 0; i < file_count; ++i) {
+		char filename[32];
+		memcpy(filename, buffer + offset, 32);
+		offset += 32;
+
+		File file;
+		memcpy(&file.size, buffer + offset, sizeof(size_t));
+		offset += sizeof(size_t);
+
+		size_t sector_count;
+		memcpy(&sector_count, buffer + offset, sizeof(size_t));
+		offset += sizeof(size_t);
+
+		file.sectors.resize(sector_count);
+		for (size_t j = 0; j < sector_count; ++j) {
+			memcpy(&file.sectors[j], buffer + offset, sizeof(uint32_t));
+			offset += sizeof(uint32_t);
+		}
+
+		files[string(filename)] = file;
+	}
+
+	files.forEach([](const string&, File file) {
+		for (size_t i = 0; i < file.sectors.size(); i++) {
+			if (!taken_sectors.has(file.sectors[i])) {
+				taken_sectors.push(file.sectors[i]);
+			}
+		}
+		});
 
 	return true;
-	/*char buffer[512];
-	ata_read_sector(0, buffer); 
-
-	memcpy(&superblock, buffer, sizeof(Superblock));
-
-	if (superblock.total_sectors == 0 || superblock.file_count == 0) {
-		return false; 
-	}
-	return true;*/
 }
 
-bool FileSystem::write_superblock(Superblock& block) {
-	char* data = reinterpret_cast<char*>(&block);
+bool FileSystem::write_superblock() {
+	char buffer[512];
+	size_t offset = 0;
 
-	ata_write_to_sector(0, data);
-	return true;
-	/*char buffer[512]; 
+	size_t file_count = files.size();
+	memcpy(buffer + offset, &file_count, sizeof(size_t));
+	offset += sizeof(size_t);
 
-	memcpy(buffer, &superblock, sizeof(Superblock));
+	files.forEach([&](const string& key, File file) {
+
+		memcpy(buffer + offset, key.c_str(), 32);
+		offset += 32;
+
+		memcpy(buffer + offset, &file.size, sizeof(size_t));
+		offset += sizeof(size_t);
+
+		size_t sector_count = file.sectors.size();
+		memcpy(buffer + offset, &sector_count, sizeof(size_t));
+		offset += sizeof(size_t);
+
+		for (size_t i = 0; i < file.sectors.size(); i++) {
+			memcpy(buffer + offset, &file.sectors[i], sizeof(uint32_t));
+			offset += sizeof(uint32_t);
+		}
+	});
 
 	ata_write_to_sector(0, buffer);
-	return true;*/
+
+	return true;
 }

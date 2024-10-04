@@ -146,9 +146,9 @@ void SimpleOS::Terminal_commands::__command_cat(char** args) {
 
 void Terminal_commands::__command_mkfile(char** args) {
 
-	if (__check_argc(args, 1)) {
+	if (__check_argc(args, 2)) {
 
-		if (FileSystem::create_file(args[0], "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"))
+		if (FileSystem::create_file(args[0], args[1]))
 			Terminal::lnprint("Good mkfile");
 	}
 }
@@ -215,7 +215,7 @@ bool Terminal_commands::__check_argc(char** args, size_t argc) {
 	if (size == argc) return true;
 
 	Terminal::lnprint(size > argc ? "Too many arguments" : "Too few arguments");
-	
+
 	return false;
 }
 
@@ -254,7 +254,7 @@ void Terminal::call_command(const char* key, char** args) {
 	else if (strcmp(key, "cat") == 0) {
 		Terminal_commands::__command_cat(args);
 	}
-	
+
 	else if (strcmp(key, "mkfile") == 0) {
 		Terminal_commands::__command_mkfile(args);
 	}
@@ -272,11 +272,11 @@ void Terminal::call_command(const char* key, char** args) {
 	}
 
 	else if (strcmp(key, "apfile") == 0) {
-		Terminal_commands::__command_wrfile(args);
+		Terminal_commands::__command_apfile(args);
 	}
 
 	else if (strcmp(key, "exfile") == 0) {
-		Terminal_commands::__command_wrfile(args);
+		Terminal_commands::__command_exfile(args);
 	}
 
 	else if (strcmp(key, "format") == 0) {
@@ -289,10 +289,6 @@ void Terminal::call_command(const char* key, char** args) {
 		ata_read_sector(0, buffer);
 
 		Terminal::lnprint(buffer);
-	}
-
-	else if (strcmp(key, "cat") == 0) {
-		lnprint(",_     _\n| \\_, -~/ \n/ _  _ | , --.\n(@  @) / , -'\n\  _T_ / -._((\n/ `. \\\n| _  \ | \n\ \, /      |\n|| |-_\__ / \n((_ / `(____, -'\n");
 	}
 
 	else {

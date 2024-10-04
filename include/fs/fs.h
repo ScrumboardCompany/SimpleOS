@@ -23,15 +23,13 @@ namespace SimpleOS {
 		};
 
 		struct Superblock {
-			//uint32_t total_sectors; 
-			//uint32_t used_sectors;
-			//uint32_t file_count;
-			//uint32_t file_table_start;
-			map<string, File> files;
-			vector<uint32_t> taken_sectors;
+			uint32_t file_table_start;
+			uint32_t total_files;   
+			uint32_t total_sectors;   
+			uint32_t free_sectors;
 		};
 
-		static bool init_fs();
+		static void init_fs();
 
 		static bool create_file(const char* name, const char* data = nullptr);
 
@@ -49,6 +47,8 @@ namespace SimpleOS {
 
 		static bool format();
 
+		static void file_info(const char* name);
+
 		static bool exist(const char* name);
 
 	private:
@@ -61,6 +61,7 @@ namespace SimpleOS {
 
 		static map<string, File> files;
 		static vector<size_t> taken_sectors;
+        static Superblock block;
 	};
 
 }

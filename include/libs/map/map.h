@@ -3,6 +3,8 @@
 #ifndef _MAP_
 #define _MAP_
 
+#include "libs/string/string.h"
+
 template<typename _KTy, typename _VTy>
 class map {
 private:
@@ -21,48 +23,70 @@ private:
     Node* root;
 
     Node* insert(Node* node, const _KTy& key, const _VTy& value);
-
     Node* find(Node* node, const _KTy& key) const;
-
     Node* erase(Node* node, const _KTy& key);
-
     Node* findMin(Node* node) const;
-
     void clear(Node* node);
 
-	template<typename Func>
-	void inOrderTraversal(Node* node, Func func) const;
+    Node* copy(Node* node) const;
+
+    size_t size(Node* node) const;
+
+    template<typename Func>
+    void inOrderTraversal(Node* node, Func func) const;
 
 public:
     map() : root(nullptr) {}
+
+    map(const map& other) : root(copy(other.root)) {}
+
+    map& operator=(const map& other) {
+        if (this != &other) {
+            clear(root);
+            root = copy(other.root);
+        }
+        return *this;
+    }
 
     ~map() {
         clear(root);
     }
 
     void insert(const _KTy& key, const _VTy& value);
-
     _VTy& operator[](const _KTy& key);
-
     _VTy* find(const _KTy& key) const;
-
     void erase(const _KTy& key);
-
     bool has(const _KTy& key) const;
 
-	template<typename Func>
-	void forEach(Func func) const;
+    size_t size() const;
+
+    template<typename Func>
+    void forEach(Func func) const;
 };
+
+template<typename _KTy, typename _VTy>
+inline typename map<_KTy, _VTy>::Node* map<_KTy, _VTy>::copy(Node* node) const {
+    if (node == nullptr) {
+        return nullptr;
+    }
+
+    Node* newNode = (Node*)(malloc(sizeof(Node)));
+
+    memcpy(&(newNode->key), &(node->key), sizeof(_KTy));
+    memcpy(&(newNode->value), &(node->value), sizeof(_VTy));
+
+    newNode->left = copy(node->left);
+    newNode->right = copy(node->right);
+    return newNode;
+}
 
 template<typename _KTy, typename _VTy>
 inline typename map<_KTy, _VTy>::Node* map<_KTy, _VTy>::insert(Node* node, const _KTy& key, const _VTy& value) {
     if (node == nullptr) {
-
-		Node* new_node  = (Node*)malloc(sizeof(Node));
-        new_node->key   = key;
+        Node* new_node = (Node*)malloc(sizeof(Node));
+        new_node->key = key;
         new_node->value = value;
-        new_node->left  = new_node->right = nullptr;
-
+        new_node->left = new_node->right = nullptr;
         return new_node;
     }
 
@@ -106,7 +130,6 @@ inline typename map<_KTy, _VTy>::Node* map<_KTy, _VTy>::erase(Node* node, const 
         node->right = erase(node->right, key);
     }
     else {
-
         if (node->left == nullptr) {
             Node* rightNode = node->right;
             free(node);
@@ -118,7 +141,6 @@ inline typename map<_KTy, _VTy>::Node* map<_KTy, _VTy>::erase(Node* node, const 
             return leftNode;
         }
         else {
-
             Node* minLargerNode = findMin(node->right);
             node->key = minLargerNode->key;
             node->value = minLargerNode->value;
@@ -149,11 +171,11 @@ inline void map<_KTy, _VTy>::clear(Node* node) {
 template<typename _KTy, typename _VTy>
 template<typename Func>
 inline void map<_KTy, _VTy>::inOrderTraversal(Node* node, Func func) const {
-	if (node != nullptr) {
-		inOrderTraversal(node->left, func);
-		func(node->key, node->value);
-		inOrderTraversal(node->right, func);
-	}
+    if (node != nullptr) {
+        inOrderTraversal(node->left, func);
+        func(node->key, node->value);
+        inOrderTraversal(node->right, func);
+    }
 }
 
 template<typename _KTy, typename _VTy>
@@ -165,7 +187,6 @@ template<typename _KTy, typename _VTy>
 inline _VTy& map<_KTy, _VTy>::operator[](const _KTy& key) {
     Node* node = find(root, key);
     if (node == nullptr) {
-
         root = insert(root, key, _VTy());
         node = find(root, key);
     }
@@ -194,7 +215,20 @@ inline bool map<_KTy, _VTy>::has(const _KTy& key) const {
 template<typename _KTy, typename _VTy>
 template<typename Func>
 inline void map<_KTy, _VTy>::forEach(Func func) const {
-	inOrderTraversal(root, func);
+    inOrderTraversal(root, func);
+}
+
+template<typename _KTy, typename _VTy>
+inline size_t map<_KTy, _VTy>::size(Node* node) const {
+    if (node == nullptr) {
+        return 0;
+    }
+    return 1 + size(node->left) + size(node->right);
+}
+
+template<typename _KTy, typename _VTy>
+inline size_t map<_KTy, _VTy>::size() const {
+    return size(root);
 }
 
 #endif // _MAP_
