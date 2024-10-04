@@ -12,6 +12,7 @@
 #include "IRQ/IRQ.h"
 #include "devices/keyboard.h"
 #include "fs/disk.h"
+#include "fs/fs.h"
 
 using namespace SimpleOS;
 
@@ -20,6 +21,7 @@ extern "C" void kernel_main(void) {
     IDT::init_idt();
     IRQ::init_pic();
     Keyboard::init_keyboard();
+    FileSystem::init_fs();
     Terminal::print('>');
 
     while (true) {

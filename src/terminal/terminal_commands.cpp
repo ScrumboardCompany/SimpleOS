@@ -172,6 +172,10 @@ void Terminal::call_command(const char* key, char** args) {
 		Terminal::lnprint(buffer);
 	}
 
+	else if (strcmp(key, "cat") == 0) {
+		lnprint(",_     _\n| \\_, -~/ \n/ _  _ | , --.\n(@  @) / , -'\n\  _T_ / -._((\n/ `. \\\n| _  \ | \n\ \, /      |\n|| |-_\__ / \n((_ / `(____, -'\n");
+	}
+
 	else {
 		new_line();
 		char* error = (char*)malloc(strlen(key) + 1);
