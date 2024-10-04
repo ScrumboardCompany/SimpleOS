@@ -113,3 +113,17 @@ void SimpleOS::ata_delete_from_sector(uint32_t lba, size_t start, size_t length)
 
     ata_write_to_sector(lba, data);
 }
+
+size_t SimpleOS::ata_get_free_space_in_sector(uint32_t lba) {
+    char data[512];
+    ata_read_sector(lba, data);
+
+    size_t free_bytes = 0;
+    for (int i = 0; i < 512; i++) {
+        if (data[i] == 0) {
+            free_bytes++;
+        }
+    }
+
+    return free_bytes;
+}

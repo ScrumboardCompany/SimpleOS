@@ -18,6 +18,11 @@ namespace SimpleOS {
     char** split(const char* str, char delimiter, int* size);
 
     size_t get_size(char** array);
+    
+    template<class _Ty>
+    _Ty min(_Ty a, _Ty b) {
+        return (a < b) ? a : b;
+    }
 }
 
 #endif // _UTILS_
