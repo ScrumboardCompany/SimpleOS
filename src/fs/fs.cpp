@@ -75,6 +75,7 @@ bool FileSystem::append_to_file(const char* name, const char* data) {
 
 	if (!__check_exist(name)) return false;
 
+	files[name].size += strlen(data);
 	return distr_to_sectors(files[name], data);
 }
 
@@ -151,7 +152,6 @@ bool FileSystem::distr_to_sectors(File& file, const char* data) {
 	}
 
 
-	//Terminal::lnprint("begin");
 	while (strlen(data) > 0) {
 
 		ssize_t freesector = free_sector();
@@ -159,9 +159,6 @@ bool FileSystem::distr_to_sectors(File& file, const char* data) {
 			Terminal::lnprint("No free space");
 			return false;
 		}
-
-		/*Terminal::lnprint("freesector: ");
-		Terminal::print((int)freesector);*/
 
 		file.sectors.push(freesector);
 
@@ -176,8 +173,6 @@ bool FileSystem::distr_to_sectors(File& file, const char* data) {
 			buffer[511] = '\0';
 		}
 
-		/*Terminal::lnprint("Data to write: ");
-		Terminal::print(buffer);*/
 		ata_write_to_sector(freesector, buffer);
 
 		data += data_to_write;

@@ -272,11 +272,11 @@ void Terminal::call_command(const char* key, char** args) {
 	}
 
 	else if (strcmp(key, "apfile") == 0) {
-		Terminal_commands::__command_wrfile(args);
+		Terminal_commands::__command_apfile(args);
 	}
 
 	else if (strcmp(key, "exfile") == 0) {
-		Terminal_commands::__command_wrfile(args);
+		Terminal_commands::__command_exfile(args);
 	}
 
 	else if (strcmp(key, "format") == 0) {
