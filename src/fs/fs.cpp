@@ -10,6 +10,8 @@ map<string, FileSystem::File> FileSystem::files;
 vector<size_t> FileSystem::taken_sectors;
 FileSystem::Superblock FileSystem::block;
 
+string FileSystem::opened_file = "";
+
 void FileSystem::init_fs() {
 	Superblock temp_block;
 
@@ -92,16 +94,21 @@ bool FileSystem::delete_file(const char* name) {
 
 bool FileSystem::write_to_file(const char* name, const char* data) {
 
+	if (!__check_exist(name)) return false;
+
 	if (!delete_file(name)) {
 		return false;
 	}
 
-	return create_file(name, data);
+	if (!create_file(name, data)) return false;
+
+	return true;
 }
 
 bool FileSystem::append_to_file(const char* name, const char* data) {
 
 	if (!__check_exist(name)) return false;
+
 	files[name].size += strlen(data);
 
 	if (!distr_to_sectors(files[name], data)) return false;
@@ -291,4 +298,16 @@ bool FileSystem::write_superblock() {
 	ata_write_to_sector(0, buffer);
 
 	return true;
+}
+
+void FileSystem::open_file(const char* name) {
+	opened_file = name;
+}
+
+const string& FileSystem::get_opened_file() {
+	return opened_file;
+}
+
+void FileSystem::close_file() {
+	opened_file = "";
 }

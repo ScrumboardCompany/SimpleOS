@@ -17,7 +17,6 @@ void Terminal::print(char c, size_t pos) {
 
 	buffer[pos * 2] = c;
 	buffer[pos * 2 + 1] = color;
-	move_cursor(pos);
 }
 
 void Terminal::print(char c) {
@@ -27,6 +26,7 @@ void Terminal::print(char c) {
 		print("   ");
 	}
 	else print(c, pos++);
+	move_cursor(pos - 1);
 }
 
 void Terminal::print(int n) {

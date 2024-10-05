@@ -92,11 +92,14 @@ namespace SimpleOS {
 
 		static void reset_selected_command_pos();
 
+		static void change_mode(bool is_console_mode);
+
     //private:
 		
 		static string buffer;
 
 		static bool is_caps_lock;
+		static bool is_console_mode;
 
 		static vector<string> commands;
 
@@ -111,6 +114,10 @@ namespace SimpleOS {
 		static void __capslock(PressedKey key);
 		static void __arrow_up(PressedKey key);
 		static void __arrow_down(PressedKey key);
+
+		static void __textbackspace(PressedKey key);
+		static void __textenter(PressedKey key);
+		static void __textctrl(PressedKey key);
 
     };
 

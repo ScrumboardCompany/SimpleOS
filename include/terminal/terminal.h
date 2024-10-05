@@ -74,7 +74,7 @@ namespace SimpleOS {
 
 		static void clear();
 
-		static void delete_char(size_t pos);
+		static void delete_char();
 
 		static void delete_line();
 
@@ -83,6 +83,8 @@ namespace SimpleOS {
 		static void execute_command(const char* command);
 
 		static size_t get_pos();
+
+		static void set_pos(size_t pos);
 
 		static void move_cursor(size_t position);
 

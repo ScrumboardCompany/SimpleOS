@@ -8,6 +8,7 @@ using namespace SimpleOS;
 string Keyboard::buffer = "";
 
 bool Keyboard::is_caps_lock = false;
+bool Keyboard::is_console_mode = true;
 
 vector<string> Keyboard::commands;
 size_t Keyboard::selected_command_pos = -1;
@@ -30,17 +31,25 @@ extern "C" void SimpleOS::keyboard_handler() {
 		Keyboard::reset_selected_command_pos();
 	}
 
-	Keyboard::__backspace(key);
-	Keyboard::__enter(key);
 	Keyboard::__capslock(key);
-	Keyboard::__arrow_up(key);
-	Keyboard::__arrow_down(key);
+
+	if (Keyboard::is_console_mode) {
+		Keyboard::__backspace(key);
+		Keyboard::__enter(key);
+		Keyboard::__arrow_up(key);
+		Keyboard::__arrow_down(key);
+	}
+	else {
+		Keyboard::__textbackspace(key);
+		Keyboard::__textenter(key);
+		Keyboard::__textctrl(key);
+	}
 
 	IRQ::port_byte_out(0x20, 0x20);
 }
 
 Keyboard::PressedKey Keyboard::get_key() {
-	return static_cast<PressedKey>(IRQ::port_byte_in(0x60));
+	return (PressedKey)(IRQ::port_byte_in(0x60));
 }
 
 char Keyboard::get_key_char(Keyboard::PressedKey key) {
@@ -113,4 +122,13 @@ void Keyboard::__handle_arrow(bool isUp) {
 	Terminal::delete_line();
 	Terminal::print('>');
 	Terminal::print(Keyboard::buffer);
+}
+
+void Keyboard::change_mode(bool is_console_mode) {
+	Keyboard::buffer = "";
+	Keyboard::reset_selected_command_pos();
+
+	Keyboard::is_console_mode = is_console_mode;
+	//Terminal::lnprint("is_console_mode: ");
+	//Terminal::print(is_console_mode ? "true" : "false");
 }

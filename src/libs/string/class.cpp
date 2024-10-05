@@ -84,6 +84,14 @@ void string::pop() {
 	this->operator=(newStr);
 }
 
+void string::clear() {
+	if (str) {
+		free(str);
+		str = nullptr;
+	}
+	length = 0;
+}
+
 string& string::operator = (const char* str) {
 	if (str) {
 		free(this->str);

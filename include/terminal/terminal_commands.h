@@ -27,6 +27,8 @@ namespace SimpleOS {
 		static void __command_exfile(char** args);
 		static void __command_format(char** args);
 
+		static void __command_open(char** args);
+
 		static bool __check_argc(char** args, size_t argc);
 	};
 }

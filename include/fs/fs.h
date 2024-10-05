@@ -51,17 +51,25 @@ namespace SimpleOS {
 
 		static bool exist(const char* name);
 
+		static bool __check_exist(const char* name);
+
+		static void open_file(const char* name);
+
+		static const string& get_opened_file();
+
+		static void close_file();
+
 	private:
 		static ssize_t free_sector(size_t size);
 		static ssize_t free_sector();
 
 		static bool distr_to_sectors(File& file, const char* data);
 
-		static bool __check_exist(const char* name);
-
 		static map<string, File> files;
 		static vector<size_t> taken_sectors;
         static Superblock block;
+
+		static string opened_file;
 	};
 
 }

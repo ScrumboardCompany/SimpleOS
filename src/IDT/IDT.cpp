@@ -28,7 +28,7 @@ void IDT::set_in_idt_slot(int pos, uint32_t base, uint16_t sel, uint8_t flags) {
 }
 
 extern "C" void SimpleOS::dividing_by_zero() {
-    Terminal::print("Failed operation dividing by zero");
+    Terminal::lnprint("Failed operation dividing by zero");
 }
 
 IDT::IDTSlot IDT::idt[IDT_SIZE];

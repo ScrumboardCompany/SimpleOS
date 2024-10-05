@@ -3,6 +3,7 @@
 #include "utils/utils.h"
 #include "fs/fs.h"
 #include "fs/disk.h"
+#include "devices/keyboard.h"
 
 using namespace SimpleOS;
 
@@ -52,7 +53,7 @@ void Terminal_commands::__command_reset(char** args) {
 
 	if (__check_argc(args, 0)) {
 		Terminal::reload(' ', Terminal::Color::Grey, Terminal::Color::Black);
-		Terminal::pos = 0;
+		Terminal::set_pos(0);
 
 		Terminal::terminal_color = Terminal::Color::Grey;
 		Terminal::bg_color = Terminal::Color::Black;
@@ -81,6 +82,8 @@ void Terminal_commands::__command_help(char** args) {
 		Terminal::lnprint("rmfile [name] - deletes a file named \"name\"");
 		Terminal::lnprint("wrfile [name] [data] - overwrites data from a file named \"name\" with new \"data\"");
 		Terminal::lnprint("apfile [name] [data] - assigns new \"data\" to data from a file named \"name\"");
+		Terminal::lnprint("format - deletes all files");
+		Terminal::lnprint("open [name] - opens file with name \"name\"");
 	}
 }
 
@@ -215,6 +218,33 @@ void Terminal_commands::__command_format(char** args) {
 	}
 }
 
+void Terminal_commands::__command_open(char** args) {
+
+	if (__check_argc(args, 1)) {
+
+		if (FileSystem::__check_exist(args[0])) {
+			Terminal::clear();
+			//Terminal::lnprint("Good clear");
+
+			FileSystem::open_file(args[0]);
+			//Terminal::lnprint("Good openfile: ");
+			//Terminal::print(FileSystem::get_opened_file());
+
+			string buffer;
+			FileSystem::read_file(args[0], buffer);
+			//Terminal::lnprint("Buffer: ");
+			//Terminal::print(buffer);
+
+			Keyboard::change_mode(false);
+
+			Terminal::print(buffer);
+			Keyboard::buffer = buffer;
+			//Terminal::lnprint("Keyboard buffer: ");
+			//Terminal::print(Keyboard::buffer);
+		}
+	}
+}
+
 bool Terminal_commands::__check_argc(char** args, size_t argc) {
 	size_t size = get_size(args);
 
@@ -287,6 +317,11 @@ void Terminal::call_command(const char* key, char** args) {
 
 	else if (strcmp(key, "format") == 0) {
 		Terminal_commands::__command_format(args);
+	}
+
+	else if (strcmp(key, "open") == 0) {
+		Terminal_commands::__command_open(args);
+		return;
 	}
 
 	else if (strcmp(key, "rdsector") == 0) {

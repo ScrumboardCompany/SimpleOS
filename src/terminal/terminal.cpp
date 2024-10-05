@@ -17,7 +17,7 @@ void Terminal::reload(char c, Color char_color, Color background_color) {
 
 void Terminal::clear() {
 	reload(' ', terminal_color, bg_color);
-	pos = 0;
+	set_pos(0);
 }
 
 void Terminal::execute_command(const char* command) {
@@ -34,20 +34,17 @@ void Terminal::execute_command(const char* command) {
 	call_command(command_split[0], args);
 };
 
-void Terminal::delete_char(size_t pos) {
+void Terminal::delete_char() {
 	if (pos > 0) {
 		char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
 
-		--pos;
+		set_pos(pos - 1);
 		buffer[pos * 2] = ' ';
-
-		Terminal::pos = pos;
 		move_cursor(pos - 1);
 	}
 }
 
 void Terminal::delete_line() {
-	const size_t WIDTH = 80;
 	size_t line_start = (pos / WIDTH) * WIDTH;
 	char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
 
@@ -55,12 +52,16 @@ void Terminal::delete_line() {
 		buffer[(line_start + i) * 2] = ' ';
 	}
 
-	pos = line_start;
-	move_cursor(pos - 1);
+	set_pos(line_start);
 }
 
 size_t Terminal::get_pos() {
 	return pos;
+}
+
+void Terminal::set_pos(size_t pos) {
+	Terminal::pos = pos;
+	move_cursor(pos);
 }
 
 void Terminal::move_cursor(size_t pos) {

@@ -28,6 +28,8 @@ namespace SimpleOS {
 
 		void pop();
 
+		void clear();
+
 		string& operator = (const char* str);
 
 		string& operator = (const string& other);

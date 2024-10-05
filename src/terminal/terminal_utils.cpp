@@ -28,9 +28,9 @@ void Terminal::new_line() {
 			buffer[(HEIGHT - 1) * WIDTH * 2 + j * 2] = ' ';
 		}
 
-		pos = (HEIGHT - 1) * WIDTH;
+		set_pos((HEIGHT - 1) * WIDTH);
 	}
 	else {
-		pos = (pos / WIDTH + 1) * WIDTH;
+		set_pos((pos / WIDTH + 1) * WIDTH);
 	}
 }
