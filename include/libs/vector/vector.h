@@ -32,6 +32,8 @@ public:
 
 	size_t size() const;
 
+    void resize(size_t new_size);
+
     bool has(const _Ty& val) const;
 
     int find(const _Ty& value) const;
@@ -135,6 +137,36 @@ inline bool vector<_Ty>::valid_index(int pos) const {
 template<typename _Ty>
 inline size_t vector<_Ty>::size() const {
     return _size;
+}
+
+template<typename _Ty>
+void vector<_Ty>::resize(size_t new_size) {
+    if (new_size < _size) {
+        _Ty* new_arr = (_Ty*)(malloc(new_size * sizeof(_Ty)));
+
+        for (size_t i = 0; i < new_size; i++) {
+            new_arr[i] = arr[i];
+        }
+
+        free(arr);
+        arr = new_arr;
+        _size = new_size;
+    }
+    else if (new_size > _size) {
+        _Ty* new_arr = (_Ty*)(malloc(new_size * sizeof(_Ty)));
+
+        for (size_t i = 0; i < _size; i++) {
+            new_arr[i] = arr[i];
+        }
+
+        for (size_t i = _size; i < new_size; i++) {
+            new_arr[i] = _Ty(); 
+        }
+
+        free(arr);
+        arr = new_arr;
+        _size = new_size;
+    }
 }
 
 template<typename _Ty>

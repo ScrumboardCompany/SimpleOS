@@ -66,7 +66,7 @@ void Terminal_commands::__command_echo(char** args) {
 	}
 }
 
-void SimpleOS::Terminal_commands::__command_help(char** args) {
+void Terminal_commands::__command_help(char** args) {
 
 	if (__check_argc(args, 0)) {
 		Terminal::lnprint("color [spec arg] [number] - set and fill color to the specified argument");
@@ -75,10 +75,16 @@ void SimpleOS::Terminal_commands::__command_help(char** args) {
 		Terminal::lnprint("clear - clears all text in the console");
 		Terminal::lnprint("reset - clears all text in the console and resets the colors");
 		Terminal::lnprint("echo [text] - prints the passed argument to the console");
+		Terminal::lnprint("cat [number] - prints a cat under the specified number");
+		Terminal::lnprint("mkfile [name] [data] - creates a file called \"name\" and adds \"data\" there");
+		Terminal::lnprint("rdfile [name] - reads data from a file named \"name\"");
+		Terminal::lnprint("rmfile [name] - deletes a file named \"name\"");
+		Terminal::lnprint("wrfile [name] [data] - overwrites data from a file named \"name\" with new \"data\"");
+		Terminal::lnprint("apfile [name] [data] - assigns new \"data\" to data from a file named \"name\"");
 	}
 }
 
-void SimpleOS::Terminal_commands::__command_cat(char** args) {
+void Terminal_commands::__command_cat(char** args) {
 
 	if (__check_argc(args, 1)) {
 		int code = atoi(args[0]);
@@ -138,7 +144,7 @@ void SimpleOS::Terminal_commands::__command_cat(char** args) {
 			(_/ (_/      ((_/)");
 			break;
 		default:
-			Terminal::print("Invalid cat");
+			Terminal::lnprint("Invalid cat");
 			break;
 		}
 	}
@@ -146,9 +152,9 @@ void SimpleOS::Terminal_commands::__command_cat(char** args) {
 
 void Terminal_commands::__command_mkfile(char** args) {
 
-	if (__check_argc(args, 1)) {
+	if (__check_argc(args, 2)) {
 
-		if (FileSystem::create_file(args[0], "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"))
+		if (FileSystem::create_file(args[0], args[1]))
 			Terminal::lnprint("Good mkfile");
 	}
 }
@@ -215,7 +221,7 @@ bool Terminal_commands::__check_argc(char** args, size_t argc) {
 	if (size == argc) return true;
 
 	Terminal::lnprint(size > argc ? "Too many arguments" : "Too few arguments");
-	
+
 	return false;
 }
 
@@ -225,12 +231,12 @@ void Terminal::call_command(const char* key, char** args) {
 		Terminal_commands::__command_color(args);
 	}
 
-	else if (strcmp(key, "fill") == 0) {
-		Terminal_commands::__command_fill(args);
-	}
-
 	else if (strcmp(key, "set") == 0) {
 		Terminal_commands::__command_set(args);
+	}
+
+	else if (strcmp(key, "fill") == 0) {
+		Terminal_commands::__command_fill(args);
 	}
 
 	else if (strcmp(key, "clear") == 0) {
@@ -254,7 +260,7 @@ void Terminal::call_command(const char* key, char** args) {
 	else if (strcmp(key, "cat") == 0) {
 		Terminal_commands::__command_cat(args);
 	}
-	
+
 	else if (strcmp(key, "mkfile") == 0) {
 		Terminal_commands::__command_mkfile(args);
 	}

@@ -15,11 +15,21 @@ namespace SimpleOS {
 	class FileSystem {
 		
 	public:
+
 		struct File {
 			size_t size = 0;
 			vector<uint32_t> sectors;
 
 		};
+
+		struct Superblock {
+			uint32_t file_table_start;
+			uint32_t total_files;   
+			uint32_t total_sectors;   
+			uint32_t free_sectors;
+		};
+
+		static void init_fs();
 
 		static bool create_file(const char* name, const char* data = nullptr);
 
@@ -29,9 +39,15 @@ namespace SimpleOS {
 
 		static bool append_to_file(const char* name, const char* data);
 
+		static bool read_superblock();
+
+		static bool write_superblock();
+
 		static bool read_file(const char* name, string& buffer);
 
 		static bool format();
+
+		static void file_info(const char* name);
 
 		static bool exist(const char* name);
 
@@ -45,6 +61,7 @@ namespace SimpleOS {
 
 		static map<string, File> files;
 		static vector<size_t> taken_sectors;
+        static Superblock block;
 	};
 
 }
