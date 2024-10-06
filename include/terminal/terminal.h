@@ -74,7 +74,7 @@ namespace SimpleOS {
 
 		static void clear();
 
-		static void delete_char();
+		static void delete_char(size_t pos);
 
 		static void delete_line();
 

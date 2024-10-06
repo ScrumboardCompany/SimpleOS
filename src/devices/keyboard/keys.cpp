@@ -8,7 +8,7 @@ using namespace SimpleOS;
 void Keyboard::__backspace(PressedKey key) {
 	if (key == Keyboard::PressedKey::Backspace) {
 		if (Terminal::get_pos() % WIDTH > 1) {
-			Terminal::delete_char();
+			Terminal::delete_char(Terminal::get_pos());
 
 			Keyboard::buffer.pop();
 			Keyboard::reset_selected_command_pos();
@@ -19,7 +19,7 @@ void Keyboard::__backspace(PressedKey key) {
 void Keyboard::__textbackspace(PressedKey key) {
 	if (key == Keyboard::PressedKey::Backspace) {
 		if (Terminal::get_pos() > 0) {
-			Terminal::delete_char();
+			Terminal::delete_char(Terminal::get_pos());
 
 			Keyboard::buffer.pop();
 		}

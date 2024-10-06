@@ -34,12 +34,14 @@ void Terminal::execute_command(const char* command) {
 	call_command(command_split[0], args);
 };
 
-void Terminal::delete_char() {
+void Terminal::delete_char(size_t pos) {
 	if (pos > 0) {
 		char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
 
-		set_pos(pos - 1);
+		--pos;
 		buffer[pos * 2] = ' ';
+
+		Terminal::pos = pos;
 		move_cursor(pos - 1);
 	}
 }
