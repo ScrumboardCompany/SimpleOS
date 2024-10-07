@@ -85,7 +85,6 @@ void Terminal::set_buffer_pos(size_t pos) {
 }
 
 void Terminal::move_cursor(size_t pos) {
-	/*uint8_t position = (uint8_t)pos + 1;*/
 	uint8_t position = (uint8_t)pos;
 
 	IRQ::port_byte_out(0x3D4, 0x0F);

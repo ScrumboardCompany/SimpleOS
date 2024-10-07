@@ -10,7 +10,6 @@ void Keyboard::__backspace(PressedKey key) {
 		if (Terminal::get_pos() % WIDTH > 1) {
 			Terminal::delete_char(Terminal::get_pos());
 
-			//Keyboard::buffer.pop();
 			Keyboard::buffer.pop(Terminal::get_buffer_pos() - 1);
 			Keyboard::reset_selected_command_pos();
 		}
@@ -86,6 +85,18 @@ void Keyboard::__arrow_up(PressedKey key) {
 void Keyboard::__arrow_down(PressedKey key) {
 	if (key == Keyboard::PressedKey::ArrowDown) {
 		__handle_arrow(false);
+	}
+}
+
+void Keyboard::__textarrow_up(PressedKey key) {
+	if (key == Keyboard::PressedKey::ArrowUp) {
+		__texthandle_arrow(true);
+	}
+}
+
+void Keyboard::__textarrow_down(PressedKey key) {
+	if (key == Keyboard::PressedKey::ArrowDown) {
+		__texthandle_arrow(false);
 	}
 }
 

@@ -102,23 +102,6 @@ namespace SimpleOS {
 			ArrowDown = 0x50,
 			ArrowLeft = 0x4B,
 			ArrowRight = 0x4D,
-			// Numpad keys
-			Numpad0 = 0x52,
-			Numpad1 = 0x4F,
-			Numpad2 = 0x50,
-			Numpad3 = 0x51,
-			Numpad4 = 0x4B,
-			Numpad5 = 0x4C,
-			Numpad6 = 0x4D,
-			Numpad7 = 0x47,
-			Numpad8 = 0x48,
-			Numpad9 = 0x49,
-			NumpadEnter = 0x9C,
-			NumpadPlus = 0x4E,
-			NumpadMinus = 0x4A,
-			NumpadMultiply = 0x37,
-			NumpadDivide = 0xB5,
-			NumpadPeriod = 0x53,
 			// Additional keys
 			Home = 0x47,
 			End = 0x4F,
@@ -159,6 +142,7 @@ namespace SimpleOS {
 
 	//private:
 		static void __handle_arrow(bool isUp);
+		static void __texthandle_arrow(bool isUp);
 
 
 		static void __backspace(PressedKey key);
@@ -172,6 +156,8 @@ namespace SimpleOS {
 		static void __textbackspace(PressedKey key);
 		static void __textenter(PressedKey key);
 		static void __textctrl(PressedKey key);
+		static void __textarrow_up(PressedKey key);
+		static void __textarrow_down(PressedKey key);
 
     };
 

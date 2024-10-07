@@ -53,10 +53,6 @@ extern "C" void SimpleOS::keyboard_handler() {
 
 	c = (Keyboard::is_caps_lock ? to_upper(c) : to_lower(c));
 
-	//if (key == Keyboard::PressedKey::X && Keyboard::ctrl_pressed) {
-	//	Terminal::lnprint("Ctrl and x were pressed");
-	//} else 
-
 	Keyboard::__capslock(key);
 
 	if (Keyboard::is_console_mode) {
@@ -71,6 +67,8 @@ extern "C" void SimpleOS::keyboard_handler() {
 		Keyboard::__textbackspace(key);
 		Keyboard::__textenter(key);
 		Keyboard::__textctrl(key);
+		Keyboard::__textarrow_up(key);
+		Keyboard::__textarrow_down(key);
 		Keyboard::__arrow_left(key);
 		Keyboard::__arrow_right(key);
 	}
@@ -78,6 +76,10 @@ extern "C" void SimpleOS::keyboard_handler() {
 	if (c) {
 		Keyboard::buffer.push(c, Keyboard::is_console_mode ? Terminal::get_buffer_pos() - 1 : Terminal::get_pos());
 		Terminal::print(c);
+		if (Keyboard::ctrl_pressed) {
+			Terminal::delete_char(Terminal::get_buffer_pos());
+			Keyboard::buffer.pop();
+		};
 
 		Keyboard::reset_selected_command_pos();
 	}
@@ -142,48 +144,6 @@ char Keyboard::get_key_char(Keyboard::PressedKey key) {
 	case Keyboard::PressedKey::LeftBracket: return '[';
 	case Keyboard::PressedKey::RightBracket: return ']';
 	case Keyboard::PressedKey::Tilde: return '`';
-	case Keyboard::PressedKey::Numpad0: return '0';
-	case Keyboard::PressedKey::Numpad1: return '1';
-	case Keyboard::PressedKey::Numpad2: return '2';
-	case Keyboard::PressedKey::Numpad3: return '3';
-	case Keyboard::PressedKey::Numpad4: return '4';
-	case Keyboard::PressedKey::Numpad5: return '5';
-	case Keyboard::PressedKey::Numpad6: return '6';
-	case Keyboard::PressedKey::Numpad7: return '7';
-	case Keyboard::PressedKey::Numpad8: return '8';
-	case Keyboard::PressedKey::Numpad9: return '9';
-	case Keyboard::PressedKey::NumpadPeriod: return '.';
-	case Keyboard::PressedKey::NumpadPlus: return '+';
-	case Keyboard::PressedKey::NumpadMinus: return '-';
-	case Keyboard::PressedKey::NumpadMultiply: return '*';
-	case Keyboard::PressedKey::NumpadDivide: return '/';
-	case Keyboard::PressedKey::Tab: return '\t';
-	case Keyboard::PressedKey::Equals: return '=';
-	case Keyboard::PressedKey::Minus: return '-';
-	case Keyboard::PressedKey::Slash: return '/';
-	case Keyboard::PressedKey::Backslash: return '\\';
-	case Keyboard::PressedKey::Semicolon: return ';';
-	case Keyboard::PressedKey::Apostrophe: return '\'';
-	case Keyboard::PressedKey::Comma: return ',';
-	case Keyboard::PressedKey::Period: return '.';
-	case Keyboard::PressedKey::LeftBracket: return '[';
-	case Keyboard::PressedKey::RightBracket: return ']';
-	case Keyboard::PressedKey::Tilde: return '`';
-	case Keyboard::PressedKey::Numpad0: return '0';
-	case Keyboard::PressedKey::Numpad1: return '1';
-	case Keyboard::PressedKey::Numpad2: return '2';
-	case Keyboard::PressedKey::Numpad3: return '3';
-	case Keyboard::PressedKey::Numpad4: return '4';
-	case Keyboard::PressedKey::Numpad5: return '5';
-	case Keyboard::PressedKey::Numpad6: return '6';
-	case Keyboard::PressedKey::Numpad7: return '7';
-	case Keyboard::PressedKey::Numpad8: return '8';
-	case Keyboard::PressedKey::Numpad9: return '9';
-	case Keyboard::PressedKey::NumpadPeriod: return '.';
-	case Keyboard::PressedKey::NumpadPlus: return '+';
-	case Keyboard::PressedKey::NumpadMinus: return '-';
-	case Keyboard::PressedKey::NumpadMultiply: return '*';
-	case Keyboard::PressedKey::NumpadDivide: return '/';
 
 	default: return _NO_CHAR;
 	}
@@ -215,6 +175,14 @@ void Keyboard::__handle_arrow(bool isUp) {
 	Terminal::delete_line();
 	Terminal::print('>');
 	Terminal::print(Keyboard::buffer);
+}
+
+void Keyboard::__texthandle_arrow(bool isUp) {
+	if (isUp && Terminal::get_pos() > 80) {
+		Terminal::set_pos(Terminal::get_pos() - 80);
+	} else if (!isUp) {
+		Terminal::set_pos(Terminal::get_pos() + 80);
+	}
 }
 
 void Keyboard::change_mode(bool is_console_mode) {
