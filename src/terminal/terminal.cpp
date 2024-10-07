@@ -1,6 +1,6 @@
 #include "terminal/terminal.h"
 #include "utils/utils.h"
-#include "IRQ/IRQ.h"
+#include "libs/io/io.h"
 
 using namespace SimpleOS;
 
@@ -40,7 +40,7 @@ void Terminal::delete_char(size_t pos) {
 		char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
 
 		--pos;
-		--buffer_pos;
+		--command.buffer_pos;
 
 		for (size_t i = pos; i < WIDTH * HEIGHT - 1; ++i) {
 			buffer[i * 2] = buffer[(i + 1) * 2];     
@@ -72,7 +72,7 @@ size_t Terminal::get_pos() {
 }
 
 size_t Terminal::get_buffer_pos() {
-	return buffer_pos;
+	return command.buffer_pos;
 }
 
 void Terminal::set_pos(size_t pos) {
@@ -81,19 +81,20 @@ void Terminal::set_pos(size_t pos) {
 }
 
 void Terminal::set_buffer_pos(size_t pos) {
-	Terminal::buffer_pos = pos;
+	command.buffer_pos = pos;
 }
 
 void Terminal::move_cursor(size_t pos) {
 	uint8_t position = (uint8_t)pos;
 
-	IRQ::port_byte_out(0x3D4, 0x0F);
-	IRQ::port_byte_out(0x3D5, (uint8_t)(position & 0xFF));
-	IRQ::port_byte_out(0x3D4, 0x0E);
-	IRQ::port_byte_out(0x3D5, (uint8_t)((position >> 8) & 0xFF));
+	outb(0x3D4, 0x0F);
+	outb(0x3D5, (uint8_t)(position & 0xFF));
+	outb(0x3D4, 0x0E);
+	outb(0x3D5, (uint8_t)((position >> 8) & 0xFF));
 }
 
 size_t Terminal::pos = 0;
-size_t Terminal::buffer_pos = 0;
 Terminal::Color Terminal::terminal_color = Terminal::Color::Grey;
 Terminal::Color Terminal::bg_color = Terminal::Color::Black;
+
+Terminal::Command Terminal::command;

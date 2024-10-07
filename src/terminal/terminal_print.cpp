@@ -37,7 +37,7 @@ void Terminal::print(char c) {
 		print(c, pos);
 
 		pos++;
-		buffer_pos++;
+		command.buffer_pos++;
 	}
 
 	move_cursor(pos);

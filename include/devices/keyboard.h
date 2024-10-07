@@ -15,7 +15,6 @@
 namespace SimpleOS {
 
     class Keyboard {
-
     public:
         enum class PressedKey : uint32_t {
 			A = 0x1E,
@@ -125,9 +124,9 @@ namespace SimpleOS {
 
 		static void change_mode(bool is_console_mode);
 
+		static void __keyboard_handler();
+
     //private:
-		
-		static string buffer;
 
 		static bool is_caps_lock;
 		static bool is_console_mode;
@@ -135,10 +134,6 @@ namespace SimpleOS {
 		static bool ctrl_pressed;
 		static bool shift_pressed;
 		static bool alt_pressed;
-
-		static vector<string> commands;
-
-		static size_t selected_command_pos;
 
 	//private:
 		static void __handle_arrow(bool isUp);
@@ -160,8 +155,8 @@ namespace SimpleOS {
 		static void __textarrow_down(PressedKey key);
 
     };
-
-	extern "C" void keyboard_handler();
 }
+
+extern "C" void keyboard_handler();
 
 #endif // _KEYBOARD_

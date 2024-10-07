@@ -1,11 +1,9 @@
 #include "devices/keyboard.h"
-#include "IDT/IDT.h"
 #include "Terminal/Terminal.h"
-#include "IRQ/IRQ.h"
+#include "IDT/IDT.h"
+#include "libs/io/io.h"
 
 using namespace SimpleOS;
-
-string Keyboard::buffer = "";
 
 bool Keyboard::is_caps_lock = false;
 bool Keyboard::is_console_mode = true;
@@ -14,14 +12,15 @@ bool Keyboard::ctrl_pressed = false;
 bool Keyboard::shift_pressed = false;
 bool Keyboard::alt_pressed = false;
 
-vector<string> Keyboard::commands;
-size_t Keyboard::selected_command_pos = -1;
-
 void Keyboard::init_keyboard() {
 	IDT::register_interrupt_handler(0x21, (uint32_t)keyboard_handler);
 }
 
-extern "C" void SimpleOS::keyboard_handler() {
+extern "C" void keyboard_handler() {
+	SimpleOS::Keyboard::__keyboard_handler();
+}
+
+void Keyboard::__keyboard_handler() {
 	Keyboard::PressedKey key = Keyboard::get_key();
 
 	char c = Keyboard::get_key_char(key);
@@ -74,7 +73,7 @@ extern "C" void SimpleOS::keyboard_handler() {
 	}
 
 	if (c) {
-		Keyboard::buffer.push(c, Keyboard::is_console_mode ? Terminal::get_buffer_pos() - 1 : Terminal::get_pos());
+		Terminal::command.buffer.push(c, Keyboard::is_console_mode ? Terminal::get_buffer_pos() - 1 : Terminal::get_pos());
 		Terminal::print(c);
 		if (Keyboard::ctrl_pressed) {
 			Terminal::delete_char(Terminal::get_buffer_pos());
@@ -84,11 +83,11 @@ extern "C" void SimpleOS::keyboard_handler() {
 		Keyboard::reset_selected_command_pos();
 	}
 
-	IRQ::port_byte_out(0x20, 0x20);
+	outb(0x20, 0x20);
 }
 
 Keyboard::PressedKey Keyboard::get_key() {
-	return (PressedKey)(IRQ::port_byte_in(0x60));
+	return (PressedKey)(inb(0x60));
 
 
 }
@@ -150,27 +149,27 @@ char Keyboard::get_key_char(Keyboard::PressedKey key) {
 }
 
 void Keyboard::reset_selected_command_pos() {
-	if (!Keyboard::commands.empty()) {
-		Keyboard::selected_command_pos = Keyboard::commands.size();
+	if (!Terminal::command.commands.empty()) {
+		Terminal::command.selected_command_pos = Terminal::command.commands.size();
 	}
-	else Keyboard::selected_command_pos = -1;
+	else Terminal::command.selected_command_pos = -1;
 }
 
 void Keyboard::__handle_arrow(bool isUp) {
-	if (!Keyboard::commands.empty() && Keyboard::selected_command_pos) {
-		if (isUp && Keyboard::selected_command_pos) {
-			if (Keyboard::selected_command_pos == 0) return;
-			--Keyboard::selected_command_pos;
+	if (!Terminal::command.commands.empty() && Terminal::command.selected_command_pos) {
+		if (isUp && Terminal::command.selected_command_pos) {
+			if (Terminal::command.selected_command_pos == 0) return;
+			--Terminal::command.selected_command_pos;
 		}
 		else {
-			if (Keyboard::selected_command_pos < Keyboard::commands.size() - 1)
-				++Keyboard::selected_command_pos;
+			if (Terminal::command.selected_command_pos < Terminal::command.commands.size() - 1)
+				++Terminal::command.selected_command_pos;
 
 			else return;
 		}
 	}
 
-	Keyboard::buffer = Keyboard::commands[Keyboard::selected_command_pos];
+	Terminal::command.buffer = Terminal::command.commands[Terminal::command.selected_command_pos];
 
 	Terminal::delete_line();
 	Terminal::print('>');
@@ -186,7 +185,7 @@ void Keyboard::__texthandle_arrow(bool isUp) {
 }
 
 void Keyboard::change_mode(bool is_console_mode) {
-	Keyboard::buffer = "";
+	Terminal::command.buffer = "";
 	Keyboard::reset_selected_command_pos();
 
 	Keyboard::is_console_mode = is_console_mode;

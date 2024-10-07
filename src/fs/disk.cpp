@@ -4,23 +4,23 @@
 using namespace SimpleOS;
 
 void SimpleOS::ata_wait_bsy() {
-    while (IRQ::port_byte_in(ATA_PRIMARY_IO_BASE + 7) & ATA_STATUS_BSY);
+    while (inb(ATA_PRIMARY_IO_BASE + 7) & ATA_STATUS_BSY);
 }
 
 void SimpleOS::ata_wait_drq() {
-    while (!(IRQ::port_byte_in(ATA_PRIMARY_IO_BASE + 7) & ATA_STATUS_DRQ));
+    while (!(inb(ATA_PRIMARY_IO_BASE + 7) & ATA_STATUS_DRQ));
 }
 
 uint32_t SimpleOS::ata_get_sector_count() {
     uint16_t buffer[256];
 
-    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 6, 0xA0);
-    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 7, ATA_COMMAND_IDENTIFY);
+    outb(ATA_PRIMARY_IO_BASE + 6, 0xA0);
+    outb(ATA_PRIMARY_IO_BASE + 7, ATA_COMMAND_IDENTIFY);
 
     ata_wait_bsy();
 
     for (int i = 0; i < 256; i++) {
-        buffer[i] = IRQ::inw(ATA_PRIMARY_IO_BASE);
+        buffer[i] = inw(ATA_PRIMARY_IO_BASE);
     }
 
     uint32_t sector_count = buffer[60] | (buffer[61] << 16);
@@ -29,18 +29,18 @@ uint32_t SimpleOS::ata_get_sector_count() {
 }
 
 void SimpleOS::ata_write_to_sector(uint32_t lba, const char* buffer) {
-    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 6, 0xE0 | ((lba >> 24) & 0x0F));
-    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 2, 1);
-    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 3, (uint8_t)lba);
-    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 4, (uint8_t)(lba >> 8));
-    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 5, (uint8_t)(lba >> 16));
-    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 7, ATA_COMMAND_WRITE);
+    outb(ATA_PRIMARY_IO_BASE + 6, 0xE0 | ((lba >> 24) & 0x0F));
+    outb(ATA_PRIMARY_IO_BASE + 2, 1);
+    outb(ATA_PRIMARY_IO_BASE + 3, (uint8_t)lba);
+    outb(ATA_PRIMARY_IO_BASE + 4, (uint8_t)(lba >> 8));
+    outb(ATA_PRIMARY_IO_BASE + 5, (uint8_t)(lba >> 16));
+    outb(ATA_PRIMARY_IO_BASE + 7, ATA_COMMAND_WRITE);
 
     ata_wait_bsy();
     ata_wait_drq();
 
     for (int i = 0; i < 256; i++) {
-        IRQ::outw(ATA_PRIMARY_IO_BASE, ((uint16_t*)buffer)[i]);
+        outw(ATA_PRIMARY_IO_BASE, ((uint16_t*)buffer)[i]);
     }
 
     ata_wait_bsy();
@@ -75,18 +75,18 @@ bool SimpleOS::ata_append_to_sector(uint32_t lba, const char* buffer) {
 }
 
 void SimpleOS::ata_read_sector(uint32_t lba, char* buffer) {
-    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 6, 0xE0 | ((lba >> 24) & 0x0F));
-    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 2, 1);
-    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 3, (uint8_t)lba);
-    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 4, (uint8_t)(lba >> 8));
-    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 5, (uint8_t)(lba >> 16));
-    IRQ::port_byte_out(ATA_PRIMARY_IO_BASE + 7, ATA_COMMAND_READ);
+    outb(ATA_PRIMARY_IO_BASE + 6, 0xE0 | ((lba >> 24) & 0x0F));
+    outb(ATA_PRIMARY_IO_BASE + 2, 1);
+    outb(ATA_PRIMARY_IO_BASE + 3, (uint8_t)lba);
+    outb(ATA_PRIMARY_IO_BASE + 4, (uint8_t)(lba >> 8));
+    outb(ATA_PRIMARY_IO_BASE + 5, (uint8_t)(lba >> 16));
+    outb(ATA_PRIMARY_IO_BASE + 7, ATA_COMMAND_READ);
 
     ata_wait_bsy();
     ata_wait_drq();
 
     for (int i = 0; i < 256; i++) {
-        ((uint16_t*)buffer)[i] = IRQ::inw(ATA_PRIMARY_IO_BASE);
+        ((uint16_t*)buffer)[i] = inw(ATA_PRIMARY_IO_BASE);
     }
 
     ata_wait_bsy();
