@@ -9,6 +9,17 @@
 
 namespace SimpleOS {
 
+    struct time {
+        u8 year;
+        u8 month;
+        u8 day;
+        u8 hour;
+        u8 minute;
+        u8 second;
+    };
+
+    time get_time();
+
     void* memset(void* ptr, int value, size_t num);
 
     char* add_char(const char* str, char c);

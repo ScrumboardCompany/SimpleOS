@@ -3,7 +3,7 @@
 #ifndef __DISK__
 #define __DISK__
 
-#include "IRQ/IRQ.h"
+#include "libs/io/io.h"
 #include "utils/typedef.h"
 #include "utils/utils.h"
 

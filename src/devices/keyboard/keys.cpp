@@ -11,7 +11,7 @@ void Keyboard::__backspace(PressedKey key) {
 			Terminal::delete_char(Terminal::get_pos());
 
 			//Keyboard::buffer.pop();
-			Keyboard::buffer.pop(Terminal::get_buffer_pos() - 1);
+			Terminal::command.buffer.pop(Terminal::get_buffer_pos() - 1);
 			Keyboard::reset_selected_command_pos();
 		}
 	}
@@ -22,21 +22,21 @@ void Keyboard::__textbackspace(PressedKey key) {
 		if (Terminal::get_pos() > 0) {
 			Terminal::delete_char(Terminal::get_pos());
 
-			Keyboard::buffer.pop(Terminal::get_pos());
+			Terminal::command.buffer.pop(Terminal::get_pos());
 		}
 	}
 }
 
 void Keyboard::__enter(PressedKey key) {
 	if (key == Keyboard::PressedKey::Enter) {
-		if (Keyboard::buffer.size() > 0) {
-			Terminal::execute_command(Keyboard::buffer.c_str());
+		if (Terminal::command.buffer.size() > 0) {
+			Terminal::execute_command(Terminal::command.buffer.c_str());
 
-			Keyboard::commands.push(Keyboard::buffer);
-			Keyboard::selected_command_pos = Keyboard::commands.size();
+			Terminal::command.commands.push(Terminal::command.buffer);
+			Terminal::command.selected_command_pos = Terminal::command.commands.size();
 
 			if (is_console_mode) {
-				Keyboard::buffer = "";
+				Terminal::command.buffer = "";
 				Terminal::print('>');
 			}
 		}
@@ -47,7 +47,7 @@ void Keyboard::__enter(PressedKey key) {
 
 void Keyboard::__textenter(PressedKey key) {
 	if (key == Keyboard::PressedKey::Enter) {
-		buffer.push('\n');
+		Terminal::command.buffer.push('\n');
 		Terminal::new_line();
 	}
 }
@@ -66,7 +66,7 @@ void Keyboard::__textctrl(PressedKey key) {
 
 		if (opened_file != "") {
 
-			FileSystem::write_to_file(opened_file.c_str(), buffer.c_str());
+			FileSystem::write_to_file(opened_file.c_str(), Terminal::command.buffer.c_str());
 
 			change_mode(true);
 			FileSystem::close_file();
@@ -101,7 +101,7 @@ void Keyboard::__arrow_left(PressedKey key) {
 
 void Keyboard::__arrow_right(PressedKey key) {
 	if (key == Keyboard::PressedKey::ArrowRight) {
-		if (Terminal::get_pos() < Keyboard::buffer.size() + 1) {
+		if (Terminal::get_pos() < Terminal::command.buffer.size() + 1) {
 			Terminal::set_pos(Terminal::get_pos() + 1);
 			Terminal::set_buffer_pos(Terminal::get_buffer_pos() + 1);
 			Terminal::move_cursor(Terminal::get_pos());

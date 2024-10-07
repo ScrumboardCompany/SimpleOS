@@ -239,10 +239,30 @@ void Terminal_commands::__command_open(char** args) {
 			Keyboard::change_mode(false);
 
 			Terminal::print(buffer);
-			Keyboard::buffer = buffer;
+			Terminal::command.buffer = buffer;
 			//Terminal::lnprint("Keyboard buffer: ");
 			//Terminal::print(Keyboard::buffer);
 		}
+	}
+}
+
+void Terminal_commands::__command_time(char** args) {
+
+	if (__check_argc(args, 0)) {
+
+		time current_time = get_time();
+
+		Terminal::lnprint((int)current_time.hour);
+		Terminal::print(':');
+		Terminal::print((int)current_time.minute);
+		Terminal::print(':');
+		Terminal::print((int)current_time.second);
+
+		Terminal::lnprint((int)current_time.day);
+		Terminal::print('.');
+		Terminal::print((int)current_time.month);
+		Terminal::print('.');
+		Terminal::print((int)current_time.year);
 	}
 }
 
@@ -323,6 +343,10 @@ void Terminal::call_command(const char* key, char** args) {
 	else if (strcmp(key, "open") == 0) {
 		Terminal_commands::__command_open(args);
 		return;
+	}
+
+	else if (strcmp(key, "time") == 0) {
+		Terminal_commands::__command_time(args);
 	}
 
 	else if (strcmp(key, "rdsector") == 0) {

@@ -6,6 +6,7 @@
 #include "utils/typedef.h"
 #include "terminal/terminal_commands.h"
 #include "libs/string/class.h"
+#include "libs/vector/vector.h"
 #include <stdint.h>
 
 #define VIDEO_MEMORY_ADDRESS 0xB8000
@@ -17,15 +18,25 @@ namespace SimpleOS {
 
 	class Terminal {
 		friend class Terminal_commands;
+		friend class Keyboard;
 	public:
 		enum class Color : uint8_t;
 
 	private:
 
+		struct Command {
+
+			string buffer;
+			size_t buffer_pos;
+			vector<string> commands;
+			size_t selected_command_pos;
+		};
+
 		static size_t pos;
-		static size_t buffer_pos;
 		static Color terminal_color;
 		static Color bg_color;
+
+		static Command command;
 		
 		static void to_args(char** command_split, char** args, size_t size_command_split);
 

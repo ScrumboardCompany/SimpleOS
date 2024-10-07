@@ -1,14 +1,14 @@
 #include "graphics/graphics.h"
 #include "IDT/IDT.h"
-#include "IRQ/IRQ.h"
+#include "libs/io/io.h"
 
 using namespace SimpleOS;
 
 void Video::set_vga_mode() {
-    IRQ::port_byte_out(0x3C2, 0x63);
+    outb(0x3C2, 0x63);
 
-    IRQ::port_byte_out(0x3D4, 0x11);
-    IRQ::port_byte_out(0x3D5, 0x80);
+    outb(0x3D4, 0x11);
+    outb(0x3D5, 0x80);
 
     static unsigned char g_320x200x256[] = {
         0x5F, 0x4F, 0x50, 0x82, 0x54, 0x80, 0xBF, 0x1F, 0x00, 0x41,
@@ -17,27 +17,27 @@ void Video::set_vga_mode() {
     };
 
     for (size_t i = 0; i < sizeof(g_320x200x256); i++) {
-        IRQ::port_byte_out(0x3D4, i);
-        IRQ::port_byte_out(0x3D5, g_320x200x256[i]);
+        outb(0x3D4, i);
+        outb(0x3D5, g_320x200x256[i]);
     }
 
-    IRQ::port_byte_out(0x3CE, 0x00);
-    IRQ::port_byte_out(0x3CF, 0x00);
+    outb(0x3CE, 0x00);
+    outb(0x3CF, 0x00);
 
-    IRQ::port_byte_out(0x3CE, 0x01);
-    IRQ::port_byte_out(0x3CF, 0x00);
+    outb(0x3CE, 0x01);
+    outb(0x3CF, 0x00);
 
-    IRQ::port_byte_out(0x3CE, 0x05);
-    IRQ::port_byte_out(0x3CF, 0x40);
+    outb(0x3CE, 0x05);
+    outb(0x3CF, 0x40);
 
-    IRQ::port_byte_out(0x3CE, 0x06);
-    IRQ::port_byte_out(0x3CF, 0x05);
+    outb(0x3CE, 0x06);
+    outb(0x3CF, 0x05);
 
     for (int i = 0; i < 16; i++) {
-        IRQ::port_byte_out(0x3C0, i);
-        IRQ::port_byte_out(0x3C0, i);
+        outb(0x3C0, i);
+        outb(0x3C0, i);
     }
-    IRQ::port_byte_out(0x3C0, 0x20);
+    outb(0x3C0, 0x20);
 }
 
 void Video::draw_pixel(int x, int y, uint8_t color) {
