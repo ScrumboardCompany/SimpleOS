@@ -62,8 +62,13 @@ namespace SimpleOS {
 			Backspace = 0x0E,
 			Tab = 0x0F,
 			Shift = 0x2A,
+			RightShift = 0x36,
+			ShiftReleased = 0xAA,
+			RightShiftReleased = 0xB6,
 			Ctrl = 0x1D,
+			CtrlReleased = 0x9D,
 			Alt = 0x38,
+			AltReleased = 0xB8,
 			CapsLock = 0x3A,
 			F1 = 0x3B,
 			F2 = 0x3C,
@@ -77,11 +82,54 @@ namespace SimpleOS {
 			F10 = 0x44,
 			F11 = 0x57,
 			F12 = 0x58,
+			Equals = 0x0D,    
+			Minus = 0x0C,     
+			Slash = 0x35,     
+			Backslash = 0x2B,
+			Semicolon = 0x27,  
+			Apostrophe = 0x28, 
+			Comma = 0x33,      
+			Period = 0x34,  
+			LeftBracket = 0x1A,
+			RightBracket = 0x1B,
+			Tilde = 0x29,      
+			Plus = 0x0D,     
+			QuestionMark = 0x35,
+			Colon = 0x27,    
+			Quote = 0x28,
 			// Arrow keys
 			ArrowUp = 0x48,
 			ArrowDown = 0x50,
 			ArrowLeft = 0x4B,
-			ArrowRight = 0x4D
+			ArrowRight = 0x4D,
+			// Numpad keys
+			Numpad0 = 0x52,
+			Numpad1 = 0x4F,
+			Numpad2 = 0x50,
+			Numpad3 = 0x51,
+			Numpad4 = 0x4B,
+			Numpad5 = 0x4C,
+			Numpad6 = 0x4D,
+			Numpad7 = 0x47,
+			Numpad8 = 0x48,
+			Numpad9 = 0x49,
+			NumpadEnter = 0x9C,
+			NumpadPlus = 0x4E,
+			NumpadMinus = 0x4A,
+			NumpadMultiply = 0x37,
+			NumpadDivide = 0xB5,
+			NumpadPeriod = 0x53,
+			// Additional keys
+			Home = 0x47,
+			End = 0x4F,
+			PageUp = 0x49,
+			PageDown = 0x51,
+			Insert = 0x52,
+			Delete = 0x53,
+			PrintScreen = 0xB7,
+			ScrollLock = 0x46,
+			Pause = 0x45,
+			NumLock = 0x45
 		};
 
         static void init_keyboard();
@@ -100,6 +148,10 @@ namespace SimpleOS {
 
 		static bool is_caps_lock;
 		static bool is_console_mode;
+
+		static bool ctrl_pressed;
+		static bool shift_pressed;
+		static bool alt_pressed;
 
 		static vector<string> commands;
 

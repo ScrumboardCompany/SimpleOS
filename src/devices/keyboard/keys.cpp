@@ -59,19 +59,14 @@ void Keyboard::__capslock(PressedKey key) {
 }
 
 void Keyboard::__textctrl(PressedKey key) {
-	if (key == Keyboard::PressedKey::Ctrl) {
+	if (key == Keyboard::PressedKey::X && ctrl_pressed) {
 
-		//Terminal::lnprint("Ctrl + x good");
 		string opened_file = FileSystem::get_opened_file();
-		//Terminal::lnprint("opened file: ");
-		//Terminal::print(opened_file);
 		string temp;
 
 		if (opened_file != "") {
-			//Terminal::lnprint("good opened file");
 
 			FileSystem::write_to_file(opened_file.c_str(), buffer.c_str());
-			temp = buffer;
 
 			change_mode(true);
 			FileSystem::close_file();
@@ -79,7 +74,6 @@ void Keyboard::__textctrl(PressedKey key) {
 		}
 		Terminal::print('>');
 
-		Terminal::print(temp);
 	}
 }
 

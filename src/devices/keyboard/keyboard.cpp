@@ -10,6 +10,10 @@ string Keyboard::buffer = "";
 bool Keyboard::is_caps_lock = false;
 bool Keyboard::is_console_mode = true;
 
+bool Keyboard::ctrl_pressed = false;
+bool Keyboard::shift_pressed = false;
+bool Keyboard::alt_pressed = false;
+
 vector<string> Keyboard::commands;
 size_t Keyboard::selected_command_pos = -1;
 
@@ -22,14 +26,36 @@ extern "C" void SimpleOS::keyboard_handler() {
 
 	char c = Keyboard::get_key_char(key);
 
+	switch (key) {
+	case Keyboard::PressedKey::Ctrl:
+		Keyboard::ctrl_pressed = true;
+		break;
+	case Keyboard::PressedKey::CtrlReleased:
+		Keyboard::ctrl_pressed = false;
+		break;
+	case Keyboard::PressedKey::Shift:
+	case Keyboard::PressedKey::RightShift:
+		Keyboard::shift_pressed = true;
+		break;
+	case Keyboard::PressedKey::ShiftReleased:
+	case Keyboard::PressedKey::RightShiftReleased:
+		Keyboard::shift_pressed = false;
+		break;
+	case Keyboard::PressedKey::Alt:
+		Keyboard::alt_pressed = true;
+		break;
+	case Keyboard::PressedKey::AltReleased:
+		Keyboard::alt_pressed = false;
+		break;
+	default:
+		break;
+	}
+
 	c = (Keyboard::is_caps_lock ? to_upper(c) : to_lower(c));
 
-	if (c) {
-		Keyboard::buffer.push(c, Keyboard::is_console_mode ? Terminal::get_buffer_pos() - 1 : Terminal::get_pos());
-		Terminal::print(c);
-
-		Keyboard::reset_selected_command_pos();
-	}
+	//if (key == Keyboard::PressedKey::X && Keyboard::ctrl_pressed) {
+	//	Terminal::lnprint("Ctrl and x were pressed");
+	//} else 
 
 	Keyboard::__capslock(key);
 
@@ -49,11 +75,20 @@ extern "C" void SimpleOS::keyboard_handler() {
 		Keyboard::__arrow_right(key);
 	}
 
+	if (c) {
+		Keyboard::buffer.push(c, Keyboard::is_console_mode ? Terminal::get_buffer_pos() - 1 : Terminal::get_pos());
+		Terminal::print(c);
+
+		Keyboard::reset_selected_command_pos();
+	}
+
 	IRQ::port_byte_out(0x20, 0x20);
 }
 
 Keyboard::PressedKey Keyboard::get_key() {
 	return (PressedKey)(IRQ::port_byte_in(0x60));
+
+
 }
 
 char Keyboard::get_key_char(Keyboard::PressedKey key) {
@@ -95,7 +130,34 @@ char Keyboard::get_key_char(Keyboard::PressedKey key) {
 	case Keyboard::PressedKey::Num8: return '8';
 	case Keyboard::PressedKey::Num9: return '9';
 	case Keyboard::PressedKey::Space: return ' ';
-	case Keyboard::PressedKey::Tab:   return '\t';
+	case Keyboard::PressedKey::Tab: return '\t';
+	case Keyboard::PressedKey::Equals: return '=';
+	case Keyboard::PressedKey::Minus: return '-';
+	case Keyboard::PressedKey::Slash: return '/';
+	case Keyboard::PressedKey::Backslash: return '\\';
+	case Keyboard::PressedKey::Semicolon: return ';';
+	case Keyboard::PressedKey::Apostrophe: return '\'';
+	case Keyboard::PressedKey::Comma: return ',';
+	case Keyboard::PressedKey::Period: return '.';
+	case Keyboard::PressedKey::LeftBracket: return '[';
+	case Keyboard::PressedKey::RightBracket: return ']';
+	case Keyboard::PressedKey::Tilde: return '`';
+	case Keyboard::PressedKey::Numpad0: return '0';
+	case Keyboard::PressedKey::Numpad1: return '1';
+	case Keyboard::PressedKey::Numpad2: return '2';
+	case Keyboard::PressedKey::Numpad3: return '3';
+	case Keyboard::PressedKey::Numpad4: return '4';
+	case Keyboard::PressedKey::Numpad5: return '5';
+	case Keyboard::PressedKey::Numpad6: return '6';
+	case Keyboard::PressedKey::Numpad7: return '7';
+	case Keyboard::PressedKey::Numpad8: return '8';
+	case Keyboard::PressedKey::Numpad9: return '9';
+	case Keyboard::PressedKey::NumpadPeriod: return '.';
+	case Keyboard::PressedKey::NumpadPlus: return '+';
+	case Keyboard::PressedKey::NumpadMinus: return '-';
+	case Keyboard::PressedKey::NumpadMultiply: return '*';
+	case Keyboard::PressedKey::NumpadDivide: return '/';
+
 	default: return _NO_CHAR;
 	}
 }
