@@ -95,7 +95,33 @@ char Keyboard::get_key_char(Keyboard::PressedKey key) {
 	case Keyboard::PressedKey::Num8: return '8';
 	case Keyboard::PressedKey::Num9: return '9';
 	case Keyboard::PressedKey::Space: return ' ';
-	case Keyboard::PressedKey::Tab:   return '\t';
+	case Keyboard::PressedKey::Tab: return '\t';
+	case Keyboard::PressedKey::Equals: return '=';
+	case Keyboard::PressedKey::Minus: return '-';
+	case Keyboard::PressedKey::Slash: return '/';
+	case Keyboard::PressedKey::Backslash: return '\\';
+	case Keyboard::PressedKey::Semicolon: return ';';
+	case Keyboard::PressedKey::Apostrophe: return '\'';
+	case Keyboard::PressedKey::Comma: return ',';
+	case Keyboard::PressedKey::Period: return '.';
+	case Keyboard::PressedKey::LeftBracket: return '[';
+	case Keyboard::PressedKey::RightBracket: return ']';
+	case Keyboard::PressedKey::Tilde: return '`';
+	case Keyboard::PressedKey::Numpad0: return '0';
+	case Keyboard::PressedKey::Numpad1: return '1';
+	case Keyboard::PressedKey::Numpad2: return '2';
+	case Keyboard::PressedKey::Numpad3: return '3';
+	case Keyboard::PressedKey::Numpad4: return '4';
+	case Keyboard::PressedKey::Numpad5: return '5';
+	case Keyboard::PressedKey::Numpad6: return '6';
+	case Keyboard::PressedKey::Numpad7: return '7';
+	case Keyboard::PressedKey::Numpad8: return '8';
+	case Keyboard::PressedKey::Numpad9: return '9';
+	case Keyboard::PressedKey::NumpadPeriod: return '.';
+	case Keyboard::PressedKey::NumpadPlus: return '+';
+	case Keyboard::PressedKey::NumpadMinus: return '-';
+	case Keyboard::PressedKey::NumpadMultiply: return '*';
+	case Keyboard::PressedKey::NumpadDivide: return '/';
 	default: return _NO_CHAR;
 	}
 }
