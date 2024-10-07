@@ -26,7 +26,11 @@ namespace SimpleOS {
 
 		void push(const char c);
 
+		void push(const char c, size_t pos);
+
 		void pop();
+
+		void pop(size_t pos);
 
 		void clear();
 

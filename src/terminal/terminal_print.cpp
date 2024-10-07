@@ -25,8 +25,22 @@ void Terminal::print(char c) {
 	} else if (c == '\t') {
 		print("   ");
 	}
-	else print(c, pos++);
-	move_cursor(pos - 1);
+	else {
+		if (pos < WIDTH* HEIGHT - 1) {
+			for (size_t i = WIDTH * HEIGHT - 1; i > pos; --i) {
+				char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
+				buffer[i * 2] = buffer[(i - 1) * 2];
+				buffer[i * 2 + 1] = buffer[(i - 1) * 2 + 1];
+			}
+		}
+
+		print(c, pos);
+
+		pos++;
+		buffer_pos++;
+	}
+
+	move_cursor(pos);
 }
 
 void Terminal::print(int n) {

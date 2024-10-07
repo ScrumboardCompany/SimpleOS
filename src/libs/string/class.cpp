@@ -69,6 +69,29 @@ void string::push(const char c) {
 	this->operator=(newStr);
 }
 
+void string::push(const char c, size_t pos) {
+	if (pos > length) pos = length;
+
+	string newStr;
+
+	newStr.str = (char*)malloc(length + 2); 
+	newStr.length = length + 1;
+
+	for (size_t i = 0; i < pos; i++) {
+		newStr.str[i] = str[i];
+	}
+
+	newStr.str[pos] = c;
+
+	for (size_t i = pos; i < length; i++) {
+		newStr.str[i + 1] = str[i];
+	}
+
+	newStr.str[newStr.length] = '\0';
+
+	this->operator=(newStr);
+}
+
 void string::pop() {
 	string newStr;
 
@@ -77,6 +100,27 @@ void string::pop() {
 
 	for (size_t i = 0; i < newStr.length; i++) {
 		newStr.str[i] = str[i];
+	}
+
+	newStr.str[newStr.length] = '\0';
+
+	this->operator=(newStr);
+}
+
+void string::pop(size_t pos) {
+	if (pos >= length) return;
+
+	string newStr;
+
+	newStr.str = (char*)malloc(length); 
+	newStr.length = length - 1;
+
+	for (size_t i = 0; i < pos; i++) {
+		newStr.str[i] = str[i];
+	}
+
+	for (size_t i = pos + 1; i < length; i++) {
+		newStr.str[i - 1] = str[i];
 	}
 
 	newStr.str[newStr.length] = '\0';

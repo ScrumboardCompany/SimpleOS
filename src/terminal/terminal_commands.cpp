@@ -54,6 +54,7 @@ void Terminal_commands::__command_reset(char** args) {
 	if (__check_argc(args, 0)) {
 		Terminal::reload(' ', Terminal::Color::Grey, Terminal::Color::Black);
 		Terminal::set_pos(0);
+		Terminal::set_buffer_pos(0);
 
 		Terminal::terminal_color = Terminal::Color::Grey;
 		Terminal::bg_color = Terminal::Color::Black;

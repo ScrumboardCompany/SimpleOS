@@ -114,6 +114,8 @@ namespace SimpleOS {
 		static void __capslock(PressedKey key);
 		static void __arrow_up(PressedKey key);
 		static void __arrow_down(PressedKey key);
+		static void __arrow_left(PressedKey key);
+		static void __arrow_right(PressedKey key);
 
 		static void __textbackspace(PressedKey key);
 		static void __textenter(PressedKey key);

@@ -18,6 +18,7 @@ void Terminal::reload(char c, Color char_color, Color background_color) {
 void Terminal::clear() {
 	reload(' ', terminal_color, bg_color);
 	set_pos(0);
+	set_buffer_pos(0);
 }
 
 void Terminal::execute_command(const char* command) {
@@ -39,10 +40,18 @@ void Terminal::delete_char(size_t pos) {
 		char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
 
 		--pos;
-		buffer[pos * 2] = ' ';
+		--buffer_pos;
+
+		for (size_t i = pos; i < WIDTH * HEIGHT - 1; ++i) {
+			buffer[i * 2] = buffer[(i + 1) * 2];     
+			buffer[i * 2 + 1] = buffer[(i + 1) * 2 + 1];
+		}
+
+		buffer[(WIDTH * HEIGHT - 1) * 2] = ' ';
+		buffer[(WIDTH * HEIGHT - 1) * 2 + 1] = ((uint8_t)bg_color << 4) | (uint8_t)terminal_color;
 
 		Terminal::pos = pos;
-		move_cursor(pos - 1);
+		move_cursor(pos);
 	}
 }
 
@@ -55,10 +64,15 @@ void Terminal::delete_line() {
 	}
 
 	set_pos(line_start);
+	set_buffer_pos(0);
 }
 
 size_t Terminal::get_pos() {
 	return pos;
+}
+
+size_t Terminal::get_buffer_pos() {
+	return buffer_pos;
 }
 
 void Terminal::set_pos(size_t pos) {
@@ -66,8 +80,13 @@ void Terminal::set_pos(size_t pos) {
 	move_cursor(pos);
 }
 
+void Terminal::set_buffer_pos(size_t pos) {
+	Terminal::buffer_pos = pos;
+}
+
 void Terminal::move_cursor(size_t pos) {
-	uint8_t position = (uint8_t)pos + 1;
+	/*uint8_t position = (uint8_t)pos + 1;*/
+	uint8_t position = (uint8_t)pos;
 
 	IRQ::port_byte_out(0x3D4, 0x0F);
 	IRQ::port_byte_out(0x3D5, (uint8_t)(position & 0xFF));
@@ -76,5 +95,6 @@ void Terminal::move_cursor(size_t pos) {
 }
 
 size_t Terminal::pos = 0;
+size_t Terminal::buffer_pos = 0;
 Terminal::Color Terminal::terminal_color = Terminal::Color::Grey;
 Terminal::Color Terminal::bg_color = Terminal::Color::Black;

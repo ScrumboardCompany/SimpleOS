@@ -29,8 +29,10 @@ void Terminal::new_line() {
 		}
 
 		set_pos((HEIGHT - 1) * WIDTH);
+		set_buffer_pos(0);
 	}
 	else {
 		set_pos((pos / WIDTH + 1) * WIDTH);
+		set_buffer_pos(0);
 	}
 }

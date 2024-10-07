@@ -23,6 +23,7 @@ namespace SimpleOS {
 	private:
 
 		static size_t pos;
+		static size_t buffer_pos;
 		static Color terminal_color;
 		static Color bg_color;
 		
@@ -84,7 +85,11 @@ namespace SimpleOS {
 
 		static size_t get_pos();
 
+		static size_t get_buffer_pos();
+
 		static void set_pos(size_t pos);
+
+		static void set_buffer_pos(size_t pos);
 
 		static void move_cursor(size_t position);
 
