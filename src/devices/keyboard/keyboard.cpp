@@ -84,12 +84,10 @@ void Keyboard::__keyboard_handler() {
 			Terminal::command.buffer.push(Terminal::command.clipboard, Terminal::command.buffer_pos - 1);
 			Terminal::clear_highlighted_buffer();
 
-			//Terminal::delete_line();
-			//Terminal::print('>');
-			//Terminal::print(Terminal::command.buffer);
 			Terminal::print(Terminal::command.clipboard);
 		}
 		else {
+			if (!Terminal::command.highlighted_buffer.empty()) Terminal::delete_highlighted_text();
 			Terminal::command.buffer.push(c, Keyboard::is_console_mode ? Terminal::get_buffer_pos() - 1 : Terminal::get_pos());
 			Terminal::print(c);
 		}

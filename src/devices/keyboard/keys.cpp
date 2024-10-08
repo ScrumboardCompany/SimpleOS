@@ -3,16 +3,19 @@
 #include "fs/fs.h"
 #include "utils/utils.h"
 
-
 using namespace SimpleOS;
 
 void Keyboard::__backspace(PressedKey key) {
 	if (key == Keyboard::PressedKey::Backspace) {
-		if (Terminal::get_pos() % WIDTH > 1) {
+		if (!Terminal::command.highlighted_buffer.empty()) {
+
+
+			Terminal::delete_highlighted_text();
+
+		}
+		else if (Terminal::get_pos() % WIDTH > 1) {
 			Terminal::delete_char(Terminal::get_pos());
-
 			Terminal::command.buffer.pop(Terminal::get_buffer_pos() - 1);
-
 			Keyboard::reset_selected_command_pos();
 		}
 	}
@@ -135,7 +138,7 @@ void Keyboard::__arrow_left(PressedKey key) {
 			}
 
 			Terminal::set_pos(Terminal::get_pos() - 1);
-			Terminal::set_buffer_pos(Terminal::get_buffer_pos() - 1);
+			Terminal::set_buffer_pos(Terminal::get_buffer_pos() > 1 ? Terminal::get_buffer_pos() - 1 : Terminal::get_buffer_pos());
 			Terminal::move_cursor(Terminal::get_pos());
 		}
 	}
@@ -143,7 +146,7 @@ void Keyboard::__arrow_left(PressedKey key) {
 
 void Keyboard::__arrow_right(PressedKey key) {
 	if (key == Keyboard::PressedKey::ArrowRight) {
-		if (Terminal::get_pos() < Terminal::command.buffer.size() + 1) {
+		if (Terminal::get_buffer_pos() < Terminal::command.buffer.size() + 1) {
 			if (shift_pressed) {
 
 				if (Terminal::get_highlighted_buffer_pos() == 0) Terminal::command.highlighted_buffer_start_pos = Terminal::get_buffer_pos();

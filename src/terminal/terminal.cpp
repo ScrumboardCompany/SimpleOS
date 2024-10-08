@@ -116,6 +116,10 @@ ssize_t Terminal::get_highlighted_buffer_pos() {
 	return command.highlighted_buffer_pos;
 }
 
+size_t Terminal::get_highlighted_buffer_start_pos() {
+	return command.highlighted_buffer_start_pos;
+}
+
 void Terminal::set_highlighted_buffer_pos(ssize_t pos) {
 	command.highlighted_buffer_pos = pos;
 }
@@ -123,6 +127,41 @@ void Terminal::set_highlighted_buffer_pos(ssize_t pos) {
 void Terminal::clear_highlighted_buffer() {
 	command.highlighted_buffer = "";
 	command.highlighted_buffer_pos = 0;
+	command.highlighted_buffer_start_pos = 0;
+}
+
+void Terminal::delete_highlighted_text() {
+
+	if (Terminal::command.buffer.size() == Terminal::command.highlighted_buffer.size()) {
+		Terminal::delete_line();
+		Terminal::print('>');
+		Terminal::command.buffer = "";
+	}
+	else if (Terminal::command.highlighted_buffer_pos < 0) {
+		size_t start = Terminal::command.highlighted_buffer_start_pos + Terminal::command.highlighted_buffer_pos;
+		size_t current_buffer_pos = Terminal::get_buffer_pos();
+		// Can do the same thing with the pos
+
+		for (size_t i = start; i < Terminal::command.highlighted_buffer_start_pos; i++) {
+			Terminal::delete_char(Terminal::get_pos() + 1);
+
+			Terminal::command.buffer.pop(start - 1);
+		}
+
+		Terminal::set_buffer_pos(current_buffer_pos);
+	}
+	else if (Terminal::command.highlighted_buffer_pos > 0) {
+		size_t start = Terminal::command.highlighted_buffer_start_pos;
+
+		for (size_t i = start; i < Terminal::command.highlighted_buffer_pos + start; i++) {
+			Terminal::delete_char(Terminal::get_pos());
+
+			Terminal::command.buffer.pop(start - 1);
+		}
+	}
+
+	Terminal::clear_highlighted_buffer();
+	Terminal::restore_default_bg_color();
 }
 
 void Terminal::move_cursor(size_t pos) {

@@ -364,6 +364,7 @@ void Terminal::call_command(const char* key, char** args) {
 		Terminal::lnprint(Terminal::command.highlighted_buffer);
 		Terminal::lnprint((int)Terminal::command.highlighted_buffer_pos);
 		Terminal::lnprint((int)Terminal::command.highlighted_buffer_start_pos);
+		Terminal::lnprint((int)Terminal::get_pos());
 	}
 
 	else {

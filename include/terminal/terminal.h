@@ -110,9 +110,13 @@ namespace SimpleOS {
 
 		static ssize_t get_highlighted_buffer_pos();
 
+		static size_t get_highlighted_buffer_start_pos();
+
 		static void set_highlighted_buffer_pos(ssize_t pos);
 
 		static void clear_highlighted_buffer();
+
+		static void delete_highlighted_text();
 
 		static void move_cursor(size_t position);
 
