@@ -75,6 +75,8 @@ inline void vector<_Ty>::push(_Ty value) {
 template<typename _Ty>
 inline void vector<_Ty>::pop() {
 
+    if (empty()) return;
+
     if (_size) {
         _Ty* new_arr = (_Ty*)(malloc((_size + 1) * sizeof(_Ty)));
 
@@ -91,6 +93,8 @@ inline void vector<_Ty>::pop() {
 
 template<typename _Ty>
 inline void vector<_Ty>::pop(size_t index) {
+    if (index >= _size || empty()) return;
+
     if (valid_index(index)) {
         _Ty* new_arr = (_Ty*)(malloc((_size - 1) * sizeof(_Ty)));
 

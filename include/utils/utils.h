@@ -29,6 +29,8 @@ namespace SimpleOS {
     char** split(const char* str, char delimiter, int* size);
 
     size_t get_size(char** array);
+
+    size_t abs(int num);
     
     template<class _Ty>
     _Ty min(_Ty a, _Ty b) {

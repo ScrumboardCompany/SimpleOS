@@ -136,3 +136,7 @@ size_t SimpleOS::get_size(char** array) {
 
     return size;
 }
+
+size_t SimpleOS::abs(int x) {
+    return x < 0 ? -x : x;
+}

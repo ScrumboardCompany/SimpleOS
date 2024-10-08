@@ -73,12 +73,26 @@ void Keyboard::__keyboard_handler() {
 	}
 
 	if (c) {
-		Terminal::command.buffer.push(c, Keyboard::is_console_mode ? Terminal::get_buffer_pos() - 1 : Terminal::get_pos());
-		Terminal::print(c);
-		if (Keyboard::ctrl_pressed) {
-			Terminal::delete_char(Terminal::get_buffer_pos());
-			Keyboard::buffer.pop();
-		};
+		
+		if (key == Keyboard::PressedKey::C && ctrl_pressed) {
+			if (Terminal::command.highlighted_buffer != "") {
+				Terminal::command.clipboard = Terminal::command.highlighted_buffer;
+				Terminal::clear_highlighted_buffer();
+			}
+		}
+		else if (key == Keyboard::PressedKey::V && ctrl_pressed) {
+			Terminal::command.buffer.push(Terminal::command.clipboard, Terminal::command.buffer_pos - 1);
+			Terminal::clear_highlighted_buffer();
+
+			//Terminal::delete_line();
+			//Terminal::print('>');
+			//Terminal::print(Terminal::command.buffer);
+			Terminal::print(Terminal::command.clipboard);
+		}
+		else {
+			Terminal::command.buffer.push(c, Keyboard::is_console_mode ? Terminal::get_buffer_pos() - 1 : Terminal::get_pos());
+			Terminal::print(c);
+		}
 
 		Keyboard::reset_selected_command_pos();
 	}
@@ -173,7 +187,7 @@ void Keyboard::__handle_arrow(bool isUp) {
 
 	Terminal::delete_line();
 	Terminal::print('>');
-	Terminal::print(Keyboard::buffer);
+	Terminal::print(Terminal::command.buffer);
 }
 
 void Keyboard::__texthandle_arrow(bool isUp) {

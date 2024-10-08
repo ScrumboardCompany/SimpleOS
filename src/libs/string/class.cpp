@@ -22,6 +22,15 @@ string::string(const char* str)
 	this->str[length] = '\0';
 };
 
+string::string(const char c) {
+	length = 1;
+	this->str = (char*)malloc(2);
+
+	this->str[0] = c;
+
+	this->str[1] = '\0';
+}
+
 string::string(const string& other) {
 	if (other.str == nullptr) {
 		str = nullptr;
@@ -92,7 +101,17 @@ void string::push(const char c, size_t pos) {
 	this->operator=(newStr);
 }
 
+void string::push(const string& other, size_t pos) {
+	if (pos > length) pos = length;
+	
+	for (size_t i = 0; i < other.length; i++) {
+		push(other.str[i], pos++);
+	}
+}
+
 void string::pop() {
+	if (empty()) return;
+
 	string newStr;
 
 	newStr.str = (char*)malloc(length);
@@ -108,7 +127,7 @@ void string::pop() {
 }
 
 void string::pop(size_t pos) {
-	if (pos >= length) return;
+	if (pos >= length || empty()) return;
 
 	string newStr;
 
@@ -125,6 +144,26 @@ void string::pop(size_t pos) {
 
 	newStr.str[newStr.length] = '\0';
 
+	this->operator=(newStr);
+}
+
+void string::erase(size_t pos, size_t count) {
+	if (pos >= length || count == 0 || empty()) return;
+	if (pos + count > length) count = length - pos;
+
+	string newStr;
+	newStr.length = length - count;
+	newStr.str = (char*)malloc(newStr.length + 1);
+
+	for (size_t i = 0; i < pos; i++) {
+		newStr.str[i] = str[i];
+	}
+
+	for (size_t i = pos + count; i < length; i++) {
+		newStr.str[i - count] = str[i];
+	}
+
+	newStr.str[newStr.length] = '\0';
 	this->operator=(newStr);
 }
 
@@ -194,12 +233,47 @@ string string::operator + (const string& other) {
 	return newStr;
 };
 
+string string::operator+(const char c) {
+	string newStr;
+
+	size_t thisLen = length;
+
+	newStr.length = thisLen + 1;
+
+	newStr.str = (char*)malloc(newStr.length + 1);
+
+	for (size_t i = 0; i < thisLen; i++) {
+		newStr.str[i] = str[i];
+	}
+
+	newStr.str[thisLen] = c;
+
+	newStr.str[thisLen + 1] = '\0';
+
+	return newStr;
+}
+
+//string operator+(const char c, const string& str) {
+//	string newStr;
+//	newStr.push(c);  
+//	newStr = newStr + str;  
+//	return newStr;
+//}
+
 bool string::operator ==(const string& other) const {
 	return strcmp(str, other.str) == 0;
 };
 
+bool string::operator ==(const char* str) const {
+	return strcmp(this->str, str) == 0;
+};
+
 bool string::operator !=(const string& other) const {
 	return strcmp(str, other.str) != 0;
+};
+
+bool string::operator !=(const char* str) const {
+	return strcmp(this->str, str) != 0;
 };
 
 bool string::operator <(const char* other) const {
@@ -221,3 +295,7 @@ bool string::operator >(const string& other) const {
 char& string::operator [](size_t index) {
 	return str[index];
 };
+
+bool string::empty() const {
+	return str == nullptr || str[0] == '\0';
+}

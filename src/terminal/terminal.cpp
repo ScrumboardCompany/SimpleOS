@@ -19,6 +19,8 @@ void Terminal::clear() {
 	reload(' ', terminal_color, bg_color);
 	set_pos(0);
 	set_buffer_pos(0);
+	//clear_highlighted_buffer();
+	//restore_default_bg_color();
 }
 
 void Terminal::execute_command(const char* command) {
@@ -55,6 +57,32 @@ void Terminal::delete_char(size_t pos) {
 	}
 }
 
+void Terminal::delete_chars(size_t pos, size_t count) {
+	if (pos == 0 || count == 0) return;
+
+	if (pos < count) {
+		count = pos;
+	}
+
+	char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
+
+	pos -= count;
+	command.buffer_pos -= count;
+
+	for (size_t i = pos; i < WIDTH * HEIGHT - count; ++i) {
+		buffer[i * 2] = buffer[(i + count) * 2];
+		buffer[i * 2 + 1] = buffer[(i + count) * 2 + 1];
+	}
+
+	for (size_t i = WIDTH * HEIGHT - count; i < WIDTH * HEIGHT; ++i) {
+		buffer[i * 2] = ' ';
+		buffer[i * 2 + 1] = ((uint8_t)bg_color << 4) | (uint8_t)terminal_color;
+	}
+
+	Terminal::pos = pos;
+	move_cursor(pos);
+}
+
 void Terminal::delete_line() {
 	size_t line_start = (pos / WIDTH) * WIDTH;
 	char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
@@ -84,6 +112,19 @@ void Terminal::set_buffer_pos(size_t pos) {
 	command.buffer_pos = pos;
 }
 
+ssize_t Terminal::get_highlighted_buffer_pos() {
+	return command.highlighted_buffer_pos;
+}
+
+void Terminal::set_highlighted_buffer_pos(ssize_t pos) {
+	command.highlighted_buffer_pos = pos;
+}
+
+void Terminal::clear_highlighted_buffer() {
+	command.highlighted_buffer = "";
+	command.highlighted_buffer_pos = 0;
+}
+
 void Terminal::move_cursor(size_t pos) {
 	uint8_t position = (uint8_t)pos;
 
@@ -94,6 +135,7 @@ void Terminal::move_cursor(size_t pos) {
 }
 
 size_t Terminal::pos = 0;
+size_t Terminal::current_line = 0;
 Terminal::Color Terminal::terminal_color = Terminal::Color::Grey;
 Terminal::Color Terminal::bg_color = Terminal::Color::Black;
 

@@ -55,6 +55,8 @@ void Terminal_commands::__command_reset(char** args) {
 		Terminal::reload(' ', Terminal::Color::Grey, Terminal::Color::Black);
 		Terminal::set_pos(0);
 		Terminal::set_buffer_pos(0);
+		Terminal::clear_highlighted_buffer();
+		Terminal::restore_default_bg_color();
 
 		Terminal::terminal_color = Terminal::Color::Grey;
 		Terminal::bg_color = Terminal::Color::Black;
@@ -355,6 +357,13 @@ void Terminal::call_command(const char* key, char** args) {
 		ata_read_sector(0, buffer);
 
 		Terminal::lnprint(buffer);
+	}
+
+	else if (strcmp(key, "high") == 0) {
+		Terminal::lnprint((int)Terminal::command.highlighted_buffer.size());
+		Terminal::lnprint(Terminal::command.highlighted_buffer);
+		Terminal::lnprint((int)Terminal::command.highlighted_buffer_pos);
+		Terminal::lnprint((int)Terminal::command.highlighted_buffer_start_pos);
 	}
 
 	else {

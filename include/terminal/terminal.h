@@ -25,14 +25,18 @@ namespace SimpleOS {
 	private:
 
 		struct Command {
-
 			string buffer;
 			size_t buffer_pos;
 			vector<string> commands;
 			size_t selected_command_pos;
+			string highlighted_buffer;
+			ssize_t highlighted_buffer_pos;
+			size_t highlighted_buffer_start_pos;
+			string clipboard;
 		};
 
 		static size_t pos;
+		static size_t current_line;
 		static Color terminal_color;
 		static Color bg_color;
 
@@ -88,6 +92,8 @@ namespace SimpleOS {
 
 		static void delete_char(size_t pos);
 
+		static void delete_chars(size_t pos, size_t count);
+
 		static void delete_line();
 
 		static void new_line();
@@ -102,6 +108,12 @@ namespace SimpleOS {
 
 		static void set_buffer_pos(size_t pos);
 
+		static ssize_t get_highlighted_buffer_pos();
+
+		static void set_highlighted_buffer_pos(ssize_t pos);
+
+		static void clear_highlighted_buffer();
+
 		static void move_cursor(size_t position);
 
 		static void set_and_fill_terminal_color(Color new_color);
@@ -115,6 +127,12 @@ namespace SimpleOS {
 		static void fill_bg_color(Color new_color);
 
 		static void set_bg_color(Color new_color);
+
+		static void fill_bg_color_at(size_t pos, Color new_color);
+
+		static void restore_default_bg_color();
+
+		static void restore_bg_color_at(size_t pos);
 
 		enum class Color : uint8_t {
 			Black = 0x00,

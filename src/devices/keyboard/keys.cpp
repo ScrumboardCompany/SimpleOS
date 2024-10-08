@@ -1,6 +1,7 @@
 #include "devices/keyboard.h"
 #include "terminal/terminal.h"
 #include "fs/fs.h"
+#include "utils/utils.h"
 
 
 using namespace SimpleOS;
@@ -10,8 +11,8 @@ void Keyboard::__backspace(PressedKey key) {
 		if (Terminal::get_pos() % WIDTH > 1) {
 			Terminal::delete_char(Terminal::get_pos());
 
-			//Keyboard::buffer.pop();
 			Terminal::command.buffer.pop(Terminal::get_buffer_pos() - 1);
+
 			Keyboard::reset_selected_command_pos();
 		}
 	}
@@ -39,7 +40,12 @@ void Keyboard::__enter(PressedKey key) {
 				Terminal::command.buffer = "";
 				Terminal::print('>');
 			}
+
+			Terminal::current_line++;
 		}
+
+		Terminal::clear_highlighted_buffer();
+		Terminal::restore_default_bg_color();
 
 		Keyboard::reset_selected_command_pos();
 	}
@@ -49,6 +55,9 @@ void Keyboard::__textenter(PressedKey key) {
 	if (key == Keyboard::PressedKey::Enter) {
 		Terminal::command.buffer.push('\n');
 		Terminal::new_line();
+		Terminal::current_line++;
+		Terminal::clear_highlighted_buffer();
+		Terminal::restore_default_bg_color();
 	}
 }
 
@@ -104,6 +113,27 @@ void Keyboard::__textarrow_down(PressedKey key) {
 void Keyboard::__arrow_left(PressedKey key) {
 	if (key == Keyboard::PressedKey::ArrowLeft) {
 		if (Terminal::get_buffer_pos() > 1) {
+			if (shift_pressed) {
+
+				if (Terminal::get_highlighted_buffer_pos() == 0) Terminal::command.highlighted_buffer_start_pos = Terminal::get_buffer_pos();
+
+				if (Terminal::get_highlighted_buffer_pos() <= 0) {
+					Terminal::command.highlighted_buffer.push(Terminal::command.buffer[Terminal::get_buffer_pos() - 2], 0);
+					Terminal::fill_bg_color_at(Terminal::get_pos() - 1, Terminal::Color::White);
+					Terminal::set_highlighted_buffer_pos(Terminal::get_highlighted_buffer_pos() - 1);
+				}
+
+				else if (!Terminal::command.highlighted_buffer.empty()) {
+					Terminal::command.highlighted_buffer.pop();
+					Terminal::restore_bg_color_at(Terminal::get_pos() - 1);
+					Terminal::set_highlighted_buffer_pos(Terminal::get_highlighted_buffer_pos() - 1);
+				}
+			}
+			else {
+				Terminal::clear_highlighted_buffer();
+				Terminal::restore_default_bg_color();
+			}
+
 			Terminal::set_pos(Terminal::get_pos() - 1);
 			Terminal::set_buffer_pos(Terminal::get_buffer_pos() - 1);
 			Terminal::move_cursor(Terminal::get_pos());
@@ -114,6 +144,27 @@ void Keyboard::__arrow_left(PressedKey key) {
 void Keyboard::__arrow_right(PressedKey key) {
 	if (key == Keyboard::PressedKey::ArrowRight) {
 		if (Terminal::get_pos() < Terminal::command.buffer.size() + 1) {
+			if (shift_pressed) {
+
+				if (Terminal::get_highlighted_buffer_pos() == 0) Terminal::command.highlighted_buffer_start_pos = Terminal::get_buffer_pos();
+
+				if (Terminal::get_highlighted_buffer_pos() >= 0) {
+					Terminal::command.highlighted_buffer.push(Terminal::command.buffer[Terminal::get_buffer_pos() - 1]);
+					Terminal::fill_bg_color_at(Terminal::get_pos(), Terminal::Color::White);
+					Terminal::set_highlighted_buffer_pos(Terminal::get_highlighted_buffer_pos() + 1);
+				}
+
+				else {
+					Terminal::command.highlighted_buffer.pop(0);
+					Terminal::restore_bg_color_at(Terminal::get_pos());
+					Terminal::set_highlighted_buffer_pos(Terminal::get_highlighted_buffer_pos() + 1);
+				}
+			}
+			else {
+				Terminal::clear_highlighted_buffer();
+				Terminal::restore_default_bg_color();
+			}
+
 			Terminal::set_pos(Terminal::get_pos() + 1);
 			Terminal::set_buffer_pos(Terminal::get_buffer_pos() + 1);
 			Terminal::move_cursor(Terminal::get_pos());
