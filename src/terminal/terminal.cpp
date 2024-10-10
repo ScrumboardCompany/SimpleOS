@@ -25,9 +25,8 @@ void Terminal::clear() {
 }
 
 void Terminal::execute_command(const string& command) {
-	int size = 0;
 
-	vector<string> command_split = split(command, ' ', &size);
+	vector<string> command_split = split(command, ' ');
 	size_t size_command_split = command_split.size();
 
 	if (!size_command_split) return;

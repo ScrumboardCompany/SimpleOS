@@ -151,7 +151,6 @@ bool FileSystem::format() {
 }
 
 bool FileSystem::file_exist(const string& name) {
-
 	return current_directory->files.has(name);
 }
 
@@ -222,6 +221,10 @@ bool FileSystem::__check_dir_exist(const string& name) {
 		return false;
 	}
 	return true;
+}
+
+bool FileSystem::file_exist(const Directory& dir, const string& name) {
+	return dir.files.has(name);
 }
 
 //bool FileSystem::read_superblock() {

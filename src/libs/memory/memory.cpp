@@ -1,4 +1,5 @@
 #include "libs/memory/memory.h"
+#include <stddef.h>
 
 typedef struct Block {
     size_t size;
@@ -9,6 +10,9 @@ typedef struct Block {
 
 #define HEAP_SIZE 0x100000
 #define BLOCK_SIZE sizeof(Block)
+#define ALIGNMENT 8
+
+#define ALIGN(size) (((size) + (ALIGNMENT - 1)) & ~(ALIGNMENT - 1))
 
 static char heap[HEAP_SIZE];
 static Block* free_list = NULL;
@@ -37,7 +41,7 @@ Block* find_free_block(size_t size) {
 }
 
 void split_block(Block* block, size_t size) {
-    if (block->size >= size + BLOCK_SIZE + 4) {
+    if (block->size >= size + BLOCK_SIZE + ALIGNMENT) {
         Block* new_block = (Block*)((char*)block + BLOCK_SIZE + size);
         new_block->size = block->size - size - BLOCK_SIZE;
         new_block->free = 1;
@@ -53,6 +57,8 @@ void* malloc(size_t size) {
         return NULL;
     }
 
+    size = ALIGN(size);
+
     if (free_list == NULL) {
         init_memory();
     }
@@ -67,22 +73,31 @@ void* malloc(size_t size) {
     return (void*)((char*)block + BLOCK_SIZE);
 }
 
+void merge_free_blocks() {
+    Block* current = free_list;
+    while (current != NULL && current->next != NULL) {
+        if (current->free && current->next->free) {
+            current->size += BLOCK_SIZE + current->next->size;
+            current->next = current->next->next;
+        } else {
+            current = current->next;
+        }
+    }
+}
+
 void free(void* ptr) {
     if (ptr == NULL) {
+        return;
+    }
+
+    if (ptr < (void*)heap || ptr >= (void*)(heap + HEAP_SIZE)) {
         return;
     }
 
     Block* block = (Block*)((char*)ptr - BLOCK_SIZE);
     block->free = 1;
 
-    Block* current = free_list;
-    while (current != NULL) {
-        if (current->free && current->next && current->next->free) {
-            current->size += BLOCK_SIZE + current->next->size;
-            current->next = current->next->next;
-        }
-        current = current->next;
-    }
+    merge_free_blocks();
 }
 
 void* calloc(size_t num, size_t size) {
@@ -100,6 +115,8 @@ void* realloc(void* ptr, size_t new_size) {
     if (ptr == NULL) {
         return malloc(new_size);
     }
+
+    new_size = ALIGN(new_size);
 
     Block* block = (Block*)((char*)ptr - BLOCK_SIZE);
     if (block->size >= new_size) {

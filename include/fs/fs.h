@@ -50,6 +50,7 @@ namespace SimpleOS {
 		static void file_info(const string& name);
 
 		static bool file_exist(const string& name);
+		static bool dir_exist(const string& name);
 
 		static bool __check_exist(const string& name);
 		static bool __check_dir_exist(const string& name);
@@ -61,6 +62,8 @@ namespace SimpleOS {
 		static bool cd(const string& name);
 
 		static bool cd_up();
+
+		static void cd_down(const string& name);
 
 		static void tree(const Directory& dir, ssize_t level = 0);
 
@@ -77,7 +80,10 @@ namespace SimpleOS {
 		static void close_file();
 
 	private:
+
 		static void print_tree(const Directory& dir, ssize_t level);
+		static bool file_exist(const Directory& dir, const string& name);
+		static bool dir_exist(const Directory& dir, const string& name);
 
 		static ssize_t free_sector();
 

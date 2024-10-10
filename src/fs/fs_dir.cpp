@@ -1,5 +1,6 @@
 #include "fs/fs.h"
 #include "terminal/terminal.h"
+#include "utils/utils.h"
 
 using namespace SimpleOS;
 
@@ -26,16 +27,41 @@ bool FileSystem::delete_dir(const string& name) {
 	return true;
 }
 
+bool FileSystem::dir_exist(const string& name) {
+	return current_directory->directories.has(name);
+}
+
 bool FileSystem::cd(const string& name) {
-	if (string(name) == "..") {
-		return cd_up();
+	Directory* last_directory = &*current_directory;
+
+	vector<string> path = split(name, '/');
+
+	bool is_first = true;
+
+	for (size_t i = 0; i < path.size(); i++) {
+
+		if (path[i] == "..") {
+			cd_up();
+		}
+
+		else if (is_first ? dir_exist(path[i]) : __check_dir_exist(path[i])) {
+			cd_down(path[i]);
+		}
+		
+		else if (is_first) {
+			current_directory = &root;
+
+			if (!__check_dir_exist(path[i])) {
+				current_directory = last_directory;
+				return false;
+			}
+			else cd_down(path[i]);
+		}
+
+		else 
+
+		is_first = false;
 	}
-
-	if (!__check_dir_exist(name)) return false;
-
-	current_directory = &current_directory->directories[name];
-
-	current_path.push(name);
 
 	return true;
 }
@@ -47,8 +73,14 @@ bool FileSystem::cd_up() {
 
 		return true;
 	}
-	Terminal::lnprint("Already at root directory");
+	//Terminal::lnprint("Already at root directory");
 	return false;
+}
+
+void FileSystem::cd_down(const string& name) {
+	current_directory = &current_directory->directories[name];
+
+	current_path.push(name);
 }
 
 void FileSystem::tree(const Directory& dir, ssize_t level) {
@@ -88,4 +120,8 @@ FileSystem::Directory* FileSystem::get_current_directory() {
 
 FileSystem::Directory FileSystem::get_root() {
 	return root;
+}
+
+bool FileSystem::dir_exist(const Directory& dir, const string& name) {
+	return dir.directories.has(name);
 }

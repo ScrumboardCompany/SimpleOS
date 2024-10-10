@@ -34,7 +34,7 @@ void* SimpleOS::memset(void* ptr, int value, size_t num) {
     return ptr;
 }
 
-vector<string> SimpleOS::split(const string& str, char delimiter, int* size) {
+vector<string> SimpleOS::split(const string& str, char delimiter) {
 
     /*int count = 1;
     const char* tmp = str;
@@ -100,10 +100,6 @@ vector<string> SimpleOS::split(const string& str, char delimiter, int* size) {
 
     if (!token.empty()) {
         tokens.push(token);
-    }
-
-    if (size != nullptr) {
-        *size = (int)(tokens.size());
     }
 
     return tokens;
