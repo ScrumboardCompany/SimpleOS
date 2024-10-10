@@ -26,7 +26,7 @@ namespace SimpleOS {
 
     void* memset(void* ptr, int value, size_t num);
 
-    vector<string> split(const string& str, char delimiter, int* size);
+    vector<string> split(const string& str, char delimiter);
 
     size_t abs(int num);
     

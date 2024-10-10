@@ -40,7 +40,7 @@ namespace SimpleOS {
 
 		static void __command_time(vector<string>& args);
 
-		static bool __check_argc(vector<string>& args, size_t argc);
+		static bool __check_argc(vector<string>& args, size_t argc, bool print_error = true);
 	};
 }
 
