@@ -20,6 +20,8 @@ namespace SimpleOS {
 
 		string(nullptr_t);
 
+		string(size_t repeat, char c);
+
 		~string();
 
 		const char* c_str() const;
@@ -44,9 +46,11 @@ namespace SimpleOS {
 
 		string& operator = (const string& other);
 
-		string operator + (const string& other);
+		string operator + (const string& other) const;
 
-		string operator + (const char c);
+		string operator + (const char c) const;
+
+		operator char* ();
 
 		bool operator ==(const string& other) const;
 
@@ -65,6 +69,8 @@ namespace SimpleOS {
 		bool operator >(const string& other) const;
 
 		char& operator [](size_t index);
+
+		const char& operator [](size_t index) const;
 
 		bool empty() const;
 

@@ -48,6 +48,17 @@ string::string(const string& other) {
 
 string::string(nullptr_t) : string() {}
 
+string::string(size_t repeat, char c) {
+	length = repeat;
+	str = (char*)malloc(length + 1);
+
+	for (size_t i = 0; i < repeat; i++) {
+		str[i] = c;
+	}
+
+	str[length] = '\0';
+}
+
 string::~string() {
 	if(str) 
 		free(str);
@@ -210,7 +221,7 @@ string& string::operator = (const string& other) {
 	return *this;
 };
 
-string string::operator + (const string& other) {
+string string::operator + (const string& other) const {
 	string newStr;
 
 	size_t thisLen = length;
@@ -233,7 +244,7 @@ string string::operator + (const string& other) {
 	return newStr;
 };
 
-string string::operator+(const char c) {
+string string::operator+(const char c) const {
 	string newStr;
 
 	size_t thisLen = length;
@@ -253,12 +264,9 @@ string string::operator+(const char c) {
 	return newStr;
 }
 
-//string operator+(const char c, const string& str) {
-//	string newStr;
-//	newStr.push(c);  
-//	newStr = newStr + str;  
-//	return newStr;
-//}
+string::operator char* () {
+	return str;
+}
 
 bool string::operator ==(const string& other) const {
 	return strcmp(str, other.str) == 0;
@@ -295,6 +303,10 @@ bool string::operator >(const string& other) const {
 char& string::operator [](size_t index) {
 	return str[index];
 };
+
+const char& string::operator [](size_t index) const {
+	return str[index];
+}
 
 bool string::empty() const {
 	return str == nullptr || str[0] == '\0';

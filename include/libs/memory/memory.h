@@ -3,7 +3,7 @@
 #ifndef _MEMORY_
 #define _MEMORY_
 
-#include <stddef.h>
+#include "utils/typedef.h"
 
 void* malloc(size_t size);
 void free(void* ptr);

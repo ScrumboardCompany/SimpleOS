@@ -89,13 +89,14 @@ void Keyboard::__keyboard_handler() {
 		else {
 			if (!Terminal::command.highlighted_buffer.empty()) Terminal::delete_highlighted_text();
 			Terminal::command.buffer.push(c, Keyboard::is_console_mode ? Terminal::get_buffer_pos() - 1 : Terminal::get_pos());
-			Terminal::print(c);
+			Keyboard::is_console_mode ? Terminal::input_print(c) : Terminal::text_print(c);
 		}
 
 		Keyboard::reset_selected_command_pos();
 	}
 
 	outb(0x20, 0x20);
+	//__asm__ volatile("sti");
 }
 
 Keyboard::PressedKey Keyboard::get_key() {

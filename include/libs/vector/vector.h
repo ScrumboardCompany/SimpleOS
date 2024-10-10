@@ -28,6 +28,8 @@ public:
 
 	bool empty() const;
 
+    void clear();
+
 	bool valid_index(int pos) const;
 
 	size_t size() const;
@@ -131,6 +133,16 @@ inline _Ty& vector<_Ty>::back() {
 template<typename _Ty>
 inline bool vector<_Ty>::empty() const {
     return !_size;
+}
+
+template<typename _Ty>
+inline void vector<_Ty>::clear() {
+    if (empty()) return;
+    _size = 0;
+    if (arr) {
+        free(arr);
+        arr = nullptr;
+    }
 }
 
 template<typename _Ty>

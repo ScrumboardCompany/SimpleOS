@@ -23,17 +23,15 @@ namespace SimpleOS {
 
     uint32_t ata_get_sector_count();
 
-    void ata_write_to_sector(uint32_t lba, const char* buffer);
+    void ata_write_to_sector(uint32_t lba, const string& buffer);
 
     bool ata_can_write_to_sector(uint32_t lba, size_t buffer_size);
 
-    bool ata_append_to_sector(uint32_t lba, const char* buffer);
+    bool ata_append_to_sector(uint32_t lba, const string& buffer);
 
-    void ata_read_sector(uint32_t lba, char* buffer);
+    void ata_read_sector(uint32_t lba, string& buffer);
 
     void ata_delete_from_sector(uint32_t lba);
-
-    void ata_delete_from_sector(uint32_t lba, size_t start, size_t length);
 
     size_t ata_get_free_space_in_sector(uint32_t lba);
 }

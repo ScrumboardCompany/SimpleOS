@@ -42,7 +42,7 @@ namespace SimpleOS {
 
 		static Command command;
 		
-		static void to_args(char** command_split, char** args, size_t size_command_split);
+		static void to_args(vector<string>& command_split, vector<string>& args);
 
 	public:
 
@@ -55,6 +55,10 @@ namespace SimpleOS {
 		static void print(char c, size_t pos);
 
 		static void print(char c);
+
+		static void input_print(char c);
+
+		static void text_print(char c);
 
 		static void print(int n);
 
@@ -92,13 +96,15 @@ namespace SimpleOS {
 
 		static void delete_char(size_t pos);
 
+		static void textdelete_char(size_t pos);
+
 		static void delete_chars(size_t pos, size_t count);
 
 		static void delete_line();
 
 		static void new_line();
 
-		static void execute_command(const char* command);
+		static void execute_command(const string& command);
 
 		static size_t get_pos();
 
@@ -159,7 +165,7 @@ namespace SimpleOS {
 
 	private: // commands
 
-		static void call_command(const char* key, char** argv);
+		static void call_command(const string& key, vector<string>& argv);
 	};
 }
 
