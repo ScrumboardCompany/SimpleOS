@@ -4,14 +4,9 @@
 
 using namespace SimpleOS;
 
-void Terminal::to_args(char** command_split, char** args, size_t size_command_split) {
-	for (size_t i = 1; i < size_command_split; i++) {
-
-		args[i - 1] = (char*)malloc((strlen(command_split[i]) + 1) * sizeof(char));
-
-		strcpy(args[i - 1], command_split[i]);
-	}
-	args[size_command_split - 1] = NULL;
+void Terminal::to_args(vector<string>& command_split, vector<string>& args) {
+	args = command_split;
+	args.pop(0);
 }
 
 void Terminal::new_line() {

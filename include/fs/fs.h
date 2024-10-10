@@ -22,6 +22,12 @@ namespace SimpleOS {
 
 		};
 
+		struct Directory {
+			map<string, File> files;
+			map<string, Directory> directories;
+			Directory* parent = nullptr;
+		};
+
 		struct Superblock {
 			uint32_t file_table_start;
 			uint32_t total_files;   
@@ -29,43 +35,65 @@ namespace SimpleOS {
 			uint32_t free_sectors;
 		};
 
-		static void init_fs();
+		static bool create_file(const string& name, const string& data = nullptr);
 
-		static bool create_file(const char* name, const char* data = nullptr);
+		static bool delete_file(const string& name);
 
-		static bool delete_file(const char* name);
+		static bool write_to_file(const string& name, const string& data);
 
-		static bool write_to_file(const char* name, const char* data);
+		static bool append_to_file(const string& name, const string& data);
 
-		static bool append_to_file(const char* name, const char* data);
-
-		static bool read_superblock();
-
-		static bool write_superblock();
-
-		static bool read_file(const char* name, string& buffer);
+		static bool read_file(const string& name, string& buffer);
 
 		static bool format();
 
-		static void file_info(const char* name);
+		static void file_info(const string& name);
 
-		static bool exist(const char* name);
+		static bool file_exist(const string& name);
+		static bool dir_exist(const string& name);
 
-		static bool __check_exist(const char* name);
+		static bool __check_exist(const string& name);
+		static bool __check_dir_exist(const string& name);
 
-		static void open_file(const char* name);
+		static bool create_dir(const string& name);
+
+		static bool delete_dir(const string& name);
+
+		static bool cd(const string& name);
+
+		static bool cd_up();
+
+		static void cd_down(const string& name);
+
+		static void tree(const Directory& dir, ssize_t level = 0);
+
+		static string get_current_path();
+
+		static Directory* get_current_directory();
+
+		static Directory get_root();
+
+		static void open_file(const string& name);
 
 		static const string& get_opened_file();
 
 		static void close_file();
 
 	private:
-		static ssize_t free_sector(size_t size);
+
+		static void print_tree(const Directory& dir, ssize_t level);
+		static bool file_exist(const Directory& dir, const string& name);
+		static bool dir_exist(const Directory& dir, const string& name);
+
 		static ssize_t free_sector();
 
 		static bool distr_to_sectors(File& file, const char* data);
 
-		static map<string, File> files;
+		static Directory root;
+		static Directory* current_directory;
+		static vector<string> current_path;
+
+		//static map<string, File> files;
 		static vector<size_t> taken_sectors;
         static Superblock block;
 

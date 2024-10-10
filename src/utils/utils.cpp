@@ -34,51 +34,9 @@ void* SimpleOS::memset(void* ptr, int value, size_t num) {
     return ptr;
 }
 
-char* SimpleOS::add_char(const char* str, char c) {
-    size_t len = strlen(str);
+vector<string> SimpleOS::split(const string& str, char delimiter) {
 
-    char* new_str = (char*)malloc(len + 2);
-    if (!new_str) {
-        return NULL;
-    }
-
-    strcpy(new_str, str);
-    free((void*)str);
-
-    new_str[len] = c;
-
-    new_str[len + 1] = '\0';
-
-    return new_str;
-}
-
-char* SimpleOS::pop_char(const char* str) {
-    size_t len = strlen(str);
-
-    if (len == 0) {
-        char* empty_str = (char*)malloc(1);
-        if (!empty_str) {
-            return NULL;
-        }
-        empty_str[0] = '\0';
-        return empty_str;
-    }
-
-    char* new_str = (char*)malloc(len);
-    if (!new_str) {
-        return NULL;
-    }
-     
-    strncpy(new_str, str, len - 1);
-    new_str[len - 1] = '\0';
-    free((void*)str);
-
-    return new_str;
-}
-
-char** SimpleOS::split(const char* str, char delimiter, int* size) {
-
-    int count = 1;
+    /*int count = 1;
     const char* tmp = str;
     while (*tmp) {
         if (*tmp == delimiter) {
@@ -124,17 +82,27 @@ char** SimpleOS::split(const char* str, char delimiter, int* size) {
 
     *size = count;
 
-    return result;
-}
+    return result;*/
 
-size_t SimpleOS::get_size(char** array) {
-    size_t size = 0;
-
-    while (array[size]) {
-        size++;
+    vector<string> tokens;
+    string token;
+    for(size_t i = 0; i < str.size(); i++) {
+        if (str[i] == delimiter) {
+            if (!token.empty()) {
+                tokens.push(token);
+                token = "";
+            }
+        }
+        else {
+            token.push(str[i]);
+        }
     }
 
-    return size;
+    if (!token.empty()) {
+        tokens.push(token);
+    }
+
+    return tokens;
 }
 
 size_t SimpleOS::abs(int x) {

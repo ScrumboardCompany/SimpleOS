@@ -96,7 +96,7 @@ void Terminal::restore_bg_color_at(size_t pos) {
 
 	uint8_t current_color = buffer[pos * 2 + 1];
 	uint8_t text_color = current_color & 0x0F;
-	uint8_t color = ((uint8_t)Color::Black << 4) | text_color;  // Предполагаем, что стандартный фон черный
+	uint8_t color = ((uint8_t)Color::Black << 4) | text_color;
 
 	buffer[pos * 2 + 1] = color;
 }

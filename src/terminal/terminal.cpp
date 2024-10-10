@@ -23,16 +23,15 @@ void Terminal::clear() {
 	//restore_default_bg_color();
 }
 
-void Terminal::execute_command(const char* command) {
-	int size = 0;
+void Terminal::execute_command(const string& command) {
 
-	char** command_split = split(command, ' ', &size);
-	size_t size_command_split = get_size(command_split);
+	vector<string> command_split = split(command, ' ');
+	size_t size_command_split = command_split.size();
 
 	if (!size_command_split) return;
 
-	char** args = (char**)malloc((size_command_split - 1) * sizeof(char*));
-	to_args(command_split, args, size_command_split);
+	vector<string> args;
+	to_args(command_split, args);
 
 	call_command(command_split[0], args);
 };

@@ -179,6 +179,14 @@ inline void map<_KTy, _VTy>::inOrderTraversal(Node* node, Func func) const {
 }
 
 template<typename _KTy, typename _VTy>
+inline size_t map<_KTy, _VTy>::size(Node* node) const {
+    if (node == nullptr) {
+        return 0;
+    }
+    return 1 + size(node->left) + size(node->right);
+}
+
+template<typename _KTy, typename _VTy>
 inline void map<_KTy, _VTy>::insert(const _KTy& key, const _VTy& value) {
     root = insert(root, key, value);
 }
@@ -216,14 +224,6 @@ template<typename _KTy, typename _VTy>
 template<typename Func>
 inline void map<_KTy, _VTy>::forEach(Func func) const {
     inOrderTraversal(root, func);
-}
-
-template<typename _KTy, typename _VTy>
-inline size_t map<_KTy, _VTy>::size(Node* node) const {
-    if (node == nullptr) {
-        return 0;
-    }
-    return 1 + size(node->left) + size(node->right);
 }
 
 template<typename _KTy, typename _VTy>

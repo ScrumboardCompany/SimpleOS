@@ -7,7 +7,7 @@
 
 using namespace SimpleOS;
 
-void Terminal_commands::__command_color(char** args) {
+void Terminal_commands::__command_color(vector<string>& args) {
 
 	if (__check_argc(args, 2)) {
 		Terminal::Color new_color = Terminal::to_color(atoi(args[1]));
@@ -19,7 +19,7 @@ void Terminal_commands::__command_color(char** args) {
 	}
 }
 
-void Terminal_commands::__command_fill(char** args) {
+void Terminal_commands::__command_fill(vector<string>& args) {
 
 	if (__check_argc(args, 2)) {
 		Terminal::Color new_color = Terminal::to_color(atoi(args[1]));
@@ -31,7 +31,7 @@ void Terminal_commands::__command_fill(char** args) {
 	}
 }
 
-void Terminal_commands::__command_set(char** args) {
+void Terminal_commands::__command_set(vector<string>& args) {
 
 	if (__check_argc(args, 2)) {
 		Terminal::Color new_color = Terminal::to_color(atoi(args[1]));
@@ -43,13 +43,13 @@ void Terminal_commands::__command_set(char** args) {
 	}
 }
 
-void Terminal_commands::__command_clear(char** args) {
+void Terminal_commands::__command_clear(vector<string>& args) {
 
 	if (__check_argc(args, 0))
 		Terminal::clear();
 }
 
-void Terminal_commands::__command_reset(char** args) {
+void Terminal_commands::__command_reset(vector<string>& args) {
 
 	if (__check_argc(args, 0)) {
 		Terminal::reload(' ', Terminal::Color::Grey, Terminal::Color::Black);
@@ -63,14 +63,14 @@ void Terminal_commands::__command_reset(char** args) {
 	}
 }
 
-void Terminal_commands::__command_echo(char** args) {
+void Terminal_commands::__command_echo(vector<string>& args) {
 
 	if (__check_argc(args, 1)) {
 		Terminal::lnprint(args[0]);
 	}
 }
 
-void Terminal_commands::__command_help(char** args) {
+void Terminal_commands::__command_help(vector<string>& args) {
 
 	if (__check_argc(args, 0)) {
 		Terminal::lnprint("color [spec arg] [number] - set and fill color to the specified argument");
@@ -90,7 +90,7 @@ void Terminal_commands::__command_help(char** args) {
 	}
 }
 
-void Terminal_commands::__command_cat(char** args) {
+void Terminal_commands::__command_cat(vector<string>& args) {
 
 	if (__check_argc(args, 1)) {
 		int code = atoi(args[0]);
@@ -156,7 +156,7 @@ void Terminal_commands::__command_cat(char** args) {
 	}
 }
 
-void Terminal_commands::__command_mkfile(char** args) {
+void Terminal_commands::__command_mkfile(vector<string>& args) {
 
 	if (__check_argc(args, 2)) {
 
@@ -165,7 +165,7 @@ void Terminal_commands::__command_mkfile(char** args) {
 	}
 }
 
-void Terminal_commands::__command_rdfile(char** args) {
+void Terminal_commands::__command_rdfile(vector<string>& args) {
 
 	if (__check_argc(args, 1)) {
 
@@ -175,7 +175,7 @@ void Terminal_commands::__command_rdfile(char** args) {
 	}
 }
 
-void Terminal_commands::__command_rmfile(char** args) {
+void Terminal_commands::__command_rmfile(vector<string>& args) {
 
 	if (__check_argc(args, 1)) {
 
@@ -184,7 +184,7 @@ void Terminal_commands::__command_rmfile(char** args) {
 	}
 }
 
-void Terminal_commands::__command_wrfile(char** args) {
+void Terminal_commands::__command_wrfile(vector<string>& args) {
 
 	if (__check_argc(args, 2)) {
 
@@ -193,7 +193,7 @@ void Terminal_commands::__command_wrfile(char** args) {
 	}
 }
 
-void Terminal_commands::__command_apfile(char** args) {
+void Terminal_commands::__command_apfile(vector<string>& args) {
 
 	if (__check_argc(args, 2)) {
 
@@ -202,17 +202,17 @@ void Terminal_commands::__command_apfile(char** args) {
 	}
 }
 
-void Terminal_commands::__command_exfile(char** args) {
+void Terminal_commands::__command_exfile(vector<string>& args) {
 
 	if (__check_argc(args, 1)) {
 
-		if (FileSystem::exist(args[0]))
+		if (FileSystem::file_exist(args[0]))
 			Terminal::lnprint("File exist");
 		else Terminal::lnprint("File don`t exist");
 	}
 }
 
-void Terminal_commands::__command_format(char** args) {
+void Terminal_commands::__command_format(vector<string>& args) {
 
 	if (__check_argc(args, 0)) {
 
@@ -221,7 +221,58 @@ void Terminal_commands::__command_format(char** args) {
 	}
 }
 
-void Terminal_commands::__command_open(char** args) {
+void Terminal_commands::__command_mkdir(vector<string>& args) {
+
+	if (__check_argc(args, 1)) {
+		if (FileSystem::create_dir(args[0])) {
+			Terminal::lnprint("Good mkdir");
+		}
+	}
+}
+
+void Terminal_commands::__command_rmdir(vector<string>& args) {
+
+	if (__check_argc(args, 1)) {
+		if (FileSystem::delete_dir(args[0])) {
+			Terminal::lnprint("Good rmdir");
+		}
+	}
+}
+
+void Terminal_commands::__command_cddir(vector<string>& args) {
+
+	if (__check_argc(args, 1)) {
+		if (FileSystem::cd(args[0])) {
+			Terminal::lnprint("Good cddir");
+		}
+	}
+}
+
+void Terminal_commands::__command_tree(vector<string>& args) {
+
+	if (__check_argc(args, 0)) {
+		
+		FileSystem::tree(FileSystem::get_root());
+	}
+}
+
+void Terminal_commands::__command_path(vector<string>& args) {
+
+	if (__check_argc(args, 0)) {
+
+		Terminal::lnprint(FileSystem::get_current_path());
+	}
+}
+
+void Terminal_commands::__command_dir(vector<string>& args) {
+
+	if (__check_argc(args, 0)) {
+
+		FileSystem::tree(*FileSystem::get_current_directory());
+	}
+}
+
+void Terminal_commands::__command_open(vector<string>& args) {
 
 	if (__check_argc(args, 1)) {
 
@@ -248,7 +299,7 @@ void Terminal_commands::__command_open(char** args) {
 	}
 }
 
-void Terminal_commands::__command_time(char** args) {
+void Terminal_commands::__command_time(vector<string>& args) {
 
 	if (__check_argc(args, 0)) {
 
@@ -268,8 +319,8 @@ void Terminal_commands::__command_time(char** args) {
 	}
 }
 
-bool Terminal_commands::__check_argc(char** args, size_t argc) {
-	size_t size = get_size(args);
+bool Terminal_commands::__check_argc(vector<string>& args, size_t argc) {
+	size_t size = args.size();
 
 	if (size == argc) return true;
 
@@ -278,88 +329,80 @@ bool Terminal_commands::__check_argc(char** args, size_t argc) {
 	return false;
 }
 
-void Terminal::call_command(const char* key, char** args) {
+void Terminal::call_command(const string& key, vector<string>& args) {
 
-	if (strcmp(key, "color") == 0) {
+	if (key == "color") {
 		Terminal_commands::__command_color(args);
 	}
 
-	else if (strcmp(key, "set") == 0) {
+	else if (key == "set") {
 		Terminal_commands::__command_set(args);
 	}
 
-	else if (strcmp(key, "fill") == 0) {
+	else if (key == "fill") {
 		Terminal_commands::__command_fill(args);
 	}
 
-	else if (strcmp(key, "clear") == 0) {
+	else if (key == "clear") {
 		Terminal_commands::__command_clear(args);
 		return;
 	}
 
-	else if (strcmp(key, "reset") == 0) {
+	else if (key == "reset") {
 		Terminal_commands::__command_reset(args);
 		return;
 	}
 
-	else if (strcmp(key, "echo") == 0) {
+	else if (key == "echo") {
 		Terminal_commands::__command_echo(args);
 	}
 
-	else if (strcmp(key, "help") == 0) {
+	else if (key == "help") {
 		Terminal_commands::__command_help(args);
 	}
 
-	else if (strcmp(key, "cat") == 0) {
+	else if (key == "cat") {
 		Terminal_commands::__command_cat(args);
 	}
 
-	else if (strcmp(key, "mkfile") == 0) {
+	else if (key == "mkfile") {
 		Terminal_commands::__command_mkfile(args);
 	}
 
-	else if (strcmp(key, "rdfile") == 0) {
+	else if (key == "rdfile") {
 		Terminal_commands::__command_rdfile(args);
 	}
 
-	else if (strcmp(key, "rmfile") == 0) {
+	else if (key == "rmfile") {
 		Terminal_commands::__command_rmfile(args);
 	}
 
-	else if (strcmp(key, "wrfile") == 0) {
+	else if (key == "wrfile") {
 		Terminal_commands::__command_wrfile(args);
 	}
 
-	else if (strcmp(key, "apfile") == 0) {
+	else if (key == "apfile") {
 		Terminal_commands::__command_apfile(args);
 	}
 
-	else if (strcmp(key, "exfile") == 0) {
+	else if (key == "exfile") {
 		Terminal_commands::__command_exfile(args);
 	}
 
-	else if (strcmp(key, "format") == 0) {
+	else if (key == "format") {
 		Terminal_commands::__command_format(args);
 	}
 
-	else if (strcmp(key, "open") == 0) {
+	else if (key == "open") {
 		Terminal_commands::__command_open(args);
 		return;
 	}
 
-	else if (strcmp(key, "time") == 0) {
+	else if (key == "time") {
 		Terminal_commands::__command_time(args);
 	}
 
-	else if (strcmp(key, "rdsector") == 0) {
-		char buffer[512];
-
-		ata_read_sector(0, buffer);
-
-		Terminal::lnprint(buffer);
-	}
-
-	else if (strcmp(key, "high") == 0) {
+	else if (key == "high") {
 		Terminal::lnprint((int)Terminal::command.highlighted_buffer.size());
 		Terminal::lnprint(Terminal::command.highlighted_buffer);
 		Terminal::lnprint((int)Terminal::command.highlighted_buffer_pos);
@@ -367,10 +410,28 @@ void Terminal::call_command(const char* key, char** args) {
 		Terminal::lnprint((int)Terminal::get_pos());
 	}
 
+	else if (key == "mkdir") {
+		Terminal_commands::__command_mkdir(args);
+	}
+
+	else if (key == "cd") {
+		Terminal_commands::__command_cddir(args);
+	}
+
+	else if (key == "tree") {
+		Terminal_commands::__command_tree(args);
+	}
+
+	else if (key == "path") {
+		Terminal_commands::__command_path(args);
+	}
+
+	else if (key == "dir") {
+		Terminal_commands::__command_dir(args);
+	}
+
 	else {
-		char* error = (char*)malloc(strlen(key) + 1);
-		strcpy(error, key);
-		lnprint(strcat(error, " is invalid command\nenter help for print all commands"));
+		lnprint(key + " is invalid command\nenter help for print all commands");
 	}
 	new_line();
 }
