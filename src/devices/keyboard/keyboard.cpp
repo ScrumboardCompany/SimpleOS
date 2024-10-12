@@ -1,5 +1,5 @@
 #include "devices/keyboard.h"
-#include "Terminal/Terminal.h"
+#include "terminal/terminal.h"
 #include "IDT/IDT.h"
 #include "libs/io/io.h"
 
