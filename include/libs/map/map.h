@@ -70,10 +70,11 @@ inline typename map<_KTy, _VTy>::Node* map<_KTy, _VTy>::copy(Node* node) const {
         return nullptr;
     }
 
-    Node* newNode = (Node*)(malloc(sizeof(Node)));
+    Node* newNode = allocate_ctor<Node>(node->key, node->value);
+    /* Node* newNode = (Node*)(malloc(sizeof(Node)));
 
     memcpy(&(newNode->key), &(node->key), sizeof(_KTy));
-    memcpy(&(newNode->value), &(node->value), sizeof(_VTy));
+    memcpy(&(newNode->value), &(node->value), sizeof(_VTy));*/
 
     newNode->left = copy(node->left);
     newNode->right = copy(node->right);
@@ -83,10 +84,12 @@ inline typename map<_KTy, _VTy>::Node* map<_KTy, _VTy>::copy(Node* node) const {
 template<typename _KTy, typename _VTy>
 inline typename map<_KTy, _VTy>::Node* map<_KTy, _VTy>::insert(Node* node, const _KTy& key, const _VTy& value) {
     if (node == nullptr) {
-        Node* new_node = (Node*)malloc(sizeof(Node));
+        /*Node* new_node = (Node*)malloc(sizeof(Node));
         new_node->key = key;
         new_node->value = value;
         new_node->left = new_node->right = nullptr;
+        return new_node;*/
+        Node* new_node = allocate_ctor<Node>(key, value);
         return new_node;
     }
 
@@ -132,12 +135,12 @@ inline typename map<_KTy, _VTy>::Node* map<_KTy, _VTy>::erase(Node* node, const 
     else {
         if (node->left == nullptr) {
             Node* rightNode = node->right;
-            free(node);
+            deallocate_dtor<Node>(node);
             return rightNode;
         }
         else if (node->right == nullptr) {
             Node* leftNode = node->left;
-            free(node);
+            deallocate_dtor<Node>(node);
             return leftNode;
         }
         else {
@@ -164,8 +167,8 @@ inline void map<_KTy, _VTy>::clear(Node* node) {
     if (node != nullptr) {
         clear(node->left);
         clear(node->right);
-        free(node);
-    }
+        deallocate_dtor<Node>(node);
+    }   
 }
 
 template<typename _KTy, typename _VTy>

@@ -24,6 +24,7 @@ public:
 
 	_Ty& at(int pos);
     _Ty& operator[](int pos);
+    const _Ty& operator[](int pos) const;
     _Ty& back();
 
 	bool empty() const;
@@ -122,7 +123,12 @@ inline _Ty& vector<_Ty>::at(int pos) {
 
 template<typename _Ty>
 inline _Ty& vector<_Ty>::operator[](int pos) {
-    return at(pos);
+    return arr[pos];
+}
+
+template<typename _Ty>
+inline const _Ty& vector<_Ty>::operator[](int pos) const {
+    return arr[pos];
 }
 
 template<typename _Ty>

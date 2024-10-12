@@ -9,8 +9,7 @@ string::string() {
 	length = 0;
 };
 
-string::string(const char* str)
-{
+string::string(const char* str) {
 	length = strlen(str);
 	this->str = (char*)malloc(length + 1);
 

@@ -132,3 +132,11 @@ void* realloc(void* ptr, size_t new_size) {
     }
     return new_ptr;
 }
+
+//void* operator new(size_t size) {
+//    return malloc(size);
+//}
+//
+//void operator delete(void* ptr) noexcept {
+//    free(ptr);
+//}

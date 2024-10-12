@@ -21,3 +21,5 @@ $(TARGET) : $(CPPOBJ) $(AOBJ)
 clean:
 	for /R %%f in (*.o) do del "%%f"
 	del *.o
+
+rebuild: clean $(TARGET)

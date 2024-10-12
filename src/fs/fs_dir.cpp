@@ -4,37 +4,74 @@
 
 using namespace SimpleOS;
 
-bool FileSystem::create_dir(const string& name) {
+bool FileSystem::create_dir(const string& path) {
 
-	if (current_directory->directories.has(name)) {
-		Terminal::lnprint(name + " already exist");
+	Directory* last_directory = current_directory;
+	vector<string> last_current_path = current_path;
+
+	string key;
+	if (!__cd(path, key)) return false;
+
+	if (current_directory->directories.has(key)) {
+		Terminal::lnprint(key + " already exist");
+
+		current_directory = last_directory;
+		current_path = last_current_path;
 		return false;
 	}
 
 	Directory new_dir;
 	new_dir.parent = current_directory;
-	current_directory->directories.insert(name, new_dir);
+	current_directory->directories.insert(key, new_dir);
+
+	current_directory = last_directory;
+	current_path = last_current_path;
 
 	return true;
 }
 
-bool FileSystem::delete_dir(const string& name) {
+bool FileSystem::delete_dir(const string& path) {
 
-	if (!__check_dir_exist(name)) return false;
+	Directory* last_directory = current_directory;
+	vector<string> last_current_path = current_path;
 
-	current_directory->directories.erase(name);
+	string key;
+	if (!__cd(path, key)) return false;
+
+	if (!__check_dir_exist(key)) return false;
+
+	current_directory->directories.erase(key);
+
+	current_directory = last_directory;
+	current_path = last_current_path;
 
 	return true;
 }
 
-bool FileSystem::dir_exist(const string& name) {
-	return current_directory->directories.has(name);
+bool FileSystem::dir_exist(const string& path) {
+	Directory* last_directory = current_directory;
+	vector<string> last_current_path = current_path;
+
+	string key;
+	if (!__cd(path, key)) return false;
+
+	bool result = current_directory->directories.has(key);
+
+	current_directory = last_directory;
+	current_path = last_current_path;
+
+	return result;
 }
 
-bool FileSystem::cd(const string& name) {
-	Directory* last_directory = &*current_directory;
+bool FileSystem::cd(const string& path) {
 
-	vector<string> path = split(name, '/');
+	vector<string> _path = split(path, '/');
+
+	return cd(_path);
+}
+
+bool FileSystem::cd(const vector<string>& path) {
+	Directory* last_directory = current_directory;
 
 	bool is_first = true;
 
@@ -47,7 +84,7 @@ bool FileSystem::cd(const string& name) {
 		else if (is_first ? dir_exist(path[i]) : __check_dir_exist(path[i])) {
 			cd_down(path[i]);
 		}
-		
+
 		else if (is_first) {
 			current_directory = &root;
 
@@ -57,8 +94,6 @@ bool FileSystem::cd(const string& name) {
 			}
 			else cd_down(path[i]);
 		}
-
-		else 
 
 		is_first = false;
 	}
@@ -104,9 +139,17 @@ void FileSystem::print_tree(const Directory& dir, ssize_t level) {
 
 }
 
+bool FileSystem::__check_dir_exist(const string& path) {
+	if (!dir_exist(path)) {
+		Terminal::lnprint("Directory don`t exists");
+		return false;
+	}
+	return true;
+}
+
 string FileSystem::get_current_path() {
 
-	string path;
+	string path = "";
 	for (size_t i = 0; i < current_path.size(); i++) {
 		path = path + current_path[i] + "/";
 	}
@@ -118,10 +161,23 @@ FileSystem::Directory* FileSystem::get_current_directory() {
 	return current_directory;
 }
 
-FileSystem::Directory FileSystem::get_root() {
+const FileSystem::Directory& FileSystem::get_root() {
 	return root;
 }
 
-bool FileSystem::dir_exist(const Directory& dir, const string& name) {
-	return dir.directories.has(name);
+bool FileSystem::__cd(const string& __path, string& buffer) {
+
+	vector<string> path = split(__path, '/');
+
+	string key = path.back();
+	path.pop();
+
+	if (!path.empty()) {
+		if (!cd(path)) {
+			return false;
+		}
+	}
+	buffer = key;
+
+	return true;
 }

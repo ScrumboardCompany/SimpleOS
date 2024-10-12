@@ -73,20 +73,28 @@ void Terminal_commands::__command_echo(vector<string>& args) {
 void Terminal_commands::__command_help(vector<string>& args) {
 
 	if (__check_argc(args, 0)) {
-		Terminal::lnprint("color [spec arg] [number] - set and fill color to the specified argument");
-		Terminal::lnprint("set  [spec arg] [number] - set color to the specified argument");
-		Terminal::lnprint("fill [spec arg] [number] - fill color to the specified argument");
+		Terminal::lnprint("color [spec arg] [number] - sets the specified color and fills the console with it");
+		Terminal::lnprint("set [spec arg] [number] - sets the specified color without filling");
+		Terminal::lnprint("fill [spec arg] [number] - fills the console with the specified color");
 		Terminal::lnprint("clear - clears all text in the console");
-		Terminal::lnprint("reset - clears all text in the console and resets the colors");
-		Terminal::lnprint("echo [text] - prints the passed argument to the console");
+		Terminal::lnprint("reset - clears the console and resets the colors to default");
+		Terminal::lnprint("echo [text] - prints the specified text to the console");
 		Terminal::lnprint("cat [number] - prints a cat under the specified number");
-		Terminal::lnprint("mkfile [name] [data] - creates a file called \"name\" and adds \"data\" there");
-		Terminal::lnprint("rdfile [name] - reads data from a file named \"name\"");
-		Terminal::lnprint("rmfile [name] - deletes a file named \"name\"");
-		Terminal::lnprint("wrfile [name] [data] - overwrites data from a file named \"name\" with new \"data\"");
-		Terminal::lnprint("apfile [name] [data] - assigns new \"data\" to data from a file named \"name\"");
-		Terminal::lnprint("format - deletes all files");
-		Terminal::lnprint("open [name] - opens file with name \"name\"");
+		Terminal::lnprint("mkfile [path] [data] - creates a file at the specified path and writes the data to it");
+		Terminal::lnprint("rdfile [path] - reads data from the file at the specified path");
+		Terminal::lnprint("rmfile [path] - deletes the file at the specified path");
+		Terminal::lnprint("wrfile [path] [data] - overwrites the file at the specified path with new data");
+		Terminal::lnprint("apfile [path] [data] - appends new data to the file at the specified path");
+		Terminal::lnprint("format - deletes all files and directories in the system");
+		Terminal::lnprint("open [path] - opens the file at the specified path");
+		Terminal::lnprint("time - prints the current world time");
+		Terminal::lnprint("mkdir [path] - creates a directory at the specified path");
+		Terminal::lnprint("exdir [path] - lists the contents of the directory at the specified path");
+		Terminal::lnprint("cd [path] - changes the current directory to the specified path");
+		Terminal::lnprint("dir - lists the contents of the current directory");
+		Terminal::lnprint("tree - prints the directory structure in a tree-like format starting from the current directory");
+		Terminal::lnprint("path - prints the current working directory path");
+
 	}
 }
 
@@ -245,6 +253,15 @@ void Terminal_commands::__command_cddir(vector<string>& args) {
 		if (FileSystem::cd(args[0])) {
 			Terminal::lnprint("Good cddir");
 		}
+	}
+}
+
+void Terminal_commands::__command_exdir(vector<string>& args) {
+
+	if (__check_argc(args, 1)) {
+		if (FileSystem::dir_exist(args[0])) 
+			Terminal::lnprint("Directory exist");
+		else Terminal::lnprint("Directory don`t exist");
 	}
 }
 
@@ -412,6 +429,14 @@ void Terminal::call_command(const string& key, vector<string>& args) {
 
 	else if (key == "mkdir") {
 		Terminal_commands::__command_mkdir(args);
+	}
+
+	/*else if (key == "rmdir") {
+		Terminal_commands::__command_rmdir(args);
+	}*/
+
+	else if (key == "exdir") {
+		Terminal_commands::__command_exdir(args);
 	}
 
 	else if (key == "cd") {

@@ -45,10 +45,16 @@ string FileSystem::opened_file = "";
 //
 //}
 
-bool FileSystem::create_file(const string& name, const string& data) {
+bool FileSystem::create_file(const string& path, const string& data) {
 
-	if (current_directory->files.has(name)) {
-		Terminal::lnprint(name + " already exist");
+	Directory* last_directory = current_directory;
+	vector<string> last_current_path = current_path;
+	
+	string key;
+	if (!__cd(path, key)) return false;
+
+	if (current_directory->files.has(key)) {
+		Terminal::lnprint(key + " already exist");
 		return false;
 	}
 
@@ -69,18 +75,27 @@ bool FileSystem::create_file(const string& name, const string& data) {
 		distr_to_sectors(new_file, data.c_str());
 	}	
 
-	current_directory->files.insert(name, new_file);
+	current_directory->files.insert(key, new_file);
 
 	//write_superblock();
+
+	current_directory = last_directory;
+	current_path = last_current_path;
 
 	return true;
 }
 
-bool FileSystem::delete_file(const string& name) {
-	
-	if (!__check_exist(name)) return false;
+bool FileSystem::delete_file(const string& path) {
 
-	File file = current_directory->files[name];
+	Directory* last_directory = current_directory;
+	vector<string> last_current_path = current_path;
+
+	string key;
+	if (!__cd(path, key)) return false;
+	
+	if (!__check_exist(key)) return false;
+
+	File file = current_directory->files[key];
 
 	for (size_t i = 0, size = file.sectors.size(); i < size; ++i) {
 		ata_delete_from_sector(file.sectors[i]);
@@ -89,44 +104,73 @@ bool FileSystem::delete_file(const string& name) {
 			taken_sectors.pop(taken_sectors.find(file.sectors[i]));
 
 	}
-	current_directory->files.erase(name);
+	current_directory->files.erase(key);
 
 	//write_superblock();
 
-	return true;
-}
-
-bool FileSystem::write_to_file(const string& name, const string& data) {
-
-	if (!__check_exist(name)) return false;
-
-	if (!delete_file(name)) {
-		return false;
-	}
-
-	if (!create_file(name, data)) return false;
+	current_directory = last_directory;
+	current_path = last_current_path;
 
 	return true;
 }
 
-bool FileSystem::append_to_file(const string& name, const string& data) {
+bool FileSystem::write_to_file(const string& path, const string& data) {
 
-	if (!__check_exist(name)) return false;
+	Directory* last_directory = current_directory;
+	vector<string> last_current_path = current_path;
 
-	current_directory->files[name].size += data.size();
+	string key;
+	if (!__cd(path, key)) return false;
 
-	if (!distr_to_sectors(current_directory->files[name], data.c_str())) return false;
+	bool result = true;
+
+	if (!__check_exist(key)) result = false;
+
+	else if (!delete_file(key)) result = false;
+
+	else if (!create_file(key, data)) result = false;
+
+	current_directory = last_directory;
+	current_path = last_current_path;
+
+	return result;
+}
+
+bool FileSystem::append_to_file(const string& path, const string& data) {
+
+	Directory* last_directory = current_directory;
+	vector<string> last_current_path = current_path;
+
+	string key;
+	if (!__cd(path, key)) return false;
+
+	bool result = true;
+
+	if (!__check_exist(key)) result = false;
+
+	current_directory->files[key].size += data.size();
+
+	if (!distr_to_sectors(current_directory->files[key], data.c_str())) result = false;
 
 	//write_superblock();
 
-	return true;
+	current_directory = last_directory;
+	current_path = last_current_path;
+
+	return result;
 }
 
-bool FileSystem::read_file(const string& name, string& buffer) {
+bool FileSystem::read_file(const string& path, string& buffer) {
 
-	if (!__check_exist(name)) return false;
+	Directory* last_directory = current_directory;
+	vector<string> last_current_path = current_path;
 
-	File file = current_directory->files[name];
+	string key;
+	if (!__cd(path, key)) return false;
+
+	if (!__check_exist(key)) return false;
+
+	File file = current_directory->files[key];
 	size_t size = file.sectors.size();
 
 	for (size_t i = 0; i < size; i++) {
@@ -134,6 +178,8 @@ bool FileSystem::read_file(const string& name, string& buffer) {
 		ata_read_sector(file.sectors[i], data);
 		buffer = buffer + data;
 	}
+	current_directory = last_directory;
+	current_path = last_current_path;
 
 	return true;
 }
@@ -150,8 +196,19 @@ bool FileSystem::format() {
 	return !has_error;
 }
 
-bool FileSystem::file_exist(const string& name) {
-	return current_directory->files.has(name);
+bool FileSystem::file_exist(const string& path) {
+	Directory* last_directory = current_directory;
+	vector<string> last_current_path = current_path;
+
+	string key;
+	if (!__cd(path, key)) return false;
+
+	bool result = current_directory->files.has(key);
+
+	current_directory = last_directory;
+	current_path = last_current_path;
+
+	return result;
 }
 
 ssize_t FileSystem::free_sector() {
@@ -207,24 +264,12 @@ bool FileSystem::distr_to_sectors(File& file, const char* data) {
 	return true;
 }
 
-bool FileSystem::__check_exist(const string& name) {
-	if (!current_directory->files.has(name)) {
+bool FileSystem::__check_exist(const string& path) {
+	if (!file_exist(path)) {
 		Terminal::lnprint("File don`t exists");
 		return false;
 	}
 	return true;
-}
-
-bool FileSystem::__check_dir_exist(const string& name) {
-	if (!current_directory->directories.has(name)) {
-		Terminal::lnprint("Directory don`t exists");
-		return false;
-	}
-	return true;
-}
-
-bool FileSystem::file_exist(const Directory& dir, const string& name) {
-	return dir.files.has(name);
 }
 
 //bool FileSystem::read_superblock() {
@@ -302,8 +347,17 @@ bool FileSystem::file_exist(const Directory& dir, const string& name) {
 //	return true;
 //}
 
-void FileSystem::open_file(const string& name) {
-	opened_file = name;
+void FileSystem::open_file(const string& path) {
+	Directory* last_directory = current_directory;
+	vector<string> last_current_path = current_path;
+
+	string key;
+	if (!__cd(path, key)) return;
+
+	opened_file = key;
+
+	current_directory = last_directory;
+	current_path = last_current_path;
 }
 
 const string& FileSystem::get_opened_file() {

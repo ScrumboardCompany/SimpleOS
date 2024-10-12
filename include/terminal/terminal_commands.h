@@ -32,6 +32,7 @@ namespace SimpleOS {
 		static void __command_mkdir(vector<string>& args);
 		static void __command_rmdir(vector<string>& args);
 		static void __command_cddir(vector<string>& args);
+		static void __command_exdir(vector<string>& args);
 		static void __command_tree(vector<string>& args);
 		static void __command_path(vector<string>& args);
 		static void __command_dir(vector<string>& args);
