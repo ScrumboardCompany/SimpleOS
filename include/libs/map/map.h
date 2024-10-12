@@ -158,7 +158,7 @@ inline void map<_KTy, _VTy>::clear(Node* node) {
     if (node != nullptr) {
         clear(node->left);
         clear(node->right);
-        free(node);
+        delete node;
     }
 }
 
