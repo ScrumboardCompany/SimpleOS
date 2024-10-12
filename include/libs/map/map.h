@@ -79,9 +79,7 @@ inline typename map<_KTy, _VTy>::Node* map<_KTy, _VTy>::copy(Node* node) const {
 template<typename _KTy, typename _VTy>
 inline typename map<_KTy, _VTy>::Node* map<_KTy, _VTy>::insert(Node* node, const _KTy& key, const _VTy& value) {
     if (node == nullptr) {
-        Node* new_node = (Node*)malloc(sizeof(Node));
-        new_node->key = key;
-        new_node->value = value;
+        Node* new_node = new Node(key, value);
         new_node->left = new_node->right = nullptr;
         return new_node;
     }
