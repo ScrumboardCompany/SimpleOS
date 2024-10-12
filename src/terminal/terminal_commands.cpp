@@ -45,7 +45,20 @@ void Terminal_commands::__command_set(vector<string>& args) {
 
 void Terminal_commands::__command_clear(vector<string>& args) {
 
-	if (__check_argc(args, 0))
+	if (__check_argc(args, 1, false)) {
+		if (args[0] == "buffer") {
+			Terminal::command.commands.clear();
+			Keyboard::reset_selected_command_pos();
+			Terminal::new_line();
+		}
+		else if (args[0] == "terminal") {
+			Terminal::clear();
+		}
+		else {
+			Terminal::lnprint("Invalid argument for clear");
+		}
+	}
+	else if(__check_argc(args, 0))
 		Terminal::clear();
 }
 
@@ -336,12 +349,11 @@ void Terminal_commands::__command_time(vector<string>& args) {
 	}
 }
 
-bool Terminal_commands::__check_argc(vector<string>& args, size_t argc) {
-	size_t size = args.size();
+bool Terminal_commands::__check_argc(vector<string>& args, size_t argc, bool print_error) {
 
-	if (size == argc) return true;
+	if (args.size() == argc) return true;
 
-	Terminal::lnprint(size > argc ? "Too many arguments" : "Too few arguments");
+	if (print_error) Terminal::lnprint(args.size() > argc ? "Too many arguments" : "Too few arguments");
 
 	return false;
 }
@@ -456,6 +468,7 @@ void Terminal::call_command(const string& key, vector<string>& args) {
 	}
 
 	else {
+		lnprint(key + " is invalid command\nenter help for print all commands");
 		lnprint(key + " is invalid command\nenter help for print all commands");
 	}
 	new_line();

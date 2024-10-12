@@ -56,6 +56,10 @@ namespace SimpleOS {
 
 		static void print(char c);
 
+		static void input_print(char c);
+
+		static void text_print(char c);
+
 		static void print(int n);
 
 		static void print(const string& string);
@@ -91,6 +95,8 @@ namespace SimpleOS {
 		static void clear();
 
 		static void delete_char(size_t pos);
+
+		static void textdelete_char(size_t pos);
 
 		static void delete_chars(size_t pos, size_t count);
 

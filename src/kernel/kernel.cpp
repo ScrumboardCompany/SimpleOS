@@ -25,8 +25,10 @@ extern "C" void kernel_main(void) {
 
     Terminal::print('>');
 
+
     while (true) {
         __asm__ volatile("sti");
-        __asm__ volatile("hlt");
+        //__asm__ volatile("sti");
+        //__asm__ volatile("hlt");
     }
 }

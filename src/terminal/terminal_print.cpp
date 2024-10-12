@@ -22,7 +22,33 @@ void Terminal::print(char c, size_t pos) {
 void Terminal::print(char c) {
 	if (c == '\n') {
 		new_line();
-	} else if (c == '\t') {
+	}
+	else if (c == '\t') {
+		print("   ");
+	}
+	else {
+		if (pos < WIDTH * HEIGHT - 1) {
+			char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
+
+			print(c, pos);
+			pos++;
+			command.buffer_pos++;
+
+			size_t line_end_pos = (pos / WIDTH + 1) * WIDTH - 1;
+			if (buffer[line_end_pos * 2] == ' ') {
+				buffer[line_end_pos * 2] = 0;
+			}
+		}
+	}
+
+	move_cursor(pos);
+}
+
+void Terminal::input_print(char c) {
+	if (c == '\n') {
+		new_line();
+	}
+	else if (c == '\t') {
 		print("   ");
 	}
 	else {
@@ -38,6 +64,35 @@ void Terminal::print(char c) {
 
 		pos++;
 		command.buffer_pos++;
+	}
+
+	move_cursor(pos);
+}
+
+void Terminal::text_print(char c) {
+	if (c == '\n') {
+		new_line();
+	}
+	else if (c == '\t') {
+		print("   ");
+	}
+	else {
+		if (pos < WIDTH* HEIGHT - 1) {
+			char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
+
+			size_t line_start = (pos / WIDTH) * WIDTH;
+			size_t line_end = line_start + WIDTH;
+
+			for (size_t i = line_end - 1; i > pos; --i) {
+				buffer[i * 2] = buffer[(i - 1) * 2];
+				buffer[i * 2 + 1] = buffer[(i - 1) * 2 + 1];
+			}
+
+			print(c, pos);
+
+			pos++;
+			command.buffer_pos++;
+		}
 	}
 
 	move_cursor(pos);

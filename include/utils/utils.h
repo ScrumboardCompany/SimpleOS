@@ -8,6 +8,8 @@
 #include "libs/string/string.h"
 #include "libs/vector/vector.h"
 #include "libs/string/class.h"
+#include "libs/vector/vector.h"
+#include "libs/string/class.h"
 
 namespace SimpleOS {
 

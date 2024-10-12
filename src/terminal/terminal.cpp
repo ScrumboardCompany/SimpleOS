@@ -1,6 +1,7 @@
 #include "terminal/terminal.h"
 #include "utils/utils.h"
 #include "libs/io/io.h"
+#include "devices/keyboard.h"
 
 using namespace SimpleOS;
 
@@ -50,6 +51,28 @@ void Terminal::delete_char(size_t pos) {
 
 		buffer[(WIDTH * HEIGHT - 1) * 2] = ' ';
 		buffer[(WIDTH * HEIGHT - 1) * 2 + 1] = ((uint8_t)bg_color << 4) | (uint8_t)terminal_color;
+
+		Terminal::pos = pos;
+		move_cursor(pos);
+	}
+}
+
+void Terminal::textdelete_char(size_t pos) {
+	if (pos > 0) {
+		char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
+
+		--pos;
+		--command.buffer_pos;
+
+		size_t current_line_end = (pos / WIDTH + 1) * WIDTH;
+
+		for (size_t i = pos; i < current_line_end - 1; ++i) {
+			buffer[i * 2] = buffer[(i + 1) * 2];
+			buffer[i * 2 + 1] = buffer[(i + 1) * 2 + 1];
+		}
+
+		buffer[(current_line_end - 1) * 2] = ' '; 
+		buffer[(current_line_end - 1) * 2 + 1] = ((uint8_t)bg_color << 4) | (uint8_t)terminal_color; 
 
 		Terminal::pos = pos;
 		move_cursor(pos);
@@ -142,7 +165,8 @@ void Terminal::delete_highlighted_text() {
 		// Can do the same thing with the pos
 
 		for (size_t i = start; i < Terminal::command.highlighted_buffer_start_pos; i++) {
-			Terminal::delete_char(Terminal::get_pos() + 1);
+			//Terminal::delete_char(Terminal::get_pos() + 1);
+			Keyboard::is_console_mode ? Terminal::delete_char(Terminal::get_pos()) : Terminal::textdelete_char(Terminal::get_pos());
 
 			Terminal::command.buffer.pop(start - 1);
 		}
@@ -153,7 +177,7 @@ void Terminal::delete_highlighted_text() {
 		size_t start = Terminal::command.highlighted_buffer_start_pos;
 
 		for (size_t i = start; i < Terminal::command.highlighted_buffer_pos + start; i++) {
-			Terminal::delete_char(Terminal::get_pos());
+			Keyboard::is_console_mode ? Terminal::delete_char(Terminal::get_pos()) : Terminal::textdelete_char(Terminal::get_pos());
 
 			Terminal::command.buffer.pop(start - 1);
 		}
