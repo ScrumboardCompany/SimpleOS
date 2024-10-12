@@ -179,7 +179,12 @@ void Terminal_commands::__command_cat(vector<string>& args) {
 
 void Terminal_commands::__command_mkfile(vector<string>& args) {
 
-	if (__check_argc(args, 2)) {
+	if (__check_argc(args, 1, false)) {
+
+		if (FileSystem::create_file(args[0]))
+			Terminal::lnprint("Good mkfile");
+	}
+	else if (__check_argc(args, 2)) {
 
 		if (FileSystem::create_file(args[0], args[1]))
 			Terminal::lnprint("Good mkfile");
@@ -262,9 +267,14 @@ void Terminal_commands::__command_rmdir(vector<string>& args) {
 
 void Terminal_commands::__command_cddir(vector<string>& args) {
 
-	if (__check_argc(args, 1)) {
+	if (__check_argc(args, 0, false)) {
+		FileSystem::cd();
+		Terminal::lnprint("Good cd to root");
+	}
+
+	else if (__check_argc(args, 1)) {
 		if (FileSystem::cd(args[0])) {
-			Terminal::lnprint("Good cddir");
+			Terminal::lnprint("Good cd");
 		}
 	}
 }
@@ -443,9 +453,9 @@ void Terminal::call_command(const string& key, vector<string>& args) {
 		Terminal_commands::__command_mkdir(args);
 	}
 
-	/*else if (key == "rmdir") {
+	else if (key == "rmdir") {
 		Terminal_commands::__command_rmdir(args);
-	}*/
+	}
 
 	else if (key == "exdir") {
 		Terminal_commands::__command_exdir(args);

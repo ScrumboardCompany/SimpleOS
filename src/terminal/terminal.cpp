@@ -156,7 +156,7 @@ void Terminal::delete_highlighted_text() {
 
 	if (Terminal::command.buffer.size() == Terminal::command.highlighted_buffer.size()) {
 		Terminal::delete_line();
-		Terminal::print('>');
+		Terminal::print(Terminal::get_pre_arrow_text());
 		Terminal::command.buffer = "";
 	}
 	else if (Terminal::command.highlighted_buffer_pos < 0) {
@@ -200,5 +200,7 @@ size_t Terminal::pos = 0;
 size_t Terminal::current_line = 0;
 Terminal::Color Terminal::terminal_color = Terminal::Color::Grey;
 Terminal::Color Terminal::bg_color = Terminal::Color::Black;
+
+string Terminal::pre_arrow_text = ">";
 
 Terminal::Command Terminal::command;

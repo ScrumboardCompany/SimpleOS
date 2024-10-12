@@ -40,6 +40,18 @@ bool FileSystem::delete_dir(const string& path) {
 
 	if (!__check_dir_exist(key)) return false;
 
+	cd_down(key);
+
+	current_directory->files.forEach([](const string& name, const File&) {
+		delete_file(name);
+		});
+
+	current_directory->directories.forEach([](const string& name, const Directory&) {
+		delete_dir(name);
+		});
+
+	cd_up();
+
 	current_directory->directories.erase(key);
 
 	current_directory = last_directory;
@@ -101,6 +113,11 @@ bool FileSystem::cd(const vector<string>& path) {
 	return true;
 }
 
+void FileSystem::cd() {
+	current_directory = &root;
+	current_path.clear();
+}
+
 bool FileSystem::cd_up() {
 	if (current_directory->parent) {
 		current_directory = current_directory->parent;
@@ -145,6 +162,10 @@ bool FileSystem::__check_dir_exist(const string& path) {
 		return false;
 	}
 	return true;
+}
+
+void FileSystem::set_current_path(const vector<string>& path) {
+	current_path = path;
 }
 
 string FileSystem::get_current_path() {

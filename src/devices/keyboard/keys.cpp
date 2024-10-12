@@ -13,7 +13,7 @@ void Keyboard::__backspace(PressedKey key) {
 			Terminal::delete_highlighted_text();
 
 		}
-		else if (Terminal::get_pos() % WIDTH > 1) {
+		else if (Terminal::get_pos() % WIDTH > Terminal::get_pre_arrow_text().size()) {
 			Terminal::delete_char(Terminal::get_pos());
 			Terminal::command.buffer.pop(Terminal::get_buffer_pos() - 1);
 			Keyboard::reset_selected_command_pos();
@@ -46,7 +46,7 @@ void Keyboard::__enter(PressedKey key) {
 
 			if (is_console_mode) {
 				Terminal::command.buffer = "";
-				Terminal::print('>');
+				Terminal::print(Terminal::get_pre_arrow_text());
 			}
 
 			Terminal::current_line++;
@@ -89,7 +89,7 @@ void Keyboard::__textctrl(PressedKey key) {
 			FileSystem::close_file();
 			Terminal::clear();
 		}
-		Terminal::print('>');
+		Terminal::print(Terminal::get_pre_arrow_text());
 
 	}
 }

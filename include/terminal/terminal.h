@@ -39,16 +39,16 @@ namespace SimpleOS {
 		static size_t current_line;
 		static Color terminal_color;
 		static Color bg_color;
+		/*static string pre_arrow_text;*/
 
 		static Command command;
 		
 		static void to_args(vector<string>& command_split, vector<string>& args);
 
 	public:
+		static string pre_arrow_text;
 
 		static Color to_color(int code);
-
-
 
 		static void print(const char* msg);
 
@@ -143,6 +143,10 @@ namespace SimpleOS {
 		static void restore_default_bg_color();
 
 		static void restore_bg_color_at(size_t pos);
+
+		static const string& get_pre_arrow_text();
+
+		static void set_pre_arrow_text(const string& new_text);
 
 		enum class Color : uint8_t {
 			Black = 0x00,

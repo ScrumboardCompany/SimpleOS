@@ -185,7 +185,7 @@ void Keyboard::__handle_arrow(bool isUp) {
 	Terminal::command.buffer = Terminal::command.commands[Terminal::command.selected_command_pos];
 
 	Terminal::delete_line();
-	Terminal::print('>');
+	Terminal::print(Terminal::get_pre_arrow_text());
 	Terminal::print(Terminal::command.buffer);
 }
 

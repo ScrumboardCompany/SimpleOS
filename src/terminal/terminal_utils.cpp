@@ -9,30 +9,6 @@ void Terminal::to_args(vector<string>& command_split, vector<string>& args) {
 	args.pop(0);
 }
 
-//void Terminal::new_line() {
-//	if (pos / WIDTH >= HEIGHT) {
-//		char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
-//
-//		for (size_t i = 1; i < HEIGHT; i++) {
-//			for (size_t j = 0; j < WIDTH; ++j) {
-//				buffer[((i - 1) * WIDTH + j) * 2] = buffer[(i * WIDTH + j) * 2];
-//			}
-//		}
-//
-//		for (size_t j = 0; j < WIDTH; ++j) {
-//			buffer[(HEIGHT - 1) * WIDTH * 2 + j * 2] = 0; 
-//		}
-//
-//		set_pos((HEIGHT - 1) * WIDTH);
-//	}
-//	else {
-//		set_pos((pos / WIDTH + 1) * WIDTH);
-//	}
-//
-//	set_buffer_pos(0);
-//	current_line++;
-//}
-
 void Terminal::new_line() {
 	if (pos / WIDTH >= HEIGHT) {
 		char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
@@ -55,4 +31,12 @@ void Terminal::new_line() {
 
 	set_buffer_pos(0);
 	current_line++;
+}
+
+const string& Terminal::get_pre_arrow_text() {
+	return pre_arrow_text;
+}
+
+void Terminal::set_pre_arrow_text(const string& new_text) {
+	pre_arrow_text = new_text;
 }

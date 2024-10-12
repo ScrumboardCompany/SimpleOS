@@ -61,11 +61,15 @@ namespace SimpleOS {
 
 		static bool cd(const vector<string>& path);
 
+		static void cd();
+
 		static bool cd_up();
 
 		static void cd_down(const string& name);
 
 		static void tree(const Directory& dir, ssize_t level = 0);
+
+		static void set_current_path(const vector<string>& path);
 
 		static string get_current_path();
 
