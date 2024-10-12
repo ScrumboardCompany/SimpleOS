@@ -70,11 +70,7 @@ inline typename map<_KTy, _VTy>::Node* map<_KTy, _VTy>::copy(Node* node) const {
         return nullptr;
     }
 
-    Node* newNode = (Node*)(malloc(sizeof(Node)));
-
-    memcpy(&(newNode->key), &(node->key), sizeof(_KTy));
-    memcpy(&(newNode->value), &(node->value), sizeof(_VTy));
-
+    Node* newNode = new Node(*node);
     newNode->left = copy(node->left);
     newNode->right = copy(node->right);
     return newNode;
