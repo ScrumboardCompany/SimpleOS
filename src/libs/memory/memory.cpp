@@ -132,3 +132,8 @@ void* realloc(void* ptr, size_t new_size) {
     }
     return new_ptr;
 }
+
+void *operator new(size_t sz)
+{
+	return malloc(sz);
+}
