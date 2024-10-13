@@ -188,7 +188,7 @@ void Terminal::delete_highlighted_text() {
 }
 
 void Terminal::move_cursor(size_t pos) {
-	uint8_t position = (uint8_t)pos;
+	uint32_t position = (uint32_t)pos;
 
 	outb(0x3D4, 0x0F);
 	outb(0x3D5, (uint8_t)(position & 0xFF));
