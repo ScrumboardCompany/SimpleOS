@@ -28,16 +28,6 @@ namespace SimpleOS {
 			Directory* parent = nullptr;
 		};
 
-		struct Superblock {
-			uint32_t file_table_start;
-			uint32_t total_files;   
-			uint32_t total_directories;
-			uint32_t total_sectors;   
-			uint32_t free_sectors;
-		};
-
-		//static void init_fs();
-
 		static bool create_file(const string& path, const string& data = nullptr);
 
 		static bool copy_file(const string& path, const string& result_path);

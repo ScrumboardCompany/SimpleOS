@@ -120,7 +120,7 @@ void Keyboard::__textarrow_down(PressedKey key) {
 
 void Keyboard::__arrow_left(PressedKey key) {
 	if (key == Keyboard::PressedKey::ArrowLeft) {
-		if ((Terminal::get_buffer_pos() > 1 && Keyboard::is_console_mode) || (Terminal::get_pos() && !Keyboard::is_console_mode)) {
+		if ((Terminal::get_buffer_pos() > Terminal::get_pre_arrow_text().size() && Keyboard::is_console_mode) || (Terminal::get_pos() && !Keyboard::is_console_mode)) {
 			if (shift_pressed) {
 
 				if (Terminal::get_highlighted_buffer_pos() == 0) Terminal::command.highlighted_buffer_start_pos = Terminal::get_buffer_pos();

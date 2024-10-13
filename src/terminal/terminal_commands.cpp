@@ -24,10 +24,25 @@ void Terminal_commands::__command_fill(vector<string>& args) {
 	if (__check_argc(args, 2)) {
 		Terminal::Color new_color = Terminal::to_color(atoi(args[1]));
 
-		if (strcmp(args[0], "text") == 0)
+		if (args[0] == "text")
 			Terminal::fill_terminal_color(new_color);
-		else if (strcmp(args[0], "bg") == 0)
+		else if (args[0] == "bg")
 			Terminal::fill_bg_color(new_color);
+		else if (args[0].size() == 1) {
+
+			char* buffer = (char*)VIDEO_MEMORY_ADDRESS;
+			for (size_t i = 0; i < WIDTH * HEIGHT; ++i) {
+				char c = buffer[i * 2];
+
+				if (c == args[0][0]) {
+					uint8_t current_color = buffer[i * 2 + 1];
+					uint8_t background_color = (current_color >> 4) & 0x0F;
+					uint8_t color = ((uint8_t)background_color << 4) | (uint8_t)new_color;
+
+					buffer[i * 2 + 1] = color;
+				}
+			}
+		}
 	}
 }
 
@@ -502,7 +517,6 @@ void Terminal::call_command(const string& key, vector<string>& args) {
 	}
 
 	else {
-		lnprint(key + " is invalid command\nenter help for print all commands");
 		lnprint(key + " is invalid command\nenter help for print all commands");
 	}
 	new_line();
