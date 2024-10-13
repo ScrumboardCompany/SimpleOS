@@ -7,7 +7,6 @@
 using namespace SimpleOS;
 
 vector<size_t> FileSystem::taken_sectors;
-FileSystem::Superblock FileSystem::block;
 
 FileSystem::Directory FileSystem::root;
 FileSystem::Directory* FileSystem::current_directory = &root;

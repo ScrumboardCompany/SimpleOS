@@ -101,7 +101,6 @@ namespace SimpleOS {
 
 		//static map<string, File> files;
 		static vector<size_t> taken_sectors;
-        static Superblock block;
 
 		static string opened_file;
 	};
