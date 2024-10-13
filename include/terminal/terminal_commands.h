@@ -22,6 +22,7 @@ namespace SimpleOS {
 		static void __command_cat(vector<string>& args);
 
 		static void __command_mkfile(vector<string>& args);
+		static void __command_cpfile(vector<string>& args);
 		static void __command_rdfile(vector<string>& args);
 		static void __command_rmfile(vector<string>& args);
 		static void __command_wrfile(vector<string>& args);
@@ -30,6 +31,7 @@ namespace SimpleOS {
 		static void __command_format(vector<string>& args);
 
 		static void __command_mkdir(vector<string>& args);
+		static void __command_cpdir(vector<string>& args);
 		static void __command_rmdir(vector<string>& args);
 		static void __command_cddir(vector<string>& args);
 		static void __command_exdir(vector<string>& args);

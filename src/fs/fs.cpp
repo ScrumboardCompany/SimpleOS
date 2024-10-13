@@ -6,7 +6,6 @@
 
 using namespace SimpleOS;
 
-//map<string, FileSystem::File> FileSystem::files;
 vector<size_t> FileSystem::taken_sectors;
 FileSystem::Superblock FileSystem::block;
 
@@ -22,19 +21,35 @@ string FileSystem::opened_file = "";
 //	if (read_superblock()) {
 //		block = temp_block;
 //
+//		current_directory = &root;
 //		uint32_t current_sector = block.file_table_start;
 //
 //		for (size_t i = 0; i < block.total_files; ++i) {
-//			char buffer[512];
+//			string buffer(512, '\0');
 //			ata_read_sector(current_sector, buffer);
 //
-//			char filename[32];
-//			memcpy(filename, buffer, 32);
+//			bool is_directory;
+//			memcpy(&is_directory, buffer, sizeof(bool));
 //
-//			File file;
-//			memcpy(&file, buffer + 32, sizeof(File));
+//			if (is_directory) {
+//				Directory dir;
+//				string dirname(buffer + sizeof(bool), 32); 
+//				dir.parent = current_directory;
+//				current_directory->directories.insert(dirname, dir);
 //
-//			files[string(filename)] = file;
+//			}
+//			else {
+//				File file;
+//				string filename(buffer + sizeof(bool), 32); 
+//				memcpy(&file.size, buffer + sizeof(bool) + 32, sizeof(size_t));
+//				size_t sector_count;
+//				memcpy(&sector_count, buffer + sizeof(bool) + 32 + sizeof(size_t), sizeof(size_t));
+//
+//				file.sectors.resize(sector_count);
+//				memcpy(file.sectors.data(), buffer + sizeof(bool) + 32 + sizeof(size_t) * 2, sector_count * sizeof(uint32_t));
+//
+//				current_directory->files.insert(filename, file);
+//			}
 //
 //			current_sector++;
 //		}
@@ -77,13 +92,34 @@ bool FileSystem::create_file(const string& path, const string& data) {
 
 	current_directory->files.insert(key, new_file);
 
-	//write_superblock();
-
 	current_directory = last_directory;
 	current_path = last_current_path;
 
 	return true;
 }
+
+bool FileSystem::copy_file(const string& path, const string& result_path) {
+
+	Directory* last_directory = current_directory;
+	vector<string> last_current_path = current_path;
+
+	string key;
+	if (!__cd(path, key)) return false;
+
+	if (!current_directory->files.has(key)) {
+		Terminal::lnprint("Source file not found");
+		return false;
+	}
+
+	string file_data;
+	read_file(path, file_data);
+
+	current_directory = last_directory;
+	current_path = last_current_path;
+
+	return create_file(result_path, file_data);
+}
+
 
 bool FileSystem::delete_file(const string& path) {
 
@@ -272,75 +308,97 @@ bool FileSystem::__check_exist(const string& path) {
 	return true;
 }
 
+
 //bool FileSystem::read_superblock() {
-//
-//	char buffer[512];
+//	string buffer(512, '\0');
+//	memset(buffer, 0, sizeof(buffer));
+//	size_t offset = 0;
 //
 //	ata_read_sector(0, buffer);
 //
-//	size_t offset = 0;
 //	size_t file_count;
+//	size_t dir_count;
+//
 //	memcpy(&file_count, buffer + offset, sizeof(size_t));
 //	offset += sizeof(size_t);
 //
+//	memcpy(&dir_count, buffer + offset, sizeof(size_t));
+//	offset += sizeof(size_t);
+//
+//	current_directory->files.clear();
+//	current_directory->directories.clear();
+//
 //	for (size_t i = 0; i < file_count; ++i) {
-//		char filename[32];
-//		memcpy(filename, buffer + offset, 32);
-//		offset += 32;
+//		size_t name_length;
+//		memcpy(&name_length, buffer.c_str() + offset, sizeof(size_t));
+//		offset += sizeof(size_t);
+//
+//		string file_name(buffer.c_str() + offset, name_length);
+//		offset += name_length;
 //
 //		File file;
-//		memcpy(&file.size, buffer + offset, sizeof(size_t));
-//		offset += sizeof(size_t);
+//		memcpy(&file, buffer.c_str() + offset, sizeof(File));
+//		offset += sizeof(File);
 //
-//		size_t sector_count;
-//		memcpy(&sector_count, buffer + offset, sizeof(size_t));
-//		offset += sizeof(size_t);
-//
-//		file.sectors.resize(sector_count);
-//		for (size_t j = 0; j < sector_count; ++j) {
-//			memcpy(&file.sectors[j], buffer + offset, sizeof(uint32_t));
-//			offset += sizeof(uint32_t);
-//		}
-//
-//		files[string(filename)] = file;
+//		current_directory->files[file_name] = file;
 //	}
 //
-//	files.forEach([](const string&, File file) {
-//		for (size_t i = 0; i < file.sectors.size(); i++) {
-//			if (!taken_sectors.has(file.sectors[i])) {
-//				taken_sectors.push(file.sectors[i]);
-//			}
-//		}
-//		});
+//	for (size_t i = 0; i < dir_count; ++i) {
+//		size_t name_length;
+//		memcpy(&name_length, buffer.c_str() + offset, sizeof(size_t));
+//		offset += sizeof(size_t);
+//
+//		string dir_name(buffer.c_str() + offset, name_length);
+//		offset += name_length;
+//
+//		Directory dir;
+//		memcpy(&dir, buffer.c_str() + offset, sizeof(Directory));
+//		offset += sizeof(Directory);
+//
+//		current_directory->directories[dir_name] = dir;
+//	}
 //
 //	return true;
 //}
 
 //bool FileSystem::write_superblock() {
 //	char buffer[512];
+//	memset(buffer, 0, sizeof(buffer));
 //	size_t offset = 0;
+//	Directory* root_dir = &root;
 //
-//	size_t file_count = files.size();
+//	size_t file_count = root_dir->files.size();
+//	size_t dir_count = root_dir->directories.size();
+//
 //	memcpy(buffer + offset, &file_count, sizeof(size_t));
 //	offset += sizeof(size_t);
 //
-//	files.forEach([&](const string& key, File file) {
+//	memcpy(buffer + offset, &dir_count, sizeof(size_t));
+//	offset += sizeof(size_t);
 //
-//		memcpy(buffer + offset, key.c_str(), 32);
-//		offset += 32;
-//
-//		memcpy(buffer + offset, &file.size, sizeof(size_t));
+//	root_dir->files.forEach([&](const string& key, const File& file) {
+//		size_t name_length = key.size();
+//		memcpy(buffer + offset, &name_length, sizeof(size_t));
 //		offset += sizeof(size_t);
 //
-//		size_t sector_count = file.sectors.size();
-//		memcpy(buffer + offset, &sector_count, sizeof(size_t));
-//		offset += sizeof(size_t);
+//		memcpy(buffer + offset, key.c_str(), name_length);
+//		offset += name_length;
 //
-//		for (size_t i = 0; i < file.sectors.size(); i++) {
-//			memcpy(buffer + offset, &file.sectors[i], sizeof(uint32_t));
-//			offset += sizeof(uint32_t);
-//		}
+//		memcpy(buffer + offset, &file, sizeof(File));
+//		offset += sizeof(File);
 //	});
+//
+//	root_dir->directories.forEach([&](const string& key, const Directory& dir) {
+//		size_t name_length = key.size();
+//		memcpy(buffer + offset, &name_length, sizeof(size_t));
+//		offset += sizeof(size_t);
+//
+//		memcpy(buffer + offset, key.c_str(), name_length);
+//		offset += name_length;
+//
+//		memcpy(buffer + offset, &dir, sizeof(Directory));
+//		offset += sizeof(Directory);
+//		});
 //
 //	ata_write_to_sector(0, buffer);
 //

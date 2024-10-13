@@ -41,6 +41,10 @@ public:
 
     int find(const _Ty& value) const;
 
+    _Ty* data();
+
+    const _Ty* data() const;
+
     vector& operator=(const vector& other);
 
     ~vector();
@@ -209,6 +213,16 @@ inline int vector<_Ty>::find(const _Ty& value) const {
         }
     }
     return -1;
+}
+
+template<typename _Ty>
+inline _Ty* vector<_Ty>::data() {
+    return arr;
+}
+
+template<typename _Ty>
+inline const _Ty* vector<_Ty>::data() const {
+    return arr;
 }
 
 template<typename _Ty>

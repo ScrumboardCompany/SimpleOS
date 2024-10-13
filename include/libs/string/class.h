@@ -22,6 +22,8 @@ namespace SimpleOS {
 
 		string(size_t repeat, char c);
 
+		string(const char* str, size_t length);
+
 		~string();
 
 		const char* c_str() const;

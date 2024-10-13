@@ -58,6 +58,17 @@ string::string(size_t repeat, char c) {
 	str[length] = '\0';
 }
 
+string::string(const char* str, size_t length) {
+	this->length = length;
+	this->str = (char*)malloc(length + 1);
+
+	for (size_t i = 0; i < length; i++) {
+		this->str[i] = str[i];
+	}
+
+	this->str[length] = '\0';
+}
+
 string::~string() {
 	if(str) 
 		free(str);

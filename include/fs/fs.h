@@ -31,11 +31,16 @@ namespace SimpleOS {
 		struct Superblock {
 			uint32_t file_table_start;
 			uint32_t total_files;   
+			uint32_t total_directories;
 			uint32_t total_sectors;   
 			uint32_t free_sectors;
 		};
 
+		//static void init_fs();
+
 		static bool create_file(const string& path, const string& data = nullptr);
+
+		static bool copy_file(const string& path, const string& result_path);
 
 		static bool delete_file(const string& path);
 
@@ -47,6 +52,10 @@ namespace SimpleOS {
 
 		static bool format();
 
+		//static bool read_superblock();
+
+		//static bool write_superblock();
+
 		static bool file_exist(const string& path);
 		static bool dir_exist(const string& path);
 
@@ -54,6 +63,8 @@ namespace SimpleOS {
 		static bool __check_dir_exist(const string& path);
 
 		static bool create_dir(const string& path);
+
+		static bool copy_dir(const string& path, const string& result_path);
 
 		static bool delete_dir(const string& path);
 

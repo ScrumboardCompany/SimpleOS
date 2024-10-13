@@ -57,6 +57,7 @@ public:
     _VTy* find(const _KTy& key) const;
     void erase(const _KTy& key);
     bool has(const _KTy& key) const;
+    void clear();
 
     size_t size() const;
 
@@ -221,6 +222,12 @@ inline void map<_KTy, _VTy>::erase(const _KTy& key) {
 template<typename _KTy, typename _VTy>
 inline bool map<_KTy, _VTy>::has(const _KTy& key) const {
     return find(root, key) != nullptr;
+}
+
+template<typename _KTy, typename _VTy>
+inline void map<_KTy, _VTy>::clear() {
+    clear(root);
+    root = nullptr;
 }
 
 template<typename _KTy, typename _VTy>

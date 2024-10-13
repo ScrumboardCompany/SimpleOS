@@ -30,6 +30,65 @@ bool FileSystem::create_dir(const string& path) {
 	return true;
 }
 
+bool FileSystem::copy_dir(const string& path, const string& result_path) {
+
+	if (!dir_exist(path)) {
+		Terminal::lnprint("Source directory not found");
+		return false;
+	}
+
+	if (!create_dir(result_path)) {
+		Terminal::lnprint("Failed to create destination directory");
+		return false;
+	}
+
+	Directory* last_directory = current_directory;
+	vector<string> last_current_path = current_path;
+
+	if (!cd(path)) return false;
+
+	bool has_error = false;
+
+	Terminal::lnprint(get_current_path());
+
+	current_directory->files.forEach([&](const string& name, const File&) {
+		if (has_error) return;
+		string new_file_path = result_path + "/" + name;
+		string file_data;
+		if (!read_file(name, file_data)) {
+			has_error = true;
+		}
+		if (!create_file(new_file_path, file_data)) {
+			has_error = true;
+		}
+		});
+
+	if (has_error) {
+		current_directory = last_directory;
+		current_path = last_current_path;
+		return false;
+	}
+
+	current_directory->directories.forEach([&](const string& name, const Directory&) {
+		if (has_error) return;
+		string new_dir_path = result_path + "/" + name;
+		if (!copy_dir(path + "/" + name, new_dir_path)) {
+			has_error = true;
+		}
+		});
+
+	if (has_error) {
+		current_directory = last_directory;
+		current_path = last_current_path;
+		return false;
+	}
+
+	current_directory = last_directory;
+	current_path = last_current_path;
+
+	return true;
+}
+
 bool FileSystem::delete_dir(const string& path) {
 
 	Directory* last_directory = current_directory;

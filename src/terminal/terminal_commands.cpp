@@ -94,6 +94,7 @@ void Terminal_commands::__command_help(vector<string>& args) {
 		Terminal::lnprint("echo [text] - prints the specified text to the console");
 		Terminal::lnprint("cat [number] - prints a cat under the specified number");
 		Terminal::lnprint("mkfile [path] [data] - creates a file at the specified path and writes the data to it");
+		Terminal::lnprint("cpfile [path1] [path2] - copies a file at the specified path");
 		Terminal::lnprint("rdfile [path] - reads data from the file at the specified path");
 		Terminal::lnprint("rmfile [path] - deletes the file at the specified path");
 		Terminal::lnprint("wrfile [path] [data] - overwrites the file at the specified path with new data");
@@ -102,6 +103,7 @@ void Terminal_commands::__command_help(vector<string>& args) {
 		Terminal::lnprint("open [path] - opens the file at the specified path");
 		Terminal::lnprint("time - prints the current world time");
 		Terminal::lnprint("mkdir [path] - creates a directory at the specified path");
+		Terminal::lnprint("cpdir [path1] [path2] - copies a directory at the specified path");
 		Terminal::lnprint("exdir [path] - lists the contents of the directory at the specified path");
 		Terminal::lnprint("cd [path] - changes the current directory to the specified path");
 		Terminal::lnprint("dir - lists the contents of the current directory");
@@ -191,6 +193,13 @@ void Terminal_commands::__command_mkfile(vector<string>& args) {
 	}
 }
 
+void Terminal_commands::__command_cpfile(vector<string>& args) {
+	if (__check_argc(args, 2)) {
+		if (FileSystem::copy_file(args[0], args[1]))
+			Terminal::lnprint("Successful cpfile");
+	}
+}
+
 void Terminal_commands::__command_rdfile(vector<string>& args) {
 
 	if (__check_argc(args, 1)) {
@@ -253,6 +262,13 @@ void Terminal_commands::__command_mkdir(vector<string>& args) {
 		if (FileSystem::create_dir(args[0])) {
 			Terminal::lnprint("Good mkdir");
 		}
+	}
+}
+
+void Terminal_commands::__command_cpdir(vector<string>& args) {
+	if (__check_argc(args, 2)) {
+		if (FileSystem::copy_dir(args[0], args[1]))
+			Terminal::lnprint("Successful cpfile");
 	}
 }
 
@@ -408,6 +424,10 @@ void Terminal::call_command(const string& key, vector<string>& args) {
 		Terminal_commands::__command_mkfile(args);
 	}
 
+	else if (key == "cpfile") {
+		Terminal_commands::__command_cpfile(args);
+	}
+
 	else if (key == "rdfile") {
 		Terminal_commands::__command_rdfile(args);
 	}
@@ -451,6 +471,10 @@ void Terminal::call_command(const string& key, vector<string>& args) {
 
 	else if (key == "mkdir") {
 		Terminal_commands::__command_mkdir(args);
+	}
+
+	else if (key == "cpdir") {
+		Terminal_commands::__command_cpdir(args);
 	}
 
 	else if (key == "rmdir") {
