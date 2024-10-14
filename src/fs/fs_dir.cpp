@@ -168,7 +168,9 @@ bool FileSystem::cd(const vector<string>& path) {
 
 		is_first = false;
 	}
-	//Terminal::set_pre_arrow_text(get_current_path() + ">");
+	string formatted_path = get_current_path();
+	formatted_path.pop();
+	Terminal::set_pre_arrow_text(formatted_path + ">");
 
 	return true;
 }
@@ -226,7 +228,9 @@ bool FileSystem::__check_dir_exist(const string& path) {
 
 void FileSystem::set_current_path(const vector<string>& path) {
 	current_path = path;
-	//Terminal::set_pre_arrow_text(get_current_path() + ">");
+	string formatted_path = get_current_path();
+	formatted_path.pop();
+	Terminal::set_pre_arrow_text(formatted_path + ">");
 }
 
 string FileSystem::get_current_path() {

@@ -50,7 +50,18 @@ void Keyboard::__keyboard_handler() {
 		break;
 	}
 
-	c = (Keyboard::is_caps_lock ? to_upper(c) : to_lower(c));
+	if (!Keyboard::is_caps_lock && shift_pressed) {
+		c = to_upper(c);
+	}
+	else if (!Keyboard::is_caps_lock && !shift_pressed) {
+		c = to_lower(c);
+	}
+	else if (Keyboard::is_caps_lock && shift_pressed) {
+		c = to_lower(c); 
+	}
+	else if (Keyboard::is_caps_lock && !shift_pressed) {
+		c = to_upper(c);
+	}
 
 	Keyboard::__capslock(key);
 
@@ -73,7 +84,7 @@ void Keyboard::__keyboard_handler() {
 	}
 
 	if (c) {
-		
+
 		if (key == Keyboard::PressedKey::C && ctrl_pressed) {
 			if (Terminal::command.highlighted_buffer != "") {
 				Terminal::command.clipboard = Terminal::command.highlighted_buffer;
@@ -86,9 +97,26 @@ void Keyboard::__keyboard_handler() {
 
 			Terminal::print(Terminal::command.clipboard);
 		}
+		else if (key == Keyboard::PressedKey::A && ctrl_pressed) {
+			Terminal::clear_highlighted_buffer();
+			Terminal::restore_default_bg_color();
+
+			Terminal::set_pos(Terminal::get_pos() - Terminal::get_buffer_pos() + 1);
+			Terminal::set_buffer_pos(1);
+
+			for (size_t i = 0; i < Terminal::command.buffer.size(); i++) {
+				Terminal::command.highlighted_buffer.push(Terminal::command.buffer[Terminal::get_buffer_pos() - 1]);
+				Terminal::fill_bg_color_at(Terminal::get_pos(), Terminal::Color::White);
+				Terminal::set_highlighted_buffer_pos(Terminal::get_highlighted_buffer_pos() + 1);
+
+				Terminal::set_pos(Terminal::get_pos() + 1);
+				Terminal::set_buffer_pos(Terminal::get_buffer_pos() + 1);
+				Terminal::move_cursor(Terminal::get_pos());
+			}
+		}
 		else {
 			if (!Terminal::command.highlighted_buffer.empty()) Terminal::delete_highlighted_text();
-			Terminal::command.buffer.push(c, Keyboard::is_console_mode ? Terminal::get_buffer_pos() - 1 : Terminal::get_pos());
+			Terminal::command.buffer.push(c, Keyboard::is_console_mode ? Terminal::get_buffer_pos() - Terminal::get_pre_arrow_text().size() : Terminal::get_pos());
 			Keyboard::is_console_mode ? Terminal::input_print(c) : Terminal::text_print(c);
 		}
 
@@ -96,7 +124,6 @@ void Keyboard::__keyboard_handler() {
 	}
 
 	outb(0x20, 0x20);
-	//__asm__ volatile("sti");
 }
 
 Keyboard::PressedKey Keyboard::get_key() {

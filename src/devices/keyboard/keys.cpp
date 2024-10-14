@@ -15,7 +15,7 @@ void Keyboard::__backspace(PressedKey key) {
 		}
 		else if (Terminal::get_pos() % WIDTH > Terminal::get_pre_arrow_text().size()) {
 			Terminal::delete_char(Terminal::get_pos());
-			Terminal::command.buffer.pop(Terminal::get_buffer_pos() - 1);
+			Terminal::command.buffer.pop(Terminal::get_buffer_pos() - Terminal::get_pre_arrow_text().size());
 			Keyboard::reset_selected_command_pos();
 		}
 	}
@@ -52,8 +52,10 @@ void Keyboard::__enter(PressedKey key) {
 			Terminal::current_line++;
 		}
 
+		// DO NOT DELETE IN ANY SITUATION!!!
 		Terminal::clear_highlighted_buffer();
 		Terminal::restore_default_bg_color();
+		// DO NOT DELETE IN ANY SITUATION!!!
 
 		Keyboard::reset_selected_command_pos();
 	}
