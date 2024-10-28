@@ -39,7 +39,9 @@ namespace SimpleOS {
 		static size_t current_line;
 		static Color terminal_color;
 		static Color bg_color;
-		/*static string pre_arrow_text;*/
+
+		static vector<string> lines_buffer;
+		static size_t scroll_position;
 
 		static Command command;
 		
@@ -125,6 +127,8 @@ namespace SimpleOS {
 		static void delete_highlighted_text();
 
 		static void move_cursor(size_t position);
+
+		static void update_screen();
 
 		static void set_and_fill_terminal_color(Color new_color);
 

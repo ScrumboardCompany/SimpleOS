@@ -20,8 +20,6 @@ void Terminal::clear() {
 	reload(' ', terminal_color, bg_color);
 	set_pos(0);
 	set_buffer_pos(0);
-	//clear_highlighted_buffer();
-	//restore_default_bg_color();
 }
 
 void Terminal::execute_command(const string& command) {
@@ -196,10 +194,22 @@ void Terminal::move_cursor(size_t pos) {
 	outb(0x3D5, (uint8_t)((position >> 8) & 0xFF));
 }
 
+void Terminal::update_screen() {
+	clear();
+
+	for (size_t i = 0; i < HEIGHT && scroll_position + i < lines_buffer.size(); ++i) {
+		print(lines_buffer[scroll_position + i]);
+		new_line();
+	}
+}
+
 size_t Terminal::pos = 0;
 size_t Terminal::current_line = 0;
 Terminal::Color Terminal::terminal_color = Terminal::Color::Grey;
 Terminal::Color Terminal::bg_color = Terminal::Color::Black;
+
+size_t Terminal::scroll_position = 0;
+vector<string> Terminal::lines_buffer;
 
 string Terminal::pre_arrow_text = ">";
 

@@ -28,6 +28,16 @@ namespace SimpleOS {
 			Directory* parent = nullptr;
 		};
 
+		struct Superblock {
+			uint32_t total_sectors;
+			uint32_t used_sectors; 
+			uint32_t free_sectors; 
+			uint32_t total_files;
+			uint32_t total_directories;
+		};
+
+		static void init();
+
 		static bool create_file(const string& path, const string& data = nullptr);
 
 		static bool copy_file(const string& path, const string& result_path);
@@ -42,9 +52,9 @@ namespace SimpleOS {
 
 		static bool format();
 
-		//static bool read_superblock();
+		static bool read_superblock();
 
-		//static bool write_superblock();
+		static void write_superblock();
 
 		static bool file_exist(const string& path);
 		static bool dir_exist(const string& path);
@@ -99,8 +109,8 @@ namespace SimpleOS {
 		static Directory* current_directory;
 		static vector<string> current_path;
 
-		//static map<string, File> files;
 		static vector<size_t> taken_sectors;
+		static Superblock superblock;
 
 		static string opened_file;
 	};

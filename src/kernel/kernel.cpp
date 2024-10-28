@@ -22,7 +22,6 @@ extern "C" void kernel_main(void) {
     IRQ::init_pic();
     Keyboard::init_keyboard();
     Terminal::pre_arrow_text = ">";
-    //FileSystem::init_fs();
 
     Terminal::print(Terminal::get_pre_arrow_text());
 

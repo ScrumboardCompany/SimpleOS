@@ -111,11 +111,24 @@ void Terminal::print(const string& str) {
 void Terminal::println(const char* msg) {
 	print(msg);
 
+	lines_buffer.push(msg);
+	/*if (scroll_position + HEIGHT - 1 >= lines_buffer.size()) {
+		scroll_position = lines_buffer.size() > HEIGHT ? lines_buffer.size() - HEIGHT : 0;
+	}*/
+	if (lines_buffer.size() + 1 >= HEIGHT) {
+		scroll_position += 1;
+	}
+
 	new_line();
 }
 
 void Terminal::println(char c) {
 	print(c);
+
+	lines_buffer.push(c);
+	if (lines_buffer.size() + 1 >= HEIGHT) {
+		scroll_position += 1;
+	}
 
 	new_line();
 };
@@ -123,11 +136,23 @@ void Terminal::println(char c) {
 void Terminal::println(int n) {
 	print(n);
 
+	char msg[10];
+	itoa(n, msg, 10);
+	lines_buffer.push(msg);
+	if (lines_buffer.size() + 1 >= HEIGHT) {
+		scroll_position += 1;
+	}
+
 	new_line();
 }
 
 void Terminal::println(const string& string) {
 	print(string);
+
+	lines_buffer.push(string);
+	if (lines_buffer.size() + 1 >= HEIGHT) {
+		scroll_position += 1;
+	}
 
 	new_line();
 }
@@ -135,11 +160,21 @@ void Terminal::println(const string& string) {
 void Terminal::lnprint(const char* msg) {
 	new_line();
 
+	lines_buffer.push(msg);
+	if (lines_buffer.size() + 1 >= HEIGHT) {
+		scroll_position += 1;
+	}
+
 	print(msg);
 }
 
 void Terminal::lnprint(char c){
 	new_line();
+
+	lines_buffer.push(c);
+	if (lines_buffer.size() + 1 >= HEIGHT) {
+		scroll_position += 1;
+	}
 
 	print(c);
 }
@@ -147,17 +182,34 @@ void Terminal::lnprint(char c){
 void Terminal::lnprint(int n) {
 	new_line();
 
+	//char msg[10];
+	//itoa(n, msg, 10);
+	//lines_buffer.push(msg);
+	//if (lines_buffer.size() + 1 >= HEIGHT) {
+	//	scroll_position += 1;
+	//}
+
 	print(n);
 }
 
 void Terminal::lnprint(const string& string) {
 	new_line();
 
+	lines_buffer.push(string);
+	if (lines_buffer.size() + 1 >= HEIGHT) {
+		scroll_position += 1;
+	}
+
 	print(string);
 }
 
 void Terminal::lnprintln(const char* msg) {
 	new_line();
+
+	lines_buffer.push(msg);
+	if (lines_buffer.size() + 1 >= HEIGHT) {
+		scroll_position += 1;
+	}
 
 	print(msg);
 
@@ -167,6 +219,11 @@ void Terminal::lnprintln(const char* msg) {
 void Terminal::lnprintln(char c) {
 	new_line();
 
+	lines_buffer.push(c);
+	if (lines_buffer.size() + 1 >= HEIGHT) {
+		scroll_position += 1;
+	}
+
 	print(c);
 
 	new_line();
@@ -175,6 +232,13 @@ void Terminal::lnprintln(char c) {
 void Terminal::lnprintln(int n) {
 	new_line();
 
+	char msg[10];
+	itoa(n, msg, 10);
+	lines_buffer.push(msg);
+	if (lines_buffer.size() + 1 >= HEIGHT) {
+		scroll_position += 1;
+	}
+
 	print(n);
 
 	new_line();
@@ -182,6 +246,11 @@ void Terminal::lnprintln(int n) {
 
 void Terminal::lnprintln(const string& string) {
 	new_line();
+
+	lines_buffer.push(string);
+	if (lines_buffer.size() + 1 >= HEIGHT) {
+		scroll_position += 1;
+	}
 
 	print(string);
 

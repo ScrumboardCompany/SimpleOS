@@ -477,11 +477,12 @@ void Terminal::call_command(const string& key, vector<string>& args) {
 	}
 
 	else if (key == "high") {
-		Terminal::lnprint((int)Terminal::command.highlighted_buffer.size());
+		/*Terminal::lnprint((int)Terminal::command.highlighted_buffer.size());
 		Terminal::lnprint(Terminal::command.highlighted_buffer);
 		Terminal::lnprint((int)Terminal::command.highlighted_buffer_pos);
 		Terminal::lnprint((int)Terminal::command.highlighted_buffer_start_pos);
-		Terminal::lnprint((int)Terminal::get_pos());
+		Terminal::lnprint((int)Terminal::get_pos());*/
+		Terminal::lnprint(static_cast<int>(Terminal::lines_buffer.size()));
 	}
 
 	else if (key == "mkdir") {
@@ -517,7 +518,7 @@ void Terminal::call_command(const string& key, vector<string>& args) {
 	}
 
 	else {
-		lnprint(key + " is invalid command\nenter help for print all commands");
+		lnprint(key + " is invalid command\nenter help to print all commands");
 	}
 	new_line();
 }
