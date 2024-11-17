@@ -477,12 +477,16 @@ void Terminal::call_command(const string& key, vector<string>& args) {
 	}
 
 	else if (key == "high") {
-		/*Terminal::lnprint((int)Terminal::command.highlighted_buffer.size());
-		Terminal::lnprint(Terminal::command.highlighted_buffer);
-		Terminal::lnprint((int)Terminal::command.highlighted_buffer_pos);
-		Terminal::lnprint((int)Terminal::command.highlighted_buffer_start_pos);
-		Terminal::lnprint((int)Terminal::get_pos());*/
 		Terminal::lnprint(static_cast<int>(Terminal::lines_buffer.size()));
+		Terminal::lnprint(Terminal::lines_buffer[0]);
+		Terminal::lnprint(Terminal::lines_buffer[2]);
+		//Terminal::lnprint(static_cast<int>(Terminal::current_line));
+		//Terminal::lnprint(static_cast<int>(Terminal::scroll_position));
+		//for (size_t i = 0; i < lines_buffer.size(); i++) {
+		//	new_line();
+		//	print(lines_buffer[i]);
+		//}
+		//Terminal::lnprintln(static_cast<int>(HEIGHT));
 	}
 
 	else if (key == "mkdir") {

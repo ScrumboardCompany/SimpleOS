@@ -39,18 +39,16 @@ void Keyboard::__textbackspace(PressedKey key) {
 void Keyboard::__enter(PressedKey key) {
 	if (key == Keyboard::PressedKey::Enter) {
 		if (Terminal::command.buffer.size() > 0) {
-			string pre_arrow_text_before_ex = Terminal::pre_arrow_text;
+			Terminal::lines_buffer.push(Terminal::pre_arrow_text + Terminal::command.buffer);
 			Terminal::execute_command(Terminal::command.buffer.c_str());
 
 			Terminal::command.commands.push(Terminal::command.buffer);
 			Terminal::command.selected_command_pos = Terminal::command.commands.size();
-
+			
 			if (is_console_mode) {
 				Terminal::command.buffer = "";
 				Terminal::print(Terminal::get_pre_arrow_text());
 			}
-
-			Terminal::lines_buffer.push(pre_arrow_text_before_ex + Terminal::command.buffer);
 
 			Terminal::current_line++;
 		}
@@ -101,21 +99,21 @@ void Keyboard::__textctrl(PressedKey key) {
 
 void Keyboard::__arrow_up(PressedKey key) {
 	if (key == Keyboard::PressedKey::ArrowUp) {
-		//__handle_arrow(true);
+		__handle_arrow(true);
 
-		if (Terminal::scroll_position > 0) {
-			Terminal::scroll_position--;
-			Terminal::update_screen();
-		}
+		//if (Terminal::scroll_position > 0) {
+		//	Terminal::scroll_position--;
+		//	Terminal::update_screen();
+		//}
 	}
 }
 
 void Keyboard::__arrow_down(PressedKey key) {
 	if (key == Keyboard::PressedKey::ArrowDown) {
-		//__handle_arrow(false);
-		//if (25 <= Terminal::lines_buffer.size()) {
-			Terminal::scroll_position++;
-			Terminal::update_screen();
+		__handle_arrow(false);
+		//if (Terminal::lines_buffer.size() >= 25) {
+		//	Terminal::scroll_position++;
+		//	Terminal::update_screen();
 		//}
 
 	}

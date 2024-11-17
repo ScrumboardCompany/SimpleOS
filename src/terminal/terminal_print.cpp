@@ -19,6 +19,12 @@ void Terminal::print(char c, size_t pos) {
 	buffer[pos * 2 + 1] = color;
 }
 
+void Terminal::print(const string& str, size_t pos) {
+	for (size_t i = 0; i < str.size(); i++) {
+		print(str[i], pos + i);
+	}
+}
+
 void Terminal::print(char c) {
 	if (c == '\n') {
 		new_line();
@@ -111,148 +117,157 @@ void Terminal::print(const string& str) {
 void Terminal::println(const char* msg) {
 	print(msg);
 
-	lines_buffer.push(msg);
-	/*if (scroll_position + HEIGHT - 1 >= lines_buffer.size()) {
-		scroll_position = lines_buffer.size() > HEIGHT ? lines_buffer.size() - HEIGHT : 0;
-	}*/
-	if (lines_buffer.size() + 1 >= HEIGHT) {
-		scroll_position += 1;
-	}
-
 	new_line();
+
+	lines_buffer.push(msg);
+	if (current_line > HEIGHT) {
+		scroll_position += 1;
+		update_screen();
+	}
 }
 
 void Terminal::println(char c) {
 	print(c);
 
-	lines_buffer.push(c);
-	if (lines_buffer.size() + 1 >= HEIGHT) {
-		scroll_position += 1;
-	}
-
 	new_line();
+
+	lines_buffer.push(c);
+	if (current_line > HEIGHT) {
+		scroll_position += 1;
+		update_screen();
+	}
 };
 
 void Terminal::println(int n) {
 	print(n);
 
+	new_line();
+
 	char msg[10];
 	itoa(n, msg, 10);
 	lines_buffer.push(msg);
-	if (lines_buffer.size() + 1 >= HEIGHT) {
+	if (current_line > HEIGHT) {
 		scroll_position += 1;
+		update_screen();
 	}
-
-	new_line();
 }
 
 void Terminal::println(const string& string) {
 	print(string);
 
-	lines_buffer.push(string);
-	if (lines_buffer.size() + 1 >= HEIGHT) {
-		scroll_position += 1;
-	}
-
 	new_line();
+
+	lines_buffer.push(string);
+	if (current_line > HEIGHT) {
+		scroll_position += 1;
+		update_screen();
+	}
 }
 
 void Terminal::lnprint(const char* msg) {
 	new_line();
 
-	lines_buffer.push(msg);
-	if (lines_buffer.size() + 1 >= HEIGHT) {
-		scroll_position += 1;
-	}
-
 	print(msg);
+
+	lines_buffer.push(msg);
+	if (current_line > HEIGHT) {
+		scroll_position += 1;
+		update_screen();
+	}
 }
 
 void Terminal::lnprint(char c){
 	new_line();
 
-	lines_buffer.push(c);
-	if (lines_buffer.size() + 1 >= HEIGHT) {
-		scroll_position += 1;
-	}
-
 	print(c);
+
+	lines_buffer.push(c);
+	if (current_line > HEIGHT) {
+		scroll_position += 1;
+		update_screen();
+	}
 }
 
 void Terminal::lnprint(int n) {
 	new_line();
 
-	//char msg[10];
-	//itoa(n, msg, 10);
-	//lines_buffer.push(msg);
-	//if (lines_buffer.size() + 1 >= HEIGHT) {
-	//	scroll_position += 1;
-	//}
-
 	print(n);
+
+	char msg[10];
+	itoa(n, msg, 10);
+	lines_buffer.push(msg);
+	if (current_line > HEIGHT) {
+		scroll_position += 1;
+		update_screen();
+	}
 }
 
 void Terminal::lnprint(const string& string) {
 	new_line();
 
-	lines_buffer.push(string);
-	if (lines_buffer.size() + 1 >= HEIGHT) {
-		scroll_position += 1;
-	}
-
 	print(string);
+
+	lines_buffer.push(string);
+	if (current_line > HEIGHT) {
+		scroll_position += 1;
+		update_screen();
+	}
 }
 
 void Terminal::lnprintln(const char* msg) {
 	new_line();
 
-	lines_buffer.push(msg);
-	if (lines_buffer.size() + 1 >= HEIGHT) {
-		scroll_position += 1;
-	}
-
 	print(msg);
 
 	new_line();
+
+	lines_buffer.push(msg);
+	if (current_line > HEIGHT) {
+		scroll_position += 1;
+		update_screen();
+	}
 }
 
 void Terminal::lnprintln(char c) {
 	new_line();
 
-	lines_buffer.push(c);
-	if (lines_buffer.size() + 1 >= HEIGHT) {
-		scroll_position += 1;
-	}
-
 	print(c);
 
 	new_line();
+
+	lines_buffer.push(c);
+	if (current_line > HEIGHT) {
+		scroll_position += 1;
+		update_screen();
+	}
 };
 
 void Terminal::lnprintln(int n) {
 	new_line();
 
-	char msg[10];
-	itoa(n, msg, 10);
-	lines_buffer.push(msg);
-	if (lines_buffer.size() + 1 >= HEIGHT) {
-		scroll_position += 1;
-	}
-
 	print(n);
 
 	new_line();
+
+	char msg[10];
+	itoa(n, msg, 10);
+	lines_buffer.push(msg);
+	if (current_line > HEIGHT) {
+		scroll_position += 1;
+		update_screen();
+	}
 }
 
 void Terminal::lnprintln(const string& string) {
 	new_line();
 
-	lines_buffer.push(string);
-	if (lines_buffer.size() + 1 >= HEIGHT) {
-		scroll_position += 1;
-	}
-
 	print(string);
 
 	new_line();
+
+	lines_buffer.push(string);
+	if (current_line > HEIGHT) {
+		scroll_position += 1;
+		update_screen();
+	}
 };

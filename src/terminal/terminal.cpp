@@ -197,7 +197,7 @@ void Terminal::move_cursor(size_t pos) {
 void Terminal::update_screen() {
 	clear();
 
-	for (size_t i = 0; i < HEIGHT && scroll_position + i < lines_buffer.size(); ++i) {
+	for (size_t i = 0; i < HEIGHT && scroll_position + i < current_line; ++i) {
 		print(lines_buffer[scroll_position + i]);
 		new_line();
 	}

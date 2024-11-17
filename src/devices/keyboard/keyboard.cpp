@@ -196,7 +196,17 @@ void Keyboard::reset_selected_command_pos() {
 }
 
 void Keyboard::__handle_arrow(bool isUp) {
-	if (!Terminal::command.commands.empty() && Terminal::command.selected_command_pos) {
+	if (shift_pressed) {
+		if (isUp && Terminal::scroll_position > 0) {
+			Terminal::scroll_position--;
+			Terminal::update_screen();
+		}
+		else if (!isUp && Terminal::lines_buffer.size() >= 25) {
+			Terminal::scroll_position++;
+			Terminal::update_screen();
+		}
+	}
+	else if (!Terminal::command.commands.empty() && Terminal::command.selected_command_pos) {
 		if (isUp && Terminal::command.selected_command_pos) {
 			if (Terminal::command.selected_command_pos == 0) return;
 			--Terminal::command.selected_command_pos;

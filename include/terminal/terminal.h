@@ -56,6 +56,8 @@ namespace SimpleOS {
 
 		static void print(char c, size_t pos);
 
+		static void print(const string& str, size_t pos);
+
 		static void print(char c);
 
 		static void input_print(char c);
