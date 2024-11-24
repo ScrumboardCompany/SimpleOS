@@ -4,8 +4,9 @@
 </div>
 
 ## How to launch on VM
-For testing, we've been using QEMU. You can also try running it on VirtualBox, but we cannot guarantee it will work.\
-```qemu-system-i386 -hda "path to disk image" -cdrom "path to SimpleOS.iso" -boot d -m 1024```
+For testing, we've been using QEMU.\
+```qemu-system-i386 -hda "path to disk image" -cdrom "path to SimpleOS.iso" -boot d -m 1024```\
+You can also try it on VirtualBox.
 
 ## Known Issues and Planned Fixes
 - Memory leaks
