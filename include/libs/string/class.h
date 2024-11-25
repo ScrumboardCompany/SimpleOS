@@ -4,6 +4,7 @@
 #define __STRING_CLASS__
 
 #include "utils/typedef.h"
+#include "libs/vector/vector.h"
 
 namespace SimpleOS {
 
@@ -75,6 +76,22 @@ namespace SimpleOS {
 		const char& operator [](size_t index) const;
 
 		bool empty() const;
+
+		int to_int() const;
+
+		static string to_string(int num);
+
+		static int to_int(const string& str);
+		
+		size_t find(const string& sub, size_t start = 0) const;
+
+		size_t find(char c, size_t start = 0) const;
+
+		string substr(size_t start, size_t length) const;
+
+		static string join(const string& delimiter, const vector<string>& parts);
+
+		static constexpr const size_t npos = static_cast<size_t>(-1);
 
 	private:
 		char* str;

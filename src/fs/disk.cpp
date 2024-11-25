@@ -74,6 +74,10 @@ bool SimpleOS::ata_append_to_sector(uint32_t lba, const string& buffer) {
     return true;
 }
 
+bool SimpleOS::ata_empty_sector(uint32_t lba) {
+    return ata_get_free_space_in_sector(lba) == 512;
+}
+
 void SimpleOS::ata_read_sector(uint32_t lba, string& buffer) {
     outb(ATA_PRIMARY_IO_BASE + 6, 0xE0 | ((lba >> 24) & 0x0F));
     outb(ATA_PRIMARY_IO_BASE + 2, 1);

@@ -321,3 +321,80 @@ const char& string::operator [](size_t index) const {
 bool string::empty() const {
 	return str == nullptr || str[0] == '\0';
 }
+
+int string::to_int() const {
+	return to_int(*this);
+}
+
+string string::to_string(int num) {
+	string result;
+	itoa(num, (char*)result, 10);
+
+	return result;
+}
+
+int string::to_int(const string& str) {
+	return atoi(str.c_str());
+}
+
+size_t SimpleOS::string::find(const string& sub, size_t start) const {
+	if (start >= length || sub.length == 0) return npos;
+
+	for (size_t i = start; i <= length - sub.length; ++i) {
+		bool match = true;
+		for (size_t j = 0; j < sub.length; ++j) {
+			if (str[i + j] != sub[j]) {
+				match = false;
+				break;
+			}
+		}
+		if (match) return i;
+	}
+	return size_t(-1);
+}
+
+size_t SimpleOS::string::find(char c, size_t start) const {
+	if (start >= length) return npos;
+
+	for (size_t i = start; i < length; ++i) {
+		if (str[i] == c) return i;
+	}
+	return size_t(-1);
+}
+
+SimpleOS::string SimpleOS::string::substr(size_t start, size_t len) const {
+	if (start >= length) return string();
+	if (start + len > length) len = length - start;
+
+	string result(len, '\0');
+	for (size_t i = 0; i < len; ++i) {
+		result[i] = str[start + i];
+	}
+	return result;
+}
+
+SimpleOS::string SimpleOS::string::join(const string& delimiter, const vector<string>& parts) {
+	if (parts.empty()) return string();
+
+	size_t total_length = 0;
+	for (size_t i = 0; i < parts.size(); i++) {
+		total_length += parts[i].size();
+	}
+
+	total_length += (parts.size() - 1) * delimiter.size();
+
+	string result(total_length, '\0');
+	size_t pos = 0;
+
+	for (size_t i = 0; i < parts.size(); ++i) {
+		for (size_t j = 0; j < parts[i].size(); ++j) {
+			result[pos++] = parts[i][j];
+		}
+		if (i < parts.size() - 1) {
+			for (size_t j = 0; j < delimiter.size(); ++j) {
+				result[pos++] = delimiter[j];
+			}
+		}
+	}
+	return result;
+}

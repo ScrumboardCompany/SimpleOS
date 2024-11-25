@@ -9,6 +9,7 @@
 #include "libs/string/class.h"
 
 #define _INVALID_SECTOR -1
+#define PERCENTAGE_FOR_METADATA 0.2f
 
 namespace SimpleOS {
 
@@ -20,23 +21,24 @@ namespace SimpleOS {
 			size_t size = 0;
 			vector<uint32_t> sectors;
 
+			string serialize() const;
+			void deserialize(const string& input);
 		};
 
 		struct Directory {
 			map<string, File> files;
 			map<string, Directory> directories;
 			Directory* parent = nullptr;
-		};
 
-		struct Superblock {
-			uint32_t total_sectors;
-			uint32_t used_sectors; 
-			uint32_t free_sectors; 
-			uint32_t total_files;
-			uint32_t total_directories;
+			string serialize() const;
+			void deserialize(const string& input);
 		};
 
 		static void init();
+
+		static void set_metadata_of_files();
+
+		static void get_metadata_of_files();
 
 		static bool create_file(const string& path, const string& data = nullptr);
 
@@ -51,10 +53,6 @@ namespace SimpleOS {
 		static bool read_file(const string& path, string& buffer);
 
 		static bool format();
-
-		static bool read_superblock();
-
-		static void write_superblock();
 
 		static bool file_exist(const string& path);
 		static bool dir_exist(const string& path);
@@ -101,16 +99,19 @@ namespace SimpleOS {
 		static bool dir_exist(const Directory& dir, const string& name);
 
 		static ssize_t free_sector();
+		static bool check_is_metadata_of_files_sector(size_t num);
+
 		static bool __cd(const string& __path, string& buffer);
 
 		static bool distr_to_sectors(File& file, const char* data);
+
+		static bool distr_files_metadata_to_sectors(File& file, const char* data);
 
 		static Directory root;
 		static Directory* current_directory;
 		static vector<string> current_path;
 
 		static vector<size_t> taken_sectors;
-		static Superblock superblock;
 
 		static string opened_file;
 	};

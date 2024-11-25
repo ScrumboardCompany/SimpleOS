@@ -21,6 +21,7 @@ extern "C" void kernel_main(void) {
     IDT::init_idt();
     IRQ::init_pic();
     Keyboard::init_keyboard();
+    FileSystem::init();
     Terminal::pre_arrow_text = ">";
 
     Terminal::print(Terminal::get_pre_arrow_text());

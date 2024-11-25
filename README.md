@@ -13,7 +13,6 @@ You can also try it on VirtualBox.
 - Scrolling(likely caused by the memory leaks)
 - The help command (currently affected by scrolling issues, so we recommend using this README for command information)
 - Text mode
-- Superblock
 
 ## How to avoid potentional bugs?
 - If you enter commands that produce 25 or more lines of output, use the clear command to ensure the console displays content correctly.

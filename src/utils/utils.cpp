@@ -35,55 +35,6 @@ void* SimpleOS::memset(void* ptr, int value, size_t num) {
 }
 
 vector<string> SimpleOS::split(const string& str, char delimiter) {
-
-    /*int count = 1;
-    const char* tmp = str;
-    while (*tmp) {
-        if (*tmp == delimiter) {
-            count++;
-        }
-        tmp++;
-    }
-
-    char** result = (char**)malloc((count + 1) * sizeof(char*));
-    if (result == NULL) {
-        return NULL;
-    }
-
-    int index = 0;
-    const char* start = str;
-    const char* end = str;
-
-    while (*end) {
-        if (*end == delimiter) {
-            int len = end - start;
-            result[index] = (char*)malloc((len + 1) * sizeof(char));
-            if (result[index] == NULL) {
-                return NULL;
-            }
-            strncpy(result[index], start, len);
-            result[index][len] = '\0';
-            index++;
-            start = end + 1;
-        }
-        end++;
-    }
-
-    int len = end - start;
-    result[index] = (char*)malloc((len + 1) * sizeof(char));
-    if (result[index] == NULL) {
-        return NULL;
-    }
-    strncpy(result[index], start, len);
-    result[index][len] = '\0';
-    index++;
-
-    result[index] = NULL;
-
-    *size = count;
-
-    return result;*/
-
     vector<string> tokens;
     string token;
     for(size_t i = 0; i < str.size(); i++) {

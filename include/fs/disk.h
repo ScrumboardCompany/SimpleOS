@@ -29,6 +29,8 @@ namespace SimpleOS {
 
     bool ata_append_to_sector(uint32_t lba, const string& buffer);
 
+    bool ata_empty_sector(uint32_t lba);
+
     void ata_read_sector(uint32_t lba, string& buffer);
 
     void ata_delete_from_sector(uint32_t lba);
