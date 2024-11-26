@@ -10,12 +10,22 @@ using namespace SimpleOS;
 void Terminal_commands::__command_color(vector<string>& args) {
 
 	if (__check_argc(args, 2)) {
-		Terminal::Color new_color = Terminal::to_color(atoi(args[1]));
+		Terminal::Color new_color;
+		if (atoi(args[1]) == 0) {
+			new_color = Terminal::to_color(args[1]);
+		}
+		else {
+			new_color = Terminal::to_color(atoi(args[1]));
+		}
 
-		if (strcmp(args[0], "text") == 0)
-			Terminal::set_and_fill_terminal_color(new_color);
-		else if (strcmp(args[0], "bg") == 0)
-			Terminal::set_and_fill_bg_color(new_color);
+		if (new_color != Terminal::Color::None) {
+			if (strcmp(args[0], "text") == 0)
+				Terminal::set_and_fill_terminal_color(new_color);
+			else if (strcmp(args[0], "bg") == 0)
+				Terminal::set_and_fill_bg_color(new_color);
+		} else {
+			Terminal::lnprint("Invalid color code");
+		}
 	}
 }
 
@@ -68,6 +78,8 @@ void Terminal_commands::__command_clear(vector<string>& args) {
 		}
 		else if (args[0] == "terminal") {
 			Terminal::clear();
+			Terminal::scroll_position = 0;
+			Terminal::lines_buffer.clear();
 		}
 		else {
 			Terminal::lnprint("Invalid argument for clear");
@@ -477,10 +489,15 @@ void Terminal::call_command(const string& key, vector<string>& args) {
 	}
 
 	else if (key == "high") {
-		Terminal::lnprint(static_cast<int>(Terminal::lines_buffer.size()));
-		Terminal::lnprint(Terminal::lines_buffer[0]);
-		Terminal::lnprint(Terminal::lines_buffer[2]);
-		//Terminal::lnprint(static_cast<int>(Terminal::current_line));
+		//Terminal::lnprint(static_cast<int>(Terminal::lines_buffer.size()));
+		//Terminal::lnprint(Terminal::lines_buffer[0]);
+		//Terminal::lnprint(Terminal::lines_buffer[1]);
+
+
+		Terminal::lnprint(static_cast<int>(Terminal::current_line));
+		//Terminal::lnprint(static_cast<int>(Terminal::get_pos()));
+		
+
 		//Terminal::lnprint(static_cast<int>(Terminal::scroll_position));
 		//for (size_t i = 0; i < lines_buffer.size(); i++) {
 		//	new_line();
@@ -522,7 +539,8 @@ void Terminal::call_command(const string& key, vector<string>& args) {
 	}
 
 	else {
-		lnprint(key + " is invalid command\nenter help to print all commands");
+		lnprint(key + " is not a valid command");
+		lnprint("enter help to print all commands");
 	}
 	new_line();
 }

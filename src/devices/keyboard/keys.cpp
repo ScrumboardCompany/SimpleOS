@@ -39,6 +39,7 @@ void Keyboard::__textbackspace(PressedKey key) {
 void Keyboard::__enter(PressedKey key) {
 	if (key == Keyboard::PressedKey::Enter) {
 		if (Terminal::command.buffer.size() > 0) {
+			Terminal::lines_buffer.pop();
 			Terminal::lines_buffer.push(Terminal::pre_arrow_text + Terminal::command.buffer);
 			Terminal::execute_command(Terminal::command.buffer.c_str());
 
@@ -48,9 +49,10 @@ void Keyboard::__enter(PressedKey key) {
 			if (is_console_mode) {
 				Terminal::command.buffer = "";
 				Terminal::print(Terminal::get_pre_arrow_text());
+				Terminal::lines_buffer.push(Terminal::pre_arrow_text);
 			}
 
-			Terminal::current_line++;
+			//Terminal::current_line++;
 		}
 
 		// DO NOT DELETE UNDER ANY CIRCUMSTANCES!!!
@@ -100,22 +102,12 @@ void Keyboard::__textctrl(PressedKey key) {
 void Keyboard::__arrow_up(PressedKey key) {
 	if (key == Keyboard::PressedKey::ArrowUp) {
 		__handle_arrow(true);
-
-		//if (Terminal::scroll_position > 0) {
-		//	Terminal::scroll_position--;
-		//	Terminal::update_screen();
-		//}
 	}
 }
 
 void Keyboard::__arrow_down(PressedKey key) {
 	if (key == Keyboard::PressedKey::ArrowDown) {
 		__handle_arrow(false);
-		//if (Terminal::lines_buffer.size() >= 25) {
-		//	Terminal::scroll_position++;
-		//	Terminal::update_screen();
-		//}
-
 	}
 }
 

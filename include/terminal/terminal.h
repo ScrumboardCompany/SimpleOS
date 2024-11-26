@@ -28,7 +28,7 @@ namespace SimpleOS {
 			string buffer;
 			size_t buffer_pos;
 			vector<string> commands;
-			size_t selected_command_pos;
+			ssize_t selected_command_pos;
 			string highlighted_buffer;
 			ssize_t highlighted_buffer_pos;
 			size_t highlighted_buffer_start_pos;
@@ -51,6 +51,8 @@ namespace SimpleOS {
 		static string pre_arrow_text;
 
 		static Color to_color(int code);
+
+		static Color to_color(const string& code);
 
 		static void print(const char* msg);
 
@@ -170,7 +172,8 @@ namespace SimpleOS {
 			LightRed = 0x0C,
 			LightMagenta = 0x0D,
 			Yellow = 0x0E,
-			White = 0x0F
+			White = 0x0F,
+			None = 63
 		};
 
 	private: // commands

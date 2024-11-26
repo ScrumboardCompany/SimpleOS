@@ -138,6 +138,8 @@ namespace SimpleOS {
 	//private:
 		static void __handle_arrow(bool isUp);
 		static void __texthandle_arrow(bool isUp);
+		static void scroll_up();
+		static void scroll_down();
 
 
 		static void __backspace(PressedKey key);

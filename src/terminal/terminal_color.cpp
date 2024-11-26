@@ -96,6 +96,26 @@ Terminal::Color Terminal::to_color(int code) {
 	case 13: return Color::LightMagenta;
 	case 14: return Color::Yellow;
 	case 15: return Color::White;
-	default: return Color::Grey;
+	default: return Color::None;
 	}
+}
+
+Terminal::Color Terminal::to_color(const string& code) {
+	if (code == "black") return Color::Black;
+	else if (code == "blue")  return Color::Blue;
+	else if (code == "green")  return Color::Green;
+	else if (code == "cyan")  return Color::Cyan;
+	else if (code == "red")  return Color::Red;
+	else if (code == "magenta" || code == "purple")  return Color::Magenta;
+	else if (code == "brown")  return Color::Brown;
+	else if (code == "grey")  return Color::Grey;
+	else if (code == "darkGrey" || code == "dark_grey" || code == "dark-grey")  return Color::DarkGrey;
+	else if (code == "lightBlue" || code == "light_blue" || code == "light-blue")  return Color::LightBlue;
+	else if (code == "lightGreen" || code == "light_green" || code == "light-green") return Color::LightGreen;
+	else if (code == "lightCyan" || code == "light_cyan" || code == "light-cyan") return Color::LightCyan;
+	else if (code == "lightRed" || code == "light_red" || code == "light-red") return Color::LightRed;
+	else if (code == "lightMagenta" || code == "light_magenta" || code == "light-magenta" || code == "light_purple" || code == "light-purple") return Color::LightMagenta;
+	else if (code == "yellow") return Color::Yellow;
+	else if (code == "white") return Color::White;
+	else return Color::None;
 }

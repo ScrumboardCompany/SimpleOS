@@ -198,12 +198,10 @@ void Keyboard::reset_selected_command_pos() {
 void Keyboard::__handle_arrow(bool isUp) {
 	if (shift_pressed) {
 		if (isUp && Terminal::scroll_position > 0) {
-			Terminal::scroll_position--;
-			Terminal::update_screen();
+			scroll_up();
 		}
-		else if (!isUp && Terminal::lines_buffer.size() >= 25) {
-			Terminal::scroll_position++;
-			Terminal::update_screen();
+		else if (!isUp && Terminal::lines_buffer.size() >= HEIGHT) {
+			scroll_down();
 		}
 	}
 	else if (!Terminal::command.commands.empty() && Terminal::command.selected_command_pos) {
@@ -212,10 +210,10 @@ void Keyboard::__handle_arrow(bool isUp) {
 			--Terminal::command.selected_command_pos;
 		}
 		else {
-			if (Terminal::command.selected_command_pos < Terminal::command.commands.size() - 1)
+			//if (Terminal::command.selected_command_pos < Terminal::command.commands.size())
 				++Terminal::command.selected_command_pos;
 
-			else return;
+			//else return;
 		}
 	}
 
@@ -239,4 +237,14 @@ void Keyboard::change_mode(bool is_console_mode) {
 	Keyboard::reset_selected_command_pos();
 
 	Keyboard::is_console_mode = is_console_mode;
+}
+
+void Keyboard::scroll_up() {
+	Terminal::scroll_position--;
+	Terminal::update_screen();
+}
+
+void Keyboard::scroll_down() {
+	Terminal::scroll_position++;
+	Terminal::update_screen();
 }

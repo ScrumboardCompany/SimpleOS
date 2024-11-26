@@ -120,7 +120,7 @@ void Terminal::println(const char* msg) {
 	new_line();
 
 	lines_buffer.push(msg);
-	if (current_line > HEIGHT) {
+	if (current_line >= HEIGHT) {
 		scroll_position += 1;
 		update_screen();
 	}
@@ -132,7 +132,7 @@ void Terminal::println(char c) {
 	new_line();
 
 	lines_buffer.push(c);
-	if (current_line > HEIGHT) {
+	if (current_line >= HEIGHT) {
 		scroll_position += 1;
 		update_screen();
 	}
@@ -146,7 +146,7 @@ void Terminal::println(int n) {
 	char msg[10];
 	itoa(n, msg, 10);
 	lines_buffer.push(msg);
-	if (current_line > HEIGHT) {
+	if (current_line >= HEIGHT) {
 		scroll_position += 1;
 		update_screen();
 	}
@@ -158,7 +158,7 @@ void Terminal::println(const string& string) {
 	new_line();
 
 	lines_buffer.push(string);
-	if (current_line > HEIGHT) {
+	if (current_line >= HEIGHT) {
 		scroll_position += 1;
 		update_screen();
 	}
@@ -170,7 +170,7 @@ void Terminal::lnprint(const char* msg) {
 	print(msg);
 
 	lines_buffer.push(msg);
-	if (current_line > HEIGHT) {
+	if (current_line >= HEIGHT) {
 		scroll_position += 1;
 		update_screen();
 	}
@@ -182,7 +182,7 @@ void Terminal::lnprint(char c){
 	print(c);
 
 	lines_buffer.push(c);
-	if (current_line > HEIGHT) {
+	if (current_line >= HEIGHT) {
 		scroll_position += 1;
 		update_screen();
 	}
@@ -196,7 +196,7 @@ void Terminal::lnprint(int n) {
 	char msg[10];
 	itoa(n, msg, 10);
 	lines_buffer.push(msg);
-	if (current_line > HEIGHT) {
+	if (current_line >= HEIGHT) {
 		scroll_position += 1;
 		update_screen();
 	}
@@ -208,7 +208,7 @@ void Terminal::lnprint(const string& string) {
 	print(string);
 
 	lines_buffer.push(string);
-	if (current_line > HEIGHT) {
+	if (current_line >= HEIGHT) {
 		scroll_position += 1;
 		update_screen();
 	}
@@ -222,7 +222,7 @@ void Terminal::lnprintln(const char* msg) {
 	new_line();
 
 	lines_buffer.push(msg);
-	if (current_line > HEIGHT) {
+	if (current_line >= HEIGHT) {
 		scroll_position += 1;
 		update_screen();
 	}
@@ -236,7 +236,7 @@ void Terminal::lnprintln(char c) {
 	new_line();
 
 	lines_buffer.push(c);
-	if (current_line > HEIGHT) {
+	if (current_line >= HEIGHT) {
 		scroll_position += 1;
 		update_screen();
 	}
@@ -252,7 +252,7 @@ void Terminal::lnprintln(int n) {
 	char msg[10];
 	itoa(n, msg, 10);
 	lines_buffer.push(msg);
-	if (current_line > HEIGHT) {
+	if (current_line >= HEIGHT) {
 		scroll_position += 1;
 		update_screen();
 	}
@@ -266,7 +266,7 @@ void Terminal::lnprintln(const string& string) {
 	new_line();
 
 	lines_buffer.push(string);
-	if (current_line > HEIGHT) {
+	if (current_line >= HEIGHT) {
 		scroll_position += 1;
 		update_screen();
 	}
